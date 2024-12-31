@@ -4,3 +4,7 @@ author: ${author}
 main: ${mainClass}
 version: ${version}
 url: ${url}
+commands:
+  koth:
+    description: Main koth command
+    usage: /koth <start|stop|status|create|delete|edit|finish|list|tp|join|leave|set|reload>
