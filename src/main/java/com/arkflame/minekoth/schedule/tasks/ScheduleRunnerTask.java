@@ -1,6 +1,7 @@
 package com.arkflame.minekoth.schedule.tasks;
 
 import com.arkflame.minekoth.MineKoTH;
+import com.arkflame.minekoth.koth.KoTH;
 import com.arkflame.minekoth.schedule.Schedule;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -15,8 +16,10 @@ public class ScheduleRunnerTask extends BukkitRunnable {
                 .getSchedulesByTime(now.getDayOfWeek(), now.getHour(), now.getMinute());
 
         for (Schedule schedule : schedules) {
-            //schedule.getKoTH().start();
-            // TODO: Effectively start the koth
+            // Get the koth by schedule
+            KoTH koTH = schedule.getKoTH();
+            // Start the koth event
+            MineKoTH.getInstance().getKoTHEventManager().start(koTH);
         }
     }
 }

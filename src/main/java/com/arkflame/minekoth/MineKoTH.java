@@ -3,6 +3,7 @@ package com.arkflame.minekoth;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.minekoth.commands.KoTHCommand;
+import com.arkflame.minekoth.koth.events.KoTHEventManager;
 import com.arkflame.minekoth.koth.managers.KoTHManager;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 import com.arkflame.minekoth.schedule.tasks.ScheduleRunnerTask;
@@ -38,6 +39,12 @@ public class MineKoTH extends JavaPlugin {
 
     public ScheduleManager getScheduleManager() {
         return scheduleManager;
+    }
+
+    private KoTHEventManager koTHEventManager = new KoTHEventManager();
+
+    public KoTHEventManager getKoTHEventManager() {
+        return koTHEventManager;
     }
 
     @Override
