@@ -3,6 +3,8 @@ package com.arkflame.minekoth.schedule;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Schedule {
@@ -69,5 +71,23 @@ public class Schedule {
                 ", hour=" + hour +
                 ", minute=" + minute +
                 '}';
+    }
+
+    public String getTimeLeftFormatted() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withHour(getHour()).withMinute(getMinute()).withSecond(0);
+
+        // Calculate seconds left until the scheduled start time
+        long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
+
+        if (secondsLeft < 0) {
+            return "00:00";
+        }
+
+        long hours = secondsLeft / 3600;
+        long minutes = (secondsLeft % 3600) / 60;
+        long seconds = secondsLeft % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 }

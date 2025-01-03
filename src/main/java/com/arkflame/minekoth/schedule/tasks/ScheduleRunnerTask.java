@@ -24,13 +24,13 @@ public class ScheduleRunnerTask extends BukkitRunnable {
             return;
         }
 
-        LocalDateTime now = LocalDateTime.now();
         Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
 
         if (schedule == null) {
             return; // No schedules available
         }
 
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(schedule.getHour()).withMinute(schedule.getMinute()).withSecond(0);
 
         // Calculate seconds left until the scheduled start time

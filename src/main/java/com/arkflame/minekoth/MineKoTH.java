@@ -8,6 +8,7 @@ import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerMoveListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
 import com.arkflame.minekoth.koth.managers.KothManager;
+import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 import com.arkflame.minekoth.schedule.tasks.ScheduleRunnerTask;
 import com.arkflame.minekoth.setup.listeners.SetupChatListener;
@@ -74,5 +75,10 @@ getKothEventManager() {
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());
+
+        // PlaceholderAPI
+        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
+            new MineKothPlaceholderExtension().register();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.arkflame.minekoth.koth.events;
 
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
@@ -30,6 +31,7 @@ public class KothEvent {
     private List<CapturingPlayers> playersCapturing;
     private int captureTime;
     private boolean stalemateEnabled;
+    private long startTime;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
@@ -38,6 +40,7 @@ public class KothEvent {
         this.playersCapturing = new ArrayList<>();
         this.captureTime = koth.getTimeToCapture();
         this.stalemateEnabled = false;
+        this.startTime = System.currentTimeMillis();
     }
 
     public KothEventState getState() {
@@ -115,15 +118,16 @@ public class KothEvent {
 
     public void tick() {
         if (state == KothEventState.CAPTURING) {
-            long currentTime = System.currentTimeMillis();
             CapturingPlayers topGroup = playersCapturing.get(0);
-            long totalCaptureTime = topGroup.getPlayers().stream()
-                    .mapToLong(playersInZone::get)
-                    .map(startTime -> currentTime - startTime)
-                    .sum();
+            Player topPlayer = topGroup.getPlayers().get(0);
+            long timeCaptured = getTimeCaptured(topPlayer);
 
-            if (totalCaptureTime / topGroup.getPlayers().size() >= captureTime * 1000L) {
+            if (timeCaptured >= captureTime * 1000L) {
                 setCaptured(topGroup);
+            } else {
+                for (Player player : topGroup.getPlayers()) {
+                    Titles.sendActionBar(player, ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
+                }
             }
         }
     }
@@ -227,6 +231,21 @@ public class KothEvent {
 
     public String getTimeCapturedFormatted(Player player) {
         long time = getTimeCaptured(player);
+        long minutes = time / 60000;
+        long seconds = (time % 60000) / 1000;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    public String getTimeLeftToCaptureFormatted() {
+        long time = captureTime * 1000 - getTimeCaptured(playersCapturing.get(0).getPlayers().get(0));
+        long minutes = time / 60000;
+        long seconds = (time % 60000) / 1000;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    // Get koth time limit and check if it was exceded comparing it with start time and current time
+    public String getTimeLeftToFinishFormatted() {
+        long time = (startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis();
         long minutes = time / 60000;
         long seconds = (time % 60000) / 1000;
         return String.format("%02d:%02d", minutes, seconds);
