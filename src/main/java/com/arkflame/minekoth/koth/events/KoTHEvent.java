@@ -152,7 +152,6 @@ public class KothEvent {
                 topPlayer.getInventory().addItem(item);
             }
         }
-        ;
 
         // Notify players
         for (Player player : Bukkit.getOnlinePlayers()) {

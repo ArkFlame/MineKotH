@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ScheduleRunnerTask extends BukkitRunnable {
 
-    private final List<Integer> countdownIntervals = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
+    private final List<Integer> countdownIntervals = Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1);
 
     @Override
     public void run() {
@@ -37,6 +37,7 @@ public class ScheduleRunnerTask extends BukkitRunnable {
         long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
 
         if (secondsLeft < 0) {
+            MineKoth.getInstance().getScheduleManager().calculateNextKoth();
             return; // The scheduled time has already passed
         }
 

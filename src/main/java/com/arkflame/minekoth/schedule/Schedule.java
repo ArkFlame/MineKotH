@@ -77,6 +77,10 @@ public class Schedule {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(getHour()).withMinute(getMinute()).withSecond(0);
 
+        if (startTime.isBefore(now)) {
+            startTime = startTime.plusDays(1);
+        }
+
         // Calculate seconds left until the scheduled start time
         long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
 

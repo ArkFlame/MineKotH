@@ -1,11 +1,11 @@
 package com.arkflame.minekoth.koth.events.managers;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -42,8 +42,8 @@ public class KothEventManager {
             throw new IllegalStateException("No active koth event to end.");
         }
         currentEvent.end();
-        Bukkit.getLogger().info("koth event ended for: " + currentEvent.getKoth().getName());
         currentEvent = null;
+        MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
 
     /**
@@ -71,6 +71,10 @@ public class KothEventManager {
     public void tick() {
         if (currentEvent != null) {
             currentEvent.tick();
+            
+            if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
+                end();
+            }
         }
     }
 

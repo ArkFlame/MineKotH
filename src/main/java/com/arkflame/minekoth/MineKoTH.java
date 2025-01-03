@@ -47,8 +47,7 @@ public class MineKoth extends JavaPlugin {
 
     private KothEventManager kothEventManager = new KothEventManager();
 
-    public KothEventManager 
-getKothEventManager() {
+    public KothEventManager getKothEventManager() {
         return kothEventManager;
     }
 

@@ -129,7 +129,7 @@ public class ScheduleManager {
         return nextSchedule;
     }
 
-    private void calculateNextKoth() {
+    public void calculateNextKoth() {
         LocalDateTime now = LocalDateTime.now();
         Schedule nearest = null;
         long nearestDelta = Long.MAX_VALUE;
