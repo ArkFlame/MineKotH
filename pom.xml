@@ -3,18 +3,18 @@
     
     <!-- Project information -->
     <groupId>com.arkflame</groupId>
-    <artifactId>MineKoth</artifactId>
+    <artifactId>MineKotH</artifactId>
     <packaging>jar</packaging>
 
     <!-- Plugin Information -->
-    <name>MineKoth</name>
+    <name>MineKotH</name>
     <description>This plugin was made using the Spigot Boilerplate by ArkFlame Development</description>
     <version>0.0.1</version>
     <url>https://github.com/arkflame/Spigot-Boilerplate</url>
 
     <properties>
         <author>ArkFlame Development</author>
-        <mainClass>com.arkflame.minekoth.MineKoTH</mainClass>
+        <mainClass>com.arkflame.minekoth.MineKoth</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

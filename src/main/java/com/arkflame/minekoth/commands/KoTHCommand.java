@@ -6,15 +6,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.arkflame.minekoth.MineKoTH;
 import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
-import com.arkflame.minekoth.koth.KoTH;
-import com.arkflame.minekoth.koth.managers.KoTHManager;
+import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.schedule.commands.ScheduleCommand;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 
-public class KoTHCommand implements CommandExecutor {
+public class KothCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -23,8 +23,8 @@ public class KoTHCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        KoTHManager kothManager = MineKoTH.getInstance().getKoTHManager();
-        ScheduleManager scheduleManager = MineKoTH.getInstance().getScheduleManager();
+        KothManager kothManager = MineKoth.getInstance().getKothManager();
+        ScheduleManager scheduleManager = MineKoth.getInstance().getScheduleManager();
 
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sendHelpMessage(player);
@@ -33,21 +33,21 @@ public class KoTHCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "create":
-                if (MineKoTH.getInstance().getSessionManager().hasSession(player)) {
+                if (MineKoth.getInstance().getSessionManager().hasSession(player)) {
                     player.sendMessage(ChatColor.RED + "You are already in a setup session. Use /koth cancel to cancel.");
                     return true;
                 }
-                MineKoTH.getInstance().getSessionManager().addSession(player, new SetupSession());
-                player.sendMessage(ChatColor.GREEN + "KoTH creation started! Enter the name of the KoTH.");
+                MineKoth.getInstance().getSessionManager().addSession(player, new SetupSession());
+                player.sendMessage(ChatColor.GREEN + "koth creation started! Enter the name of the koth.");
                 return true;
 
             case "cancel":
-                if (!MineKoTH.getInstance().getSessionManager().hasSession(player)) {
+                if (!MineKoth.getInstance().getSessionManager().hasSession(player)) {
                     player.sendMessage(ChatColor.RED + "You are not in a setup session.");
                     return true;
                 }
-                MineKoTH.getInstance().getSessionManager().removeSession(player);
-                player.sendMessage(ChatColor.RED + "KoTH creation cancelled.");
+                MineKoth.getInstance().getSessionManager().removeSession(player);
+                player.sendMessage(ChatColor.RED + "koth creation cancelled.");
                 return true;
 
             case "setup":
@@ -55,12 +55,12 @@ public class KoTHCommand implements CommandExecutor {
                 return true;
 
             case "list":
-                if (kothManager.getAllKoTHs().isEmpty()) {
-                    player.sendMessage(ChatColor.RED + "There are no KoTHs to list.");
+                if (kothManager.getAllkoths().isEmpty()) {
+                    player.sendMessage(ChatColor.RED + "There are no koths to list.");
                     return true;
                 }
-                player.sendMessage(ChatColor.GOLD + "KoTH List:");
-                kothManager.getAllKoTHs().values().forEach(koth ->
+                player.sendMessage(ChatColor.GOLD + "koth List:");
+                kothManager.getAllkoths().values().forEach(koth ->
                         player.sendMessage(ChatColor.YELLOW + "ID: " + koth.getId() + ", Name: " + koth.getName()));
                 return true;
 
@@ -71,15 +71,15 @@ public class KoTHCommand implements CommandExecutor {
                 }
                 try {
                     int id = Integer.parseInt(args[1]);
-                    KoTH koth = kothManager.getKoTHById(id);
+                    Koth koth = kothManager.getKothById(id);
                     if (koth == null) {
-                        player.sendMessage(ChatColor.RED + "No KoTH found with ID " + id + ".");
+                        player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
                         return true;
                     }
-                    sendKoTHInfo(player, koth);
+                    sendkothInfo(player, koth);
                     return true;
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Invalid KoTH ID. It must be a number.");
+                    player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
                     return true;
                 }
 
@@ -90,16 +90,16 @@ public class KoTHCommand implements CommandExecutor {
                 }
                 try {
                     int id = Integer.parseInt(args[1]);
-                    KoTH removed = kothManager.deleteKoTH(id);
-                    scheduleManager.removeSchedulesByKoTH(id);
+                    Koth removed = kothManager.deleteKoth(id);
+                    scheduleManager.removeSchedulesByKoth(id);
                     if (removed == null) {
-                        player.sendMessage(ChatColor.RED + "No KoTH found with ID " + id + ".");
+                        player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
                         return true;
                     }
-                    player.sendMessage(ChatColor.GREEN + "KoTH with ID " + id + " deleted successfully.");
+                    player.sendMessage(ChatColor.GREEN + "koth with ID " + id + " deleted successfully.");
                     return true;
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Invalid KoTH ID. It must be a number.");
+                    player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
                     return true;
                 }
             
@@ -114,17 +114,17 @@ public class KoTHCommand implements CommandExecutor {
     }
 
     private void sendHelpMessage(Player player) {
-        player.sendMessage(ChatColor.GOLD + "KoTH Commands:");
-        player.sendMessage(ChatColor.YELLOW + "/koth create" + ChatColor.WHITE + " - Start creating a new KoTH.");
-        player.sendMessage(ChatColor.YELLOW + "/koth cancel" + ChatColor.WHITE + " - Cancel the current KoTH setup.");
-        player.sendMessage(ChatColor.YELLOW + "/koth setup" + ChatColor.WHITE + " - Finish and save the current KoTH setup.");
-        player.sendMessage(ChatColor.YELLOW + "/koth list" + ChatColor.WHITE + " - List all existing KoTHs.");
-        player.sendMessage(ChatColor.YELLOW + "/koth info <id>" + ChatColor.WHITE + " - Get details about a specific KoTH.");
-        player.sendMessage(ChatColor.YELLOW + "/koth delete <id>" + ChatColor.WHITE + " - Delete a specific KoTH.");
+        player.sendMessage(ChatColor.GOLD + "koth Commands:");
+        player.sendMessage(ChatColor.YELLOW + "/koth create" + ChatColor.WHITE + " - Start creating a new koth.");
+        player.sendMessage(ChatColor.YELLOW + "/koth cancel" + ChatColor.WHITE + " - Cancel the current koth setup.");
+        player.sendMessage(ChatColor.YELLOW + "/koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
+        player.sendMessage(ChatColor.YELLOW + "/koth list" + ChatColor.WHITE + " - List all existing koths.");
+        player.sendMessage(ChatColor.YELLOW + "/koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
+        player.sendMessage(ChatColor.YELLOW + "/koth delete <id>" + ChatColor.WHITE + " - Delete a specific koth.");
     }
 
-    private void sendKoTHInfo(Player player, KoTH koth) {
-        player.sendMessage(ChatColor.GOLD + "KoTH Info:");
+    private void sendkothInfo(Player player, Koth koth) {
+        player.sendMessage(ChatColor.GOLD + "koth Info:");
         player.sendMessage(ChatColor.YELLOW + "ID: " + koth.getId());
         player.sendMessage(ChatColor.YELLOW + "Name: " + koth.getName());
         player.sendMessage(ChatColor.YELLOW + "World: " + koth.getWorldName());

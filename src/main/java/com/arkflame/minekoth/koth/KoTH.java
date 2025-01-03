@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
 
-public class KoTH {
+public class Koth {
     private int id;
     private String name;
     private String worldName;
@@ -15,7 +15,7 @@ public class KoTH {
     private Rewards rewards;
     private String times;
 
-    public KoTH(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times) {
+    public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times) {
         this.id = id;
         this.name = name;
         this.worldName = worldName;

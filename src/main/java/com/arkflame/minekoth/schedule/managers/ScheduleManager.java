@@ -1,7 +1,8 @@
 package com.arkflame.minekoth.schedule.managers;
 
 import com.arkflame.minekoth.schedule.Schedule;
-import com.arkflame.minekoth.koth.KoTH;
+import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.Koth;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,18 +16,18 @@ public class ScheduleManager {
     public void addSchedule(Schedule schedule) {
         schedulesById.put(schedule.getId(), schedule);
         updateScheduleMapping(schedule);
-        calculateNextKoTH();
+        calculateNextKoth();
     }
 
     public void removeSchedule(int id) {
         Schedule schedule = schedulesById.remove(id);
         if (schedule != null) {
             removeScheduleMapping(schedule);
-            calculateNextKoTH();
+            calculateNextKoth();
         }
     }
 
-    public void removeSchedulesByKoTH(int kothId) {
+    public void removeSchedulesByKoth(int kothId) {
         List<Integer> schedulesToRemove = new ArrayList<>();
 
         for (Schedule schedule : schedulesById.values()) {
@@ -40,8 +41,8 @@ public class ScheduleManager {
         }
     }
 
-    public void scheduleKoTH(KoTH koth) {
-        removeSchedulesByKoTH(koth.getId());
+    public void scheduleKoth(Koth koth) {
+        removeSchedulesByKoth(koth.getId());
         String times = koth.getTimes();
         String[] timeEntries = times.split(" ");
         Set<DayOfWeek> days = EnumSet.allOf(DayOfWeek.class); // TODO: Support specific days in the future
@@ -128,7 +129,7 @@ public class ScheduleManager {
         return nextSchedule;
     }
 
-    private void calculateNextKoTH() {
+    private void calculateNextKoth() {
         LocalDateTime now = LocalDateTime.now();
         Schedule nearest = null;
         long nearestDelta = Long.MAX_VALUE;

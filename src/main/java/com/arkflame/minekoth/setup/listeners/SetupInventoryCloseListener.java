@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import com.arkflame.minekoth.MineKoTH;
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.setup.session.SetupSession;
 
 public class SetupInventoryCloseListener implements Listener {
@@ -14,7 +14,7 @@ public class SetupInventoryCloseListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        SetupSession session = MineKoTH.getInstance().getSessionManager().getSession(player);
+        SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
         if (session == null)
             return;
 

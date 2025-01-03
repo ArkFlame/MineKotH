@@ -1,6 +1,6 @@
 package com.arkflame.minekoth.schedule.commands;
 
-import com.arkflame.minekoth.MineKoTH;
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.schedule.Schedule;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class ScheduleCommand {
     }
 
     private static void listSchedules(Player sender) {
-        List<Schedule> schedules = MineKoTH.getInstance().getScheduleManager().getAllSchedules();
+        List<Schedule> schedules = MineKoth.getInstance().getScheduleManager().getAllSchedules();
 
         if (schedules.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "There are no schedules available.");
@@ -38,18 +38,18 @@ public class ScheduleCommand {
 
         // Sort schedules by next occurrence
         schedules.sort((s1, s2) -> {
-            LocalDateTime next1 = MineKoTH.getInstance().getScheduleManager().getNextOccurrence(s1);
-            LocalDateTime next2 = MineKoTH.getInstance().getScheduleManager().getNextOccurrence(s2);
+            LocalDateTime next1 = MineKoth.getInstance().getScheduleManager().getNextOccurrence(s1);
+            LocalDateTime next2 = MineKoth.getInstance().getScheduleManager().getNextOccurrence(s2);
             return next1.compareTo(next2);
         });
 
-        sender.sendMessage(ChatColor.GOLD + "KoTH Schedules:");
+        sender.sendMessage(ChatColor.GOLD + "koth Schedules:");
 
         LocalDateTime now = LocalDateTime.now();
         boolean first = true;
 
         for (Schedule schedule : schedules) {
-            LocalDateTime nextOccurrence = MineKoTH.getInstance().getScheduleManager().getNextOccurrence(schedule);
+            LocalDateTime nextOccurrence = MineKoth.getInstance().getScheduleManager().getNextOccurrence(schedule);
             ChatColor color = first ? ChatColor.BLUE : ChatColor.GREEN;
 
             sender.sendMessage(color + formatSchedule(schedule, nextOccurrence));
@@ -61,9 +61,9 @@ public class ScheduleCommand {
 
     private static String formatSchedule(Schedule schedule, LocalDateTime nextOccurrence) {
         return String.format(
-                "ID: %d | KoTH: %s | Days: %s | Time: %02d:%02d | Next: %s",
+                "ID: %d | koth: %s | Days: %s | Time: %02d:%02d | Next: %s",
                 schedule.getId(),
-                schedule.getKoTH().getName(),
+                schedule.getKoth().getName(),
                 schedule.getDays().stream().map(Enum::name).collect(Collectors.joining(", ")),
                 schedule.getHour(),
                 schedule.getMinute(),

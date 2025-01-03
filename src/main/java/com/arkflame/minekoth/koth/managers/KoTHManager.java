@@ -1,16 +1,16 @@
 package com.arkflame.minekoth.koth.managers;
 
-import com.arkflame.minekoth.koth.KoTH;
+import com.arkflame.minekoth.koth.Koth;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class KoTHManager {
-    private Map<Integer, KoTH> koths = new HashMap<>();
+public class KothManager {
+    private Map<Integer, Koth> koths = new HashMap<>();
     private int nextId = 1;
 
     /**
-     * Get the next unique ID for a KoTH.
+     * Get the next unique ID for a koth.
      * 
      * @return the next ID
      */
@@ -19,42 +19,42 @@ public class KoTHManager {
     }
 
     /**
-     * Adds an existing KoTH to the manager.
+     * Adds an existing koth to the manager.
      * 
-     * @param koth The KoTH object to add.
+     * @param koth The koth object to add.
      */
-    public void addKoTH(KoTH koth) {
+    public void addKoth(Koth koth) {
         if (koth != null) {
             koths.put(koth.getId(), koth);
         }
     }
 
     /**
-     * Get a KoTH by its ID.
+     * Get a koth by its ID.
      * 
-     * @param id The ID of the KoTH.
-     * @return The KoTH object, or null if not found.
+     * @param id The ID of the koth.
+     * @return The koth object, or null if not found.
      */
-    public KoTH getKoTHById(int id) {
+    public Koth getKothById(int id) {
         return koths.get(id);
     }
 
     /**
-     * Delete a KoTH by its ID.
+     * Delete a koth by its ID.
      * 
-     * @param id The ID of the KoTH to delete.
-     * @return the deleted KoTH or null if it doesn't exist.
+     * @param id The ID of the koth to delete.
+     * @return the deleted koth or null if it doesn't exist.
      */
-    public KoTH deleteKoTH(int id) {
+    public Koth deleteKoth(int id) {
         return koths.remove(id);
     }
 
     /**
-     * Get all the KoTHs currently managed.
+     * Get all the koths currently managed.
      * 
-     * @return A map of KoTHs by their IDs.
+     * @return A map of koths by their IDs.
      */
-    public Map<Integer, KoTH> getAllKoTHs() {
+    public Map<Integer, Koth> getAllkoths() {
         return new HashMap<>(koths);
     }
 }

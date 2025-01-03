@@ -1,7 +1,7 @@
 package com.arkflame.minekoth.schedule;
 
-import com.arkflame.minekoth.MineKoTH;
-import com.arkflame.minekoth.koth.KoTH;
+import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Koth;
 import java.time.DayOfWeek;
 import java.util.*;
 
@@ -52,8 +52,8 @@ public class Schedule {
         this.minute = minute;
     }
 
-    public KoTH getKoTH() {
-        return MineKoTH.getInstance().getKoTHManager().getKoTHById(kothId);
+    public Koth getKoth() {
+        return MineKoth.getInstance().getKothManager().getKothById(kothId);
     }
 
     public boolean matches(DayOfWeek day, int hour, int minute) {

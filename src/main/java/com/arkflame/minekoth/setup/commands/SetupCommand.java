@@ -2,8 +2,8 @@ package com.arkflame.minekoth.setup.commands;
 
 import org.bukkit.entity.Player;
 
-import com.arkflame.minekoth.MineKoTH;
-import com.arkflame.minekoth.koth.KoTH;
+import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.setup.session.SetupSession;
 
@@ -11,7 +11,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class SetupCommand {
     public static void run(Player player, String[] args) {
-        SetupSession session = MineKoTH.getInstance().getSessionManager().getSession(player);
+        SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
         if (session == null) {
             player.sendMessage(ChatColor.RED + "You are not in a setup session.");
             return;
@@ -22,19 +22,19 @@ public class SetupCommand {
             return;
         }
 
-        // Save the KoTH instance to your storage system here.
-        KoTH koth = new KoTH(MineKoTH.getInstance().getKoTHManager().getNextId(), session.getName(), player.getWorld().getName(), session.getFirstPosition(),
+        // Save the koth instance to your storage system here.
+        Koth koth = new Koth(MineKoth.getInstance().getKothManager().getNextId(), session.getName(), player.getWorld().getName(), session.getFirstPosition(),
                 session.getSecondPosition(), session.getTimeLimit(), session.getCaptureTime(),
                 new Rewards(session.getRewardsCommands(), session.getRewards()), session.getTimes());
-        MineKoTH.getInstance().getSessionManager().removeSession(player);
-        player.sendMessage(ChatColor.GREEN + "KoTH setup complete! KoTH saved.");
+        MineKoth.getInstance().getSessionManager().removeSession(player);
+        player.sendMessage(ChatColor.GREEN + "koth setup complete! koth saved.");
         player.sendMessage(ChatColor.GREEN + "Name: " + ChatColor.AQUA + session.getName());
         player.sendMessage(ChatColor.GREEN + "Times: " + ChatColor.AQUA + session.getTimes());
         player.sendMessage(ChatColor.GREEN + "Time Limit: " + ChatColor.AQUA + session.getTimeLimit() + " seconds");
         player.sendMessage(ChatColor.GREEN + "Capture Time: " + ChatColor.AQUA + session.getCaptureTime() + " seconds");
         player.sendMessage(ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + session.getRewardsCommands());
-        MineKoTH.getInstance().getKoTHManager().addKoTH(koth);
-        MineKoTH.getInstance().getScheduleManager().scheduleKoTH(koth);
+        MineKoth.getInstance().getKothManager().addKoth(koth);
+        MineKoth.getInstance().getScheduleManager().scheduleKoth(koth);
         return;
     }
 }

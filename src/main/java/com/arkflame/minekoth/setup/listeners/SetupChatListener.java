@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 
-import com.arkflame.minekoth.MineKoTH;
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.Times;
 
@@ -19,7 +19,7 @@ public class SetupChatListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        SetupSession session = MineKoTH.getInstance().getSessionManager().getSession(player);
+        SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
         if (session == null)
             return;
 
@@ -57,7 +57,7 @@ public class SetupChatListener implements Listener {
 
         session.addRewardsCommand(Collections.singletonList(message));
         player.sendMessage(ChatColor.GREEN + "Rewards commands added: " + ChatColor.AQUA + message);
-        player.sendMessage(ChatColor.GREEN + "KoTH setup complete. Type /koth setup to finish.");
+        player.sendMessage(ChatColor.GREEN + "koth setup complete. Type /koth setup to finish.");
     }
 
     private void openRewardsInventory(Player player) {

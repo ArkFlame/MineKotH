@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +37,7 @@ public class Rewards {
     public void updateRewardsItems(Inventory inventory) {
         items.clear();
         for (ItemStack item : inventory.getContents()) {
-            if (item != null) {
+            if (item != null && item.getType() != Material.AIR) {
                 items.add(item);
             }
         }
