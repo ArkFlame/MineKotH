@@ -1,8 +1,10 @@
 package com.arkflame.minekoth.schedule.managers;
 
 import com.arkflame.minekoth.schedule.Schedule;
+import com.arkflame.minekoth.utils.Times;
 import com.arkflame.minekoth.koth.Koth;
-import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.KothTime;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -41,7 +43,7 @@ public class ScheduleManager {
         }
     }
 
-    public void scheduleKoth(Koth koth) {
+    public Schedule scheduleKoth(Koth koth) {
         removeSchedulesByKoth(koth.getId());
         String times = koth.getTimes();
         String[] timeEntries = times.split(" ");
@@ -49,44 +51,51 @@ public class ScheduleManager {
 
         for (String timeEntry : timeEntries) {
             try {
-                int hour, minute = 0;
-                boolean isPm = timeEntry.toLowerCase().contains("pm");
-
-                String time = timeEntry.replaceAll("[^0-9:\\s]", "").trim();
-                String[] parts = time.split(":");
-
-                if (parts.length == 2) {
-                    hour = Integer.parseInt(parts[0]);
-                    minute = Integer.parseInt(parts[1]);
-                } else if (parts.length == 1) {
-                    hour = Integer.parseInt(parts[0]);
-                } else {
-                    continue; // Skip invalid format
+                KothTime kothTime = Times.parseTimeEntry(timeEntry);
+                if (kothTime == null) {
+                    continue; // Skip invalid time entries
                 }
-
-                if (isPm && hour < 12) {
-                    hour += 12;
-                } else if (!isPm && hour == 12) {
-                    hour = 0;
-                }
-
-                if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-                    continue; // Skip out-of-range values
-                }
-
                 Schedule schedule = new Schedule(
                         generateUniqueId(),
                         koth.getId(),
                         days,
-                        hour,
-                        minute
+                        kothTime.getHour(),
+                        kothTime.getMinute()
                 );
 
                 addSchedule(schedule);
+                return schedule;
             } catch (NumberFormatException e) {
                 // Ignore invalid number formats
             }
         }
+
+        return null;
+    }
+
+    public Schedule scheduleKoth(int kothId, int hour, int minute, List<String> dayNames) {
+        Set<DayOfWeek> days = EnumSet.noneOf(DayOfWeek.class);
+
+        for (String dayName : dayNames) {
+            try {
+                DayOfWeek day = DayOfWeek.valueOf(dayName.toUpperCase());
+                days.add(day);
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid day names
+            }
+        }
+
+        Schedule schedule = new Schedule(
+                generateUniqueId(),
+                kothId,
+                days,
+                hour,
+                minute
+        );
+
+        addSchedule(schedule);
+
+        return schedule;
     }
 
     private int generateUniqueId() {

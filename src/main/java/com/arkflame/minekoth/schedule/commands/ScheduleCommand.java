@@ -1,11 +1,15 @@
 package com.arkflame.minekoth.schedule.commands;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.KothTime;
 import com.arkflame.minekoth.schedule.Schedule;
+import com.arkflame.minekoth.utils.Times;
+
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,48 @@ public class ScheduleCommand {
         switch (subCommand) {
             case "list":
                 listSchedules(sender);
+                break;
+            // Add more subcommands here
+            case "remove":
+                if (args.length < 3) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /koth schedule remove <id>");
+                    return;
+                }
+
+                try {
+                    int id = Integer.parseInt(args[2]);
+                    MineKoth.getInstance().getScheduleManager().removeSchedule(id);
+                    sender.sendMessage(ChatColor.GREEN + "Schedule removed.");
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(ChatColor.RED + "Invalid schedule ID.");
+                }
+                break;
+            case "add":
+                if (args.length < 4) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]");
+                    return;
+                }
+
+                try {
+                    int kothId = Integer.parseInt(args[2]);
+                    String[] timeEntries = args[3].split(",");
+                    for (String timeEntry : timeEntries) {
+                        List<String> dayNames = args.length > 4 ? Arrays.asList(args[4].split(",")) : Arrays.asList("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY");
+                        if (dayNames.isEmpty()) {
+                            sender.sendMessage(ChatColor.RED + "Invalid day names.");
+                            return;
+                        }
+                        KothTime kothTime = Times.parseTimeEntry(timeEntry);
+                        if (kothTime == null) {
+                            sender.sendMessage(ChatColor.RED + "Invalid time format.");
+                            return;
+                        }
+                        Schedule schedule = MineKoth.getInstance().getScheduleManager().scheduleKoth(kothId, kothTime.getHour(), kothTime.getMinute(), dayNames);
+                        sender.sendMessage(ChatColor.GOLD + "Schedule added: " + formatSchedule(schedule, MineKoth.getInstance().getScheduleManager().getNextOccurrence(schedule)));
+                    }
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(ChatColor.RED + "Invalid koth ID, hour, or minute.");
+                }
                 break;
             default:
                 sendHelp(sender);
@@ -50,7 +96,7 @@ public class ScheduleCommand {
 
         for (Schedule schedule : schedules) {
             LocalDateTime nextOccurrence = MineKoth.getInstance().getScheduleManager().getNextOccurrence(schedule);
-            ChatColor color = first ? ChatColor.BLUE : ChatColor.GREEN;
+            ChatColor color = first ? ChatColor.AQUA : ChatColor.GREEN;
 
             sender.sendMessage(color + formatSchedule(schedule, nextOccurrence));
             if (nextOccurrence.isAfter(now)) {
@@ -67,12 +113,12 @@ public class ScheduleCommand {
                 schedule.getDays().stream().map(Enum::name).collect(Collectors.joining(", ")),
                 schedule.getHour(),
                 schedule.getMinute(),
-                nextOccurrence != null ? nextOccurrence.toString() : "N/A"
-        );
+                nextOccurrence != null ? nextOccurrence.toString() : "N/A");
     }
 
     private static void sendHelp(Player sender) {
         sender.sendMessage(ChatColor.YELLOW + "Usage of /koth schedule:");
-        sender.sendMessage(ChatColor.AQUA + "list" + ChatColor.WHITE + " - Lists all schedules ordered by date and time.");
+        sender.sendMessage(
+                ChatColor.AQUA + "list" + ChatColor.WHITE + " - Lists all schedules ordered by date and time.");
     }
 }
