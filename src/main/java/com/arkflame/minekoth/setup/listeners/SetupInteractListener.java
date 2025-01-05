@@ -25,6 +25,9 @@ public class SetupInteractListener implements Listener {
         if (session == null) {
             return;
         }
+        if (event.getClickedBlock() == null) {
+            return;
+        }
 
         event.setCancelled(true);
 

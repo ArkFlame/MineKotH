@@ -228,18 +228,17 @@ public class KothEvent {
         return System.currentTimeMillis() - getTimeOfCapture(player);
     }
 
-    public String getTimeCapturedFormatted(Player player) {
-        long time = getTimeCaptured(player);
-        long minutes = time / 60000;
-        long seconds = (time % 60000) / 1000;
-        return String.format("%02d:%02d", minutes, seconds);
-    }
-
     public String getTimeLeftToCaptureFormatted() {
         long time = captureTime * 1000 - getTimeCaptured(playersCapturing.get(0).getPlayers().get(0));
         long minutes = time / 60000;
         long seconds = (time % 60000) / 1000;
-        return String.format("%02d:%02d", minutes, seconds);
+        if (seconds < 0) {
+            return "0";
+        }
+        if (minutes > 0) {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+        return String.format("%d", seconds);
     }
 
     // Get koth time limit and check if it was exceded comparing it with start time and current time
@@ -247,6 +246,12 @@ public class KothEvent {
         long time = (startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis();
         long minutes = time / 60000;
         long seconds = (time % 60000) / 1000;
-        return String.format("%02d:%02d", minutes, seconds);
+        if (seconds < 0) {
+            return "0";
+        }
+        if (minutes > 0) {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+        return String.format("%d", seconds);
     }
 }

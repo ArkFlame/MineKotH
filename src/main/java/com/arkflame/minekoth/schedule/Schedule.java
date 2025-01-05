@@ -85,13 +85,22 @@ public class Schedule {
         long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
 
         if (secondsLeft < 0) {
-            return "00:00";
+            return "0";
         }
 
-        long hours = secondsLeft / 3600;
+        long days = secondsLeft / 86400;
+        long hours = (secondsLeft % 86400) / 3600;
         long minutes = (secondsLeft % 3600) / 60;
         long seconds = secondsLeft % 60;
 
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        if (days > 0) {
+            return String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds);
+        } else if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else if (minutes > 0) {
+            return String.format("%02d:%02d", minutes, seconds);
+        } else {
+            return String.format("%d", seconds);
+        }
     }
 }
