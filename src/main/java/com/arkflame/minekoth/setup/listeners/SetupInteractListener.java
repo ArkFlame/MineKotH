@@ -1,5 +1,8 @@
 package com.arkflame.minekoth.setup.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,6 +16,7 @@ import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.Locations;
 
 public class SetupInteractListener implements Listener {
+    private Map<Player, Long> lastInteract = new HashMap<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -23,6 +27,10 @@ public class SetupInteractListener implements Listener {
         }
 
         event.setCancelled(true);
+
+        if (lastInteract.containsKey(player) && System.currentTimeMillis() - lastInteract.get(player) < 1000) {
+            return;
+        }
 
         if (!session.isNameSet()) {
             player.sendMessage(ChatColor.RED + "You must set the name of the koth first.");

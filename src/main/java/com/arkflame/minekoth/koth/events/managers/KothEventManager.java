@@ -22,7 +22,7 @@ public class KothEventManager {
      */
     public void start(Koth koth) {
         if (currentEvent != null) {
-            throw new IllegalStateException("A koth event is already active.");
+            return;
         }
         currentEvent = new KothEvent(koth);
         Titles.sendTitle(

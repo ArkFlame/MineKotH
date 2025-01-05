@@ -75,8 +75,10 @@ public class SetupChatListener implements Listener {
     }
 
     private void openRewardsInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
-        player.openInventory(inventory);
+        MineKoth.getInstance().getServer().getScheduler().runTask(MineKoth.getInstance(), () -> {
+            Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
+            player.openInventory(inventory);
+        });
     }
 
 }
