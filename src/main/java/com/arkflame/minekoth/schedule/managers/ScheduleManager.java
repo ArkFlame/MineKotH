@@ -2,7 +2,6 @@ package com.arkflame.minekoth.schedule.managers;
 
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Times;
-import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.KothTime;
 
 import java.time.DayOfWeek;
@@ -43,47 +42,8 @@ public class ScheduleManager {
         }
     }
 
-    public Schedule scheduleKoth(Koth koth) {
-        removeSchedulesByKoth(koth.getId());
-        String times = koth.getTimes();
-        String[] timeEntries = times.split(" ");
-        Set<DayOfWeek> days = EnumSet.allOf(DayOfWeek.class); // TODO: Support specific days in the future
-
-        for (String timeEntry : timeEntries) {
-            try {
-                KothTime kothTime = Times.parseTimeEntry(timeEntry);
-                if (kothTime == null) {
-                    continue; // Skip invalid time entries
-                }
-                Schedule schedule = new Schedule(
-                        generateUniqueId(),
-                        koth.getId(),
-                        days,
-                        kothTime.getHour(),
-                        kothTime.getMinute()
-                );
-
-                addSchedule(schedule);
-                return schedule;
-            } catch (NumberFormatException e) {
-                // Ignore invalid number formats
-            }
-        }
-
-        return null;
-    }
-
-    public Schedule scheduleKoth(int kothId, int hour, int minute, List<String> dayNames) {
-        Set<DayOfWeek> days = EnumSet.noneOf(DayOfWeek.class);
-
-        for (String dayName : dayNames) {
-            try {
-                DayOfWeek day = DayOfWeek.valueOf(dayName.toUpperCase());
-                days.add(day);
-            } catch (IllegalArgumentException e) {
-                // Ignore invalid day names
-            }
-        }
+    public Schedule scheduleKoth(int kothId, int hour, int minute, String ...dayNames) {
+        Set<DayOfWeek> days = dayNames.length > 0 ? Times.parseDayNames(dayNames) : EnumSet.allOf(DayOfWeek.class);
 
         Schedule schedule = new Schedule(
                 generateUniqueId(),
@@ -96,6 +56,22 @@ public class ScheduleManager {
         addSchedule(schedule);
 
         return schedule;
+    }
+
+    public void scheduleKoth(int kothId, String times, String ...dayNames) {
+        String[] timeEntries = times.split(" ");
+
+        for (String timeEntry : timeEntries) {
+            try {
+                KothTime kothTime = Times.parseTimeEntry(timeEntry);
+                if (kothTime == null) {
+                    continue; // Skip invalid time entries
+                }
+                scheduleKoth(kothId, kothTime.getHour(), kothTime.getMinute(), dayNames);
+            } catch (NumberFormatException e) {
+                // Ignore invalid number formats
+            }
+        }
     }
 
     private int generateUniqueId() {

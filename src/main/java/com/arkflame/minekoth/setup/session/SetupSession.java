@@ -8,14 +8,24 @@ import org.bukkit.inventory.ItemStack;
 import com.arkflame.minekoth.koth.Position;
 
 public class SetupSession {
+    private int id = -1;
+
     private String name;
     private String times;
+    private String days;
     private Position firstPosition;
     private Position secondPosition;
     private int timeLimit;
     private int captureTime;
     private ItemStack[] rewards;
     private List<String> rewardsCommands = new ArrayList<>();
+
+    public SetupSession() {
+    }
+
+    public SetupSession(int id) {
+        this.id = id;
+    }
 
     // Getters
     public String getName() {
@@ -104,7 +114,7 @@ public class SetupSession {
     }
 
     public boolean isComplete() {
-        return isNameSet() && isTimesSet() && isFirstPositionSet() && isSecondPositionSet() && isTimeLimitSet() && isCaptureTimeSet() && isRewardsSet();
+        return isNameSet() && isTimesSet() && isFirstPositionSet() && isSecondPositionSet() && isTimeLimitSet() && isCaptureTimeSet() && isRewardsSet() && isDaysSet();
     }
 
     public void setRewards(ItemStack[] rewards) {
@@ -113,5 +123,21 @@ public class SetupSession {
 
     public void addRewardsCommand(Collection<String> commands) {
         this.rewardsCommands.addAll(commands);
+    }
+
+    public boolean isDaysSet() {
+        return days != null;
+    }
+
+    public void setDays(String message) {
+        this.days = message;
+    }
+
+    public String getDays() {
+        return days;
+    }
+
+    public int getId() {
+        return id;
     }
 }

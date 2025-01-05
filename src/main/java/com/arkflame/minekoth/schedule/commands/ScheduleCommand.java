@@ -9,7 +9,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,8 +50,8 @@ public class ScheduleCommand {
                     int kothId = Integer.parseInt(args[2]);
                     String[] timeEntries = args[3].split(",");
                     for (String timeEntry : timeEntries) {
-                        List<String> dayNames = args.length > 4 ? Arrays.asList(args[4].split(",")) : Arrays.asList("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY");
-                        if (dayNames.isEmpty()) {
+                        String[] dayNames = args.length > 4 ? args[4].split(",") : new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
+                        if (dayNames.length == 0) {
                             sender.sendMessage(ChatColor.RED + "Invalid day names.");
                             return;
                         }
@@ -117,8 +116,9 @@ public class ScheduleCommand {
     }
 
     private static void sendHelp(Player sender) {
-        sender.sendMessage(ChatColor.YELLOW + "Usage of /koth schedule:");
-        sender.sendMessage(
-                ChatColor.AQUA + "list" + ChatColor.WHITE + " - Lists all schedules ordered by date and time.");
+        sender.sendMessage(ChatColor.GOLD + "Usage of schedule commands:");
+        sender.sendMessage(ChatColor.YELLOW + " /koth schedule list" + ChatColor.WHITE + " - List all schedules.");
+        sender.sendMessage(ChatColor.YELLOW + " /koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]" + ChatColor.WHITE + " - Add a new schedule.");
+        sender.sendMessage(ChatColor.YELLOW + " /koth schedule remove <id>" + ChatColor.WHITE + " - Remove a schedule.");
     }
 }

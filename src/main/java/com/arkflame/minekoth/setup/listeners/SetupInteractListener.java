@@ -18,14 +18,21 @@ public class SetupInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
-        if (session == null)
+        if (session == null) {
             return;
+        }
+
+        event.setCancelled(true);
+
+        if (!session.isNameSet()) {
+            player.sendMessage(ChatColor.RED + "You must set the name of the koth first.");
+            return;
+        }
 
         if (!session.isFirstPositionSet()) {
             Location loc = event.getClickedBlock().getLocation();
             session.setFirstPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
             player.sendMessage(ChatColor.GREEN + "Position 1 set at: " + ChatColor.AQUA + Locations.toString(loc));
-            event.setCancelled(true);
             return;
         }
 
@@ -34,7 +41,6 @@ public class SetupInteractListener implements Listener {
             session.setSecondPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
             player.sendMessage(ChatColor.GREEN + "Position 2 set at: " + ChatColor.AQUA + Locations.toString(loc));
             player.sendMessage(ChatColor.GREEN + "Enter the times to run the koth (e.g., 8pm 9pm 10pm).");
-            event.setCancelled(true);
             return;
         }
     }

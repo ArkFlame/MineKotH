@@ -1,5 +1,9 @@
 package com.arkflame.minekoth.utils;
 
+import java.time.DayOfWeek;
+import java.util.EnumSet;
+import java.util.Set;
+
 import com.arkflame.minekoth.koth.KothTime;
 
 public class Times {
@@ -49,5 +53,20 @@ public class Times {
         }
 
         return new KothTime(hour, minute);
+    }
+
+    public static Set<DayOfWeek> parseDayNames(String[] dayNames) {
+        Set<DayOfWeek> days = EnumSet.noneOf(DayOfWeek.class);
+
+        for (String dayName : dayNames) {
+            try {
+                DayOfWeek day = DayOfWeek.valueOf(dayName.toUpperCase());
+                days.add(day);
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid day names
+            }
+        }
+
+        return days;
     }
 }

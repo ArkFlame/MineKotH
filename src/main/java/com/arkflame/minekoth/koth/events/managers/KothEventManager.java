@@ -39,7 +39,7 @@ public class KothEventManager {
      */
     public void end() {
         if (currentEvent == null) {
-            throw new IllegalStateException("No active koth event to end.");
+            return;
         }
         currentEvent.end();
         currentEvent = null;

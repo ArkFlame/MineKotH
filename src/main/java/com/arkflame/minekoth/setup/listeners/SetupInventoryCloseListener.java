@@ -15,14 +15,15 @@ public class SetupInventoryCloseListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
-        if (session == null)
+        if (session == null) {
             return;
+        }
 
-        if (!session.isRewardsSet()) {
+        if (session.isDaysSet() && !session.isRewardsSet()) {
             session.setRewards(event.getInventory().getContents());
             player.sendMessage(ChatColor.GREEN + "Rewards set. Please enter commands without / and using %player% for rewards.");
             player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
-            player.sendMessage(ChatColor.GREEN + "Type /koth setup when done.");
+            player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
         }
     }
 

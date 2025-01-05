@@ -20,16 +20,23 @@ public class SetupChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
-        if (session == null)
+        if (session == null) {
             return;
+        }
 
         event.setCancelled(true);
+        
         String message = event.getMessage();
 
         if (!session.isNameSet()) {
             session.setName(message);
             player.sendMessage(ChatColor.GREEN + "Name set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Right-click to set Position 1 and Position 2.");
+            return;
+        }
+
+        if (!session.isFirstPositionSet() || !session.isSecondPositionSet()) {
+            player.sendMessage(ChatColor.RED + "You must set the positions of the koth first.");
             return;
         }
 
@@ -50,7 +57,14 @@ public class SetupChatListener implements Listener {
         if (!session.isCaptureTimeSet()) {
             session.setCaptureTime(Times.parseToSeconds(message));
             player.sendMessage(ChatColor.GREEN + "Capture time set to: " + ChatColor.AQUA + message);
-            player.sendMessage(ChatColor.GREEN + "Put rewards in the ches.");
+            player.sendMessage(ChatColor.GREEN + "Enter days (e.g., MONDAY, TUESDAY, ALL...).");
+            return;
+        }
+
+        if (!session.isDaysSet()) {
+            session.setDays(message);
+            player.sendMessage(ChatColor.GREEN + "Days set to: " + ChatColor.AQUA + message);
+            player.sendMessage(ChatColor.GREEN + "Put rewards in the chest.");
             openRewardsInventory(player);
             return;
         }

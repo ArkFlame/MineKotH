@@ -17,7 +17,6 @@ public class KothEventPlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         kothEventManager.updatePlayerState(event.getPlayer(), event.getTo());
-        Player player = event.getPlayer();
         // Check if theres koth event
         if (kothEventManager.getKothEvent() == null) {
             return;

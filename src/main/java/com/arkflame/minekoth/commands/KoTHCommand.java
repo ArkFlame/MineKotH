@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.setup.commands.SetupCommand;
-import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.managers.KothManager;
+import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.commands.ScheduleCommand;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 
@@ -32,61 +32,42 @@ public class KothCommand implements CommandExecutor {
         }
 
         switch (args[0].toLowerCase()) {
-            case "create":
-                if (MineKoth.getInstance().getSessionManager().hasSession(player)) {
-                    player.sendMessage(ChatColor.RED + "You are already in a setup session. Use /koth cancel to cancel.");
-                    return true;
-                }
-                MineKoth.getInstance().getSessionManager().addSession(player, new SetupSession());
-                player.sendMessage(ChatColor.GREEN + "koth creation started! Enter the name of the koth.");
-                return true;
-
-            case "cancel":
-                if (!MineKoth.getInstance().getSessionManager().hasSession(player)) {
-                    player.sendMessage(ChatColor.RED + "You are not in a setup session.");
-                    return true;
-                }
-                MineKoth.getInstance().getSessionManager().removeSession(player);
-                player.sendMessage(ChatColor.RED + "koth creation cancelled.");
-                return true;
 
             case "setup":
                 SetupCommand.run(player, args);
-                return true;
+                break;
 
             case "list":
                 if (kothManager.getAllkoths().isEmpty()) {
                     player.sendMessage(ChatColor.RED + "There are no koths to list.");
-                    return true;
+                    break;
                 }
                 player.sendMessage(ChatColor.GOLD + "koth List:");
                 kothManager.getAllkoths().values().forEach(koth ->
                         player.sendMessage(ChatColor.YELLOW + "ID: " + koth.getId() + ", Name: " + koth.getName()));
-                return true;
+                break;
 
             case "info":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usage: /koth info <id>");
-                    return true;
+                    break;
                 }
                 try {
                     int id = Integer.parseInt(args[1]);
                     Koth koth = kothManager.getKothById(id);
                     if (koth == null) {
                         player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
-                        return true;
+                        break;
                     }
                     sendkothInfo(player, koth);
-                    return true;
                 } catch (NumberFormatException e) {
                     player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
-                    return true;
                 }
 
             case "delete":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usage: /koth delete <id>");
-                    return true;
+                    break;
                 }
                 try {
                     int id = Integer.parseInt(args[1]);
@@ -97,30 +78,53 @@ public class KothCommand implements CommandExecutor {
                         return true;
                     }
                     player.sendMessage(ChatColor.GREEN + "koth with ID " + id + " deleted successfully.");
-                    return true;
                 } catch (NumberFormatException e) {
                     player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
-                    return true;
                 }
-            
+                break;
             case "schedule":
                 ScheduleCommand.run(player, args);
-                return true;
-
+                break;
+            case "start":
+                Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
+                if (schedule == null) {
+                    sender.sendMessage(ChatColor.RED + "No schedules available.");
+                    break;
+                }
+                Koth koth = schedule.getKoth();
+                if (koth == null) {
+                    sender.sendMessage(ChatColor.RED + "Invalid koth.");
+                    break;
+                }
+                MineKoth.getInstance().getKothEventManager().start(koth);
+                sender.sendMessage(ChatColor.GREEN + "Schedules started.");
+                break;
+            case "stop":
+                if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
+                    sender.sendMessage(ChatColor.RED + "No event is active.");
+                    break;
+                }
+                MineKoth.getInstance().getKothEventManager().end();
+                break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
-                return true;
+                break;
         }
+
+        return true;
     }
 
     private void sendHelpMessage(Player player) {
-        player.sendMessage(ChatColor.GOLD + "koth Commands:");
-        player.sendMessage(ChatColor.YELLOW + "/koth create" + ChatColor.WHITE + " - Start creating a new koth.");
-        player.sendMessage(ChatColor.YELLOW + "/koth cancel" + ChatColor.WHITE + " - Cancel the current koth setup.");
-        player.sendMessage(ChatColor.YELLOW + "/koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
-        player.sendMessage(ChatColor.YELLOW + "/koth list" + ChatColor.WHITE + " - List all existing koths.");
-        player.sendMessage(ChatColor.YELLOW + "/koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
-        player.sendMessage(ChatColor.YELLOW + "/koth delete <id>" + ChatColor.WHITE + " - Delete a specific koth.");
+        player.sendMessage(ChatColor.GOLD + "Usage of koth commands:");
+        player.sendMessage(ChatColor.YELLOW + " /koth create" + ChatColor.WHITE + " - Start creating a new koth.");
+        player.sendMessage(ChatColor.YELLOW + " /koth cancel" + ChatColor.WHITE + " - Cancel the current koth setup.");
+        player.sendMessage(ChatColor.YELLOW + " /koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
+        player.sendMessage(ChatColor.YELLOW + " /koth list" + ChatColor.WHITE + " - List all existing koths.");
+        player.sendMessage(ChatColor.YELLOW + " /koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
+        player.sendMessage(ChatColor.YELLOW + " /koth delete <id>" + ChatColor.WHITE + " - Delete a specific koth.");
+        player.sendMessage(ChatColor.YELLOW + " /koth schedule" + ChatColor.WHITE + " - Schedule a koth.");
+        player.sendMessage(ChatColor.YELLOW + " /koth start" + ChatColor.WHITE + " - Start the next scheduled koth.");
+        player.sendMessage(ChatColor.YELLOW + " /koth stop" + ChatColor.WHITE + " - Stop the current koth event.");
     }
 
     private void sendkothInfo(Player player, Koth koth) {
