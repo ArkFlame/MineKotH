@@ -30,6 +30,8 @@ public class SetupInteractListener implements Listener {
 
         if (lastInteract.containsKey(player) && System.currentTimeMillis() - lastInteract.get(player) < 1000) {
             return;
+        } else {
+            lastInteract.put(player, System.currentTimeMillis());
         }
 
         if (!session.isNameSet()) {
