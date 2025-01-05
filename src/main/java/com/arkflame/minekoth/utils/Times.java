@@ -57,8 +57,14 @@ public class Times {
 
     public static Set<DayOfWeek> parseDayNames(String[] dayNames) {
         Set<DayOfWeek> days = EnumSet.noneOf(DayOfWeek.class);
+        if (days == null || dayNames.length == 0) {
+            return EnumSet.allOf(DayOfWeek.class);
+        }
 
         for (String dayName : dayNames) {
+            if (dayName.equalsIgnoreCase("all")) {
+                return EnumSet.allOf(DayOfWeek.class);
+            }
             try {
                 DayOfWeek day = DayOfWeek.valueOf(dayName.toUpperCase());
                 days.add(day);

@@ -44,7 +44,7 @@ public class ScheduleManager {
 
     public Schedule scheduleKoth(int kothId, int hour, int minute, String ...dayNames) {
         Set<DayOfWeek> days = dayNames.length > 0 ? Times.parseDayNames(dayNames) : EnumSet.allOf(DayOfWeek.class);
-
+        if (days.isEmpty()) return null;
         Schedule schedule = new Schedule(
                 generateUniqueId(),
                 kothId,

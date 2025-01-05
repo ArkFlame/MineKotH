@@ -98,7 +98,7 @@ public class ScheduleCommand {
             ChatColor color = first ? ChatColor.AQUA : ChatColor.GREEN;
 
             sender.sendMessage(color + formatSchedule(schedule, nextOccurrence));
-            if (nextOccurrence.isAfter(now)) {
+            if (nextOccurrence != null && nextOccurrence.isAfter(now)) {
                 first = false; // Only the next schedule is highlighted in blue
             }
         }
