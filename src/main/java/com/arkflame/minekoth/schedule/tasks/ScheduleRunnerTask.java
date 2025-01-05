@@ -33,6 +33,11 @@ public class ScheduleRunnerTask extends BukkitRunnable {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(schedule.getHour()).withMinute(schedule.getMinute()).withSecond(0);
 
+        if (startTime.isBefore(now)) {
+            MineKoth.getInstance().getScheduleManager().calculateNextKoth();
+            return; // The scheduled time has already passed
+        }
+
         // Calculate seconds left until the scheduled start time
         long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
 

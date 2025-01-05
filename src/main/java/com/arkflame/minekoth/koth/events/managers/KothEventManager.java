@@ -30,6 +30,9 @@ public class KothEventManager {
                 ChatColor.YELLOW + "Capture the Hill!",
                 10, 20, 10);
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
+        for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
+            currentEvent.updatePlayerState(player, player.getLocation());
+        }
     }
 
     /**
