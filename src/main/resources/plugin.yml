@@ -4,6 +4,7 @@ author: ${author}
 main: ${mainClass}
 version: ${version}
 url: ${url}
+folia-supported: true
 commands:
   koth:
     description: Main koth command

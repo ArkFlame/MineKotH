@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -129,6 +130,13 @@ public class KothEvent {
                     Titles.sendActionBar(player, ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
                 }
             }
+        } else if (state == KothEventState.UNCAPTURED) {
+            long timeLimit = koth.getTimeLimit() * 1000L;
+
+            if (System.currentTimeMillis() - startTime >= timeLimit) {
+                end();
+                Titles.sendTitle(ChatColor.GREEN + "Time Limit", ChatColor.YELLOW + "No koth winners", 10, 60, 10);
+            }
         }
     }
 
@@ -171,8 +179,8 @@ public class KothEvent {
     }
 
     private void sendTitle(Player player, boolean isWinner, String winnerName) {
-        String title = isWinner ? "WINNER" : "LOSER";
-        String subtitle = "Winner: " + winnerName;
+        String title = isWinner ? ChatColor.GREEN + "YOU WON" : ChatColor.RED + "YOU LOSE";
+        String subtitle = ChatColor.YELLOW + "Koth Winner: " + winnerName;
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
     }

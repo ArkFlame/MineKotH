@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.setup.session.SetupSession;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Times;
 
 public class SetupChatListener implements Listener {
@@ -75,7 +76,7 @@ public class SetupChatListener implements Listener {
     }
 
     private void openRewardsInventory(Player player) {
-        MineKoth.getInstance().getServer().getScheduler().runTask(MineKoth.getInstance(), () -> {
+        FoliaAPI.runTask(MineKoth.getInstance(), () -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
             player.openInventory(inventory);
         });

@@ -8,6 +8,7 @@ import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerMoveListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
 import com.arkflame.minekoth.koth.managers.KothManager;
+import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 import com.arkflame.minekoth.schedule.tasks.ScheduleRunnerTask;
@@ -15,9 +16,17 @@ import com.arkflame.minekoth.setup.listeners.SetupChatListener;
 import com.arkflame.minekoth.setup.listeners.SetupInteractListener;
 import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
+import com.arkflame.minekoth.utils.FoliaAPI;
 
 public class MineKoth extends JavaPlugin {
     private static MineKoth instance;
+    private SetupSessionManager sessionManager = new SetupSessionManager();
+    private KothManager kothManager = new KothManager();
+    private ScheduleManager scheduleManager = new ScheduleManager();
+    private KothEventManager kothEventManager = new KothEventManager();
+    private LangManager langManager;
+    private ScheduleRunnerTask scheduleRunnerTask;
+    private KothEventTickTask kothEventTickTask;
 
     public static void setInstance(MineKoth instance) {
         MineKoth.instance = instance;
@@ -27,33 +36,42 @@ public class MineKoth extends JavaPlugin {
         return MineKoth.instance;
     }
 
-    private SetupSessionManager sessionManager = new SetupSessionManager();
-
     public SetupSessionManager getSessionManager() {
         return sessionManager;
     }
-
-    private KothManager kothManager = new KothManager();
 
     public KothManager getKothManager() {
         return kothManager;
     }
 
-    private ScheduleManager scheduleManager = new ScheduleManager();
-
     public ScheduleManager getScheduleManager() {
         return scheduleManager;
     }
-
-    private KothEventManager kothEventManager = new KothEventManager();
 
     public KothEventManager getKothEventManager() {
         return kothEventManager;
     }
 
+    public LangManager getLangManager() {
+        return langManager;
+    }
+
+    public ScheduleRunnerTask getScheduleRunnerTask() {
+        return scheduleRunnerTask;
+    }
+
+    public KothEventTickTask getKothEventTickTask() {
+        return kothEventTickTask;
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
+
+        // Lang
+        langManager = new LangManager(getDataFolder());
+        scheduleRunnerTask = new ScheduleRunnerTask();
+        kothEventTickTask = new KothEventTickTask();
 
         // Bukkit Stuff
         PluginManager pluginManager = getServer().getPluginManager();
@@ -67,10 +85,10 @@ public class MineKoth extends JavaPlugin {
         pluginManager.registerEvents(new SetupInventoryCloseListener(), this);
 
         // Tasks - Schedule
-        new ScheduleRunnerTask().runTaskTimer(this, 0, 20);
+        FoliaAPI.runTaskTimerAsync(this, task -> scheduleRunnerTask.run(), 0, 20);
 
         // Tasks - Koth Event
-        new KothEventTickTask().runTaskTimer(this, 0, 20);
+        FoliaAPI.runTaskTimerAsync(this, task -> kothEventTickTask.run(), 0, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());
