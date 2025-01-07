@@ -1,45 +1,50 @@
-![Spigot Boilerplate Logo](logo.jpg)
+![MineKoth Banner](minekoth-banner.jpg)
 
-# Spigot Boilerplate: Crafting Excellence in Minecraft Plugins
+# MineKoth: Master King of the Hill Events in Minecraft
 
-Welcome to Spigot Boilerplate, your go-to resource for crafting exceptional Minecraft plugins on the Spigot platform. Whether you're a seasoned developer or just starting your journey in plugin development, our boilerplate provides all the essential functionalities to kickstart your project with ease.
+Welcome to MineKoth, a specialized plugin framework for implementing dynamic King of the Hill (KOTH) events on your Minecraft server. MineKoth simplifies creating, managing, and scheduling these events, enabling server administrators to deliver exciting competitive gameplay to their players.
 
 ## Features
 
-- **Ready-to-Use Framework**: Start coding your plugin right away with a pre-configured framework.
-- **Customizable**: Tailor the boilerplate to fit your plugin's unique requirements.
-- **Optimized Performance**: Ensure smooth gameplay with optimized code and resource usage.
-- **Documentation**: Comprehensive documentation to guide you through every step of plugin development.
-- **Compatibility**: Seamlessly integrate with Spigot's latest versions for maximum compatibility.
+- **KOTH Event System**: Easily create and manage King of the Hill events.
+- **Scheduling Support**: Automate event timing with an advanced schedule manager.
+- **Interactive Setup**: Configure KOTH events with an intuitive setup system.
+- **PlaceholderAPI Integration**: Extend functionality with placeholders for in-game data display.
+- **Event Management**: Includes tools for real-time event handling and player interactions.
+- **Performance Optimized**: Designed for efficient resource utilization.
+
+## MineKoth API Overview
+
+The MineKoth API allows developers to:
+- Create custom KOTH events programmatically.
+- Interact with active events, players, and capture zones.
+- Extend and customize gameplay mechanics tied to KOTH events.
+
+For detailed API usage, refer to the code examples in the documentation or explore the source files.
 
 ## Getting Started
 
-Follow these simple steps to get up and running with Spigot Boilerplate:
-
-1. Clone the repository: `git clone https://github.com/arkflame/Spigot-Boilerplate.git`
-2. Customize the boilerplate to match your plugin's specifications.
-3. Start coding your plugin's features using the provided framework.
-4. Test your plugin in a Minecraft environment to ensure everything works as expected.
-
-For more detailed instructions, check out our [Documentation](#link-to-docs).
+1. Clone the repository: `git clone https://github.com/arkflame/MineKoth.git`
+2. Configure the plugin:
+   - Define capture points and schedules in the configuration.
+   - Use the `/koth` command to manage events in-game.
+3. Start your Minecraft server and watch the competition unfold.
 
 ## Contributing
 
-We welcome contributions from the Minecraft community to improve Spigot Boilerplate. Here's how you can get involved:
-
+We welcome contributions to improve MineKoth. Here's how you can get involved:
 - Fork the repository.
 - Make your changes.
 - Submit a pull request.
 
-We appreciate your efforts in making Spigot Boilerplate even better for everyone!
+Your contributions help make MineKoth better for the Minecraft community!
 
 ## Support
 
 Need help or have questions? Reach out to us:
-
-- [GitHub Issues](#link-to-issues): Report bugs or request features through GitHub issues.
-- [Discord Community](#link-to-discord): Join our Discord community for discussions and assistance.
-- [Email Support](#email-address): Drop us an email for personalized support.
+- [GitHub Issues](#link-to-issues): Report bugs or request features.
+- [Discord Community](#link-to-discord): Join our community for discussions and support.
+- [Email Support](#email-address): Contact us for direct assistance.
 
 ## License
 
