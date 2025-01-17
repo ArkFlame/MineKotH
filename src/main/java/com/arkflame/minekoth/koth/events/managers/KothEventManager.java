@@ -84,7 +84,11 @@ public class KothEventManager {
                     Location location = koth.getCenter();
 
                     // Play 3 fireworks in the last 3 seconds
-                    FoliaAPI.runTaskForRegion(location, () -> currentEvent.createFirework(location, FireworkEffect.Type.BALL));
+                    FoliaAPI.runTaskForRegion(location, () -> {
+                        if (currentEvent != null) {
+                            currentEvent.createFirework(location, FireworkEffect.Type.BALL);
+                        }
+                    });
 
                     // Check if 3 seconds passed since end
                     if (currentEvent.getTimeSinceEnd() > 3000L) {
