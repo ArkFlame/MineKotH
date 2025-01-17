@@ -1,6 +1,7 @@
 package com.arkflame.minekoth.koth;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
 
@@ -27,12 +28,16 @@ public class Koth {
         this.times = times;
     }
 
+    public World getWorld() {
+        return Bukkit.getWorld(worldName);
+    }
+    
     public Location getFirstPosition() {
-        return new Location(Bukkit.getWorld(worldName), firstPosition.getX(), firstPosition.getY(), firstPosition.getZ());
+        return new Location(getWorld(), firstPosition.getX(), firstPosition.getY(), firstPosition.getZ());
     }
 
     public Location getSecondPosition() {
-        return new Location(Bukkit.getWorld(worldName), secondPosition.getX(), secondPosition.getY(), secondPosition.getZ());
+        return new Location(getWorld(), secondPosition.getX(), secondPosition.getY(), secondPosition.getZ());
     }
 
     public boolean isInside(Location location) {
@@ -74,4 +79,12 @@ public class Koth {
 
     public String getTimes() { return times; }
     public void setTimes(String times) { this.times = times; }
+
+    public Location getCenter() {
+        double x = (firstPosition.getX() + secondPosition.getX()) / 2;
+        double y = (firstPosition.getY() + secondPosition.getY()) / 2;
+        double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
+
+        return new Location(getWorld(), x, y, z);
+    }
 }

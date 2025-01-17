@@ -10,6 +10,7 @@ import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.commands.ScheduleCommand;
@@ -44,8 +45,8 @@ public class KothCommand implements CommandExecutor {
                     break;
                 }
                 player.sendMessage(ChatColor.GOLD + "koth List:");
-                kothManager.getAllkoths().values().forEach(koth ->
-                        player.sendMessage(ChatColor.YELLOW + "ID: " + koth.getId() + ", Name: " + koth.getName()));
+                kothManager.getAllkoths().values().forEach(koth -> player
+                        .sendMessage(ChatColor.YELLOW + "ID: " + koth.getId() + ", Name: " + koth.getName()));
                 break;
 
             case "info":
@@ -111,7 +112,15 @@ public class KothCommand implements CommandExecutor {
                 }
                 MineKoth.getInstance().getKothEventManager().end();
                 sender.sendMessage(ChatColor.GREEN + "Event stopped.");
-                Titles.sendTitle(ChatColor.GREEN + "Stopped", ChatColor.YELLOW + "Koth stopped by " + player.getName(), 10, 60, 10);
+                Titles.sendTitle(ChatColor.GREEN + "Stopped", ChatColor.YELLOW + "Koth stopped by " + player.getName(),
+                        10, 60, 10);
+                break;
+            case "capture":
+                if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
+                    sender.sendMessage(ChatColor.RED + "No event is active.");
+                    break;
+                }
+                MineKoth.getInstance().getKothEventManager().getKothEvent().setCaptured(new CapturingPlayers(player));
                 break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
@@ -123,13 +132,16 @@ public class KothCommand implements CommandExecutor {
 
     private void sendHelpMessage(Player player) {
         player.sendMessage(ChatColor.GOLD + "Usage of koth commands:");
-        player.sendMessage(ChatColor.YELLOW + " /koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
+        player.sendMessage(
+                ChatColor.YELLOW + " /koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
         player.sendMessage(ChatColor.YELLOW + " /koth schedule" + ChatColor.WHITE + " - Schedule a koth.");
         player.sendMessage(ChatColor.YELLOW + " /koth list" + ChatColor.WHITE + " - List all existing koths.");
-        player.sendMessage(ChatColor.YELLOW + " /koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
+        player.sendMessage(
+                ChatColor.YELLOW + " /koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
         player.sendMessage(ChatColor.YELLOW + " /koth delete <id>" + ChatColor.WHITE + " - Delete a specific koth.");
         player.sendMessage(ChatColor.YELLOW + " /koth start" + ChatColor.WHITE + " - Start the next scheduled koth.");
         player.sendMessage(ChatColor.YELLOW + " /koth stop" + ChatColor.WHITE + " - Stop the current koth event.");
+        player.sendMessage(ChatColor.YELLOW + " /koth capture" + ChatColor.WHITE + " - Capture the current koth");
     }
 
     private void sendkothInfo(Player player, Koth koth) {

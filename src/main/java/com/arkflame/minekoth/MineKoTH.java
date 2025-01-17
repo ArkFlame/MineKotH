@@ -9,6 +9,7 @@ import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
+import com.arkflame.minekoth.particles.ParticleScheduler;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 import com.arkflame.minekoth.schedule.tasks.ScheduleRunnerTask;
@@ -27,6 +28,11 @@ public class MineKoth extends JavaPlugin {
     private LangManager langManager;
     private ScheduleRunnerTask scheduleRunnerTask;
     private KothEventTickTask kothEventTickTask;
+    private ParticleScheduler particleScheduler;
+
+    public ParticleScheduler getParticleScheduler() {
+        return particleScheduler;
+    }
 
     public static void setInstance(MineKoth instance) {
         MineKoth.instance = instance;
@@ -68,6 +74,9 @@ public class MineKoth extends JavaPlugin {
     public void onEnable() {
         setInstance(this);
 
+        // Managers
+        particleScheduler = new ParticleScheduler(this);
+
         // Lang
         langManager = new LangManager(getDataFolder());
         scheduleRunnerTask = new ScheduleRunnerTask();
@@ -85,10 +94,10 @@ public class MineKoth extends JavaPlugin {
         pluginManager.registerEvents(new SetupInventoryCloseListener(), this);
 
         // Tasks - Schedule
-        FoliaAPI.runTaskTimerAsync(this, task -> scheduleRunnerTask.run(), 0, 20);
+        FoliaAPI.runTaskTimerAsync(task -> scheduleRunnerTask.run(), 1, 20);
 
         // Tasks - Koth Event
-        FoliaAPI.runTaskTimerAsync(this, task -> kothEventTickTask.run(), 0, 20);
+        FoliaAPI.runTaskTimerAsync(task -> kothEventTickTask.run(), 1, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());

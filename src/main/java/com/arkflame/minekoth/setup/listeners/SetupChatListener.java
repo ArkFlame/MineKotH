@@ -42,6 +42,10 @@ public class SetupChatListener implements Listener {
         }
 
         if (!session.isTimesSet()) {
+            if (!session.isValidTimes(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid times. Please enter a valid one.");
+                return;
+            }
             session.setTimes(message);
             player.sendMessage(ChatColor.GREEN + "Run times set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Enter the time limit (e.g., 30min).");
@@ -49,6 +53,10 @@ public class SetupChatListener implements Listener {
         }
 
         if (!session.isTimeLimitSet()) {
+            if (!session.isValidTimeLimit(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid time limit. Please enter a valid one.");
+                return;
+            }
             session.setTimeLimit(Times.parseToSeconds(message));
             player.sendMessage(ChatColor.GREEN + "Time limit set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Enter the capture time (e.g., 5min).");
@@ -56,6 +64,10 @@ public class SetupChatListener implements Listener {
         }
 
         if (!session.isCaptureTimeSet()) {
+            if (!session.isValidCaptureTime(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid capture time. Please enter a valid one.");
+                return;
+            }
             session.setCaptureTime(Times.parseToSeconds(message));
             player.sendMessage(ChatColor.GREEN + "Capture time set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Enter days (e.g., MONDAY, TUESDAY, ALL...).");
@@ -63,6 +75,10 @@ public class SetupChatListener implements Listener {
         }
 
         if (!session.isDaysSet()) {
+            if (!session.isValidDays(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid days. Please enter a valid one.");
+                return;
+            }
             session.setDays(message);
             player.sendMessage(ChatColor.GREEN + "Days set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Put rewards in the chest.");
@@ -76,7 +92,7 @@ public class SetupChatListener implements Listener {
     }
 
     private void openRewardsInventory(Player player) {
-        FoliaAPI.runTask(MineKoth.getInstance(), () -> {
+        FoliaAPI.runTask(() -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
             player.openInventory(inventory);
         });

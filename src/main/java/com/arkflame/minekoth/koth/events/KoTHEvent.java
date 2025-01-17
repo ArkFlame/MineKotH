@@ -1,7 +1,11 @@
 package com.arkflame.minekoth.koth.events;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.utils.ChatColors;
+import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
@@ -28,18 +32,20 @@ public class KothEvent {
 
     private final Koth koth;
     private KothEventState state;
-    private Map<Player, Long> playersInZone;
+    private Collection<Player> playersInZone;
     private List<CapturingPlayers> playersCapturing;
-    private int captureTime;
+    private int timetoCapture;
     private boolean stalemateEnabled;
     private long startTime;
+    private long timeCaptureStarted;
+    private long endTime;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
         this.state = KothEventState.UNCAPTURED;
-        this.playersInZone = new HashMap<>();
+        this.playersInZone = new HashSet<>();
         this.playersCapturing = new ArrayList<>();
-        this.captureTime = koth.getTimeToCapture();
+        this.timetoCapture = koth.getTimeToCapture();
         this.stalemateEnabled = false;
         this.startTime = System.currentTimeMillis();
     }
@@ -56,17 +62,50 @@ public class KothEvent {
         this.stalemateEnabled = stalemateEnabled;
     }
 
-    public void updatePlayerState(Player player, boolean entering) {
-        if (entering) {
-            if (!playersInZone.containsKey(player)) {
-                playersInZone.put(player, System.currentTimeMillis());
-                addToCapturingPlayers(player);
-            }
-            evaluateState();
+    public void updateEffects(Player player) {
+        if (player == null)
+            return;
+
+        if (isTopPlayer(player)) {
+            GlowingUtility.setGlowing(player, ChatColor.RED);
+            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
+                    5);
         } else {
-            playersInZone.remove(player);
-            removeFromCapturingPlayers(player);
-            evaluateState();
+            GlowingUtility.unsetGlowing(player);
+            MineKoth.getInstance().getParticleScheduler().removeTrail(player);
+        }
+    }
+
+    public void updatePlayerState(Player player, boolean entering) {
+        CapturingPlayers oldTopGroup = getTopGroup();
+        if (entering) {
+            if (!playersInZone.contains(player)) {
+                Player oldTopPlayer = getTopPlayer();
+
+                // Update capturing players
+                addToCapturingPlayers(player);
+                evaluateState(oldTopGroup);
+
+                // Update effects
+                updateEffects(player);
+                updateEffects(oldTopPlayer);
+            }
+        } else {
+            if (playersInZone.contains(player)) {
+                Player oldTopPlayer = getTopPlayer();
+
+                // Update capturing players
+                playersInZone.remove(player);
+                removeFromCapturingPlayers(player);
+                evaluateState(oldTopGroup);
+
+                // Update effects
+                Player topPlayer = getTopPlayer();
+                if (oldTopPlayer != topPlayer) {
+                    updateEffects(oldTopPlayer);
+                    updateEffects(topPlayer);
+                }
+            }
         }
     }
 
@@ -75,7 +114,13 @@ public class KothEvent {
         return false;
     }
 
+    private void sortCapturingPlayers() {
+        playersCapturing
+                .sort((group1, group2) -> Integer.compare(group2.getPlayers().size(), group1.getPlayers().size()));
+    }
+
     private void addToCapturingPlayers(Player player) {
+        playersInZone.add(player);
         for (CapturingPlayers group : playersCapturing) {
             if (isSameTeam(group.getPlayers().get(0), player)) {
                 group.addPlayer(player);
@@ -83,51 +128,52 @@ public class KothEvent {
             }
         }
         playersCapturing.add(new CapturingPlayers(player));
+        sortCapturingPlayers();
     }
 
     private void removeFromCapturingPlayers(Player player) {
+        playersInZone.remove(player);
         playersCapturing.removeIf(group -> {
             group.removePlayer(player);
             return group.getPlayers().isEmpty();
         });
+        sortCapturingPlayers();
     }
 
-    private void evaluateState() {
+    private void evaluateState(CapturingPlayers oldTopGroup) {
         if (state == KothEventState.CAPTURED) {
             return;
         }
 
-        if (playersInZone.isEmpty()) {
+        CapturingPlayers topGroup = getTopGroup();
+        if (topGroup == null) {
             state = KothEventState.UNCAPTURED;
-            playersCapturing.clear();
-            return;
-        }
-
-        playersCapturing.sort(Comparator.comparingInt(group -> group.getPlayers().size()));
-
-        if (playersCapturing.size() > 1
-                && playersCapturing.get(0).getPlayers().size() == playersCapturing.get(1).getPlayers().size()) {
-            if (stalemateEnabled) {
-                state = KothEventState.STALEMATE;
-            } else {
-                state = KothEventState.CAPTURING;
-            }
+        } else if (stalemateEnabled && playersCapturing.size() > 1
+                && getTopGroup() == getGroup(0)) {
+            state = KothEventState.STALEMATE;
         } else {
+            if (oldTopGroup != topGroup) {
+                updateTimeCaptured();
+            }
             state = KothEventState.CAPTURING;
         }
+    }
+
+    public void setCaptured(CapturingPlayers winners) {
+        distributeRewards(winners);
+        playFireworks();
+        end();
     }
 
     public void tick() {
         if (state == KothEventState.CAPTURING) {
             CapturingPlayers topGroup = playersCapturing.get(0);
-            Player topPlayer = topGroup.getPlayers().get(0);
-            long timeCaptured = getTimeCaptured(topPlayer);
-
-            if (timeCaptured >= captureTime * 1000L) {
+            if (getTimeLeftToCapture() <= 0) {
                 setCaptured(topGroup);
             } else {
                 for (Player player : topGroup.getPlayers()) {
-                    Titles.sendActionBar(player, ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
+                    Titles.sendActionBar(player,
+                            ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
                 }
             }
         } else if (state == KothEventState.UNCAPTURED) {
@@ -140,76 +186,82 @@ public class KothEvent {
         }
     }
 
-    private void setCaptured(CapturingPlayers winners) {
-        state = KothEventState.CAPTURED;
-        giveRewards(winners);
-        playFireworks();
+    public boolean isWinner(Player player) {
+        CapturingPlayers winners = getTopGroup();
+        return winners == null ? false : winners.containsPlayer(player);
     }
 
-    private void giveRewards(CapturingPlayers winners) {
+    private void distributeRewards(CapturingPlayers winners) {
         Player topPlayer = winners.getPlayers().get(0);
 
-        // Execute reward commands
-        for (String command : koth.getRewards().getRewardsCommands()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
-        }
+        if (topPlayer != null) {
+            // Execute reward commands
+            FoliaAPI.runTask(() -> {
+                for (String command : koth.getRewards().getRewardsCommands()) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
+                }
+            });
 
-        // Give reward items
-        for (ItemStack item : koth.getRewards().getRewardsItems()) {
-            if (item != null && item.getType() != Material.AIR) {
-                topPlayer.getInventory().addItem(item);
+            // Give reward items
+            for (ItemStack item : koth.getRewards().getRewardsItems()) {
+                if (item != null && item.getType() != Material.AIR) {
+                    topPlayer.getInventory().addItem(item);
+                }
             }
         }
 
-        // Notify players
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            sendTitle(player, winners.getPlayers().contains(player), topPlayer.getName());
-        }
+        FoliaAPI.runTask(() -> {
+            // Show win/lose effects titles and subtitles
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                displayWinLoseEffects(player, isWinner(player), topPlayer);
+            }
+        });
+    }
+
+    private Firework createFirework(Location location, FireworkEffect.Type type) {
+        Firework firework = location.getWorld().spawn(location, Firework.class);
+        FireworkMeta meta = firework.getFireworkMeta();
+        meta.addEffect(
+                FireworkEffect.builder().with(type).withColor(org.bukkit.Color.LIME).withFlicker().withTrail().build());
+        meta.setPower(1);
+        firework.setFireworkMeta(meta);
+        return firework;
     }
 
     private void playFireworks() {
-        Location location = koth.getFirstPosition();
-        for (int i = 0; i < 3; i++) {
-            Firework firework = location.getWorld().spawn(location, Firework.class);
-            FireworkMeta meta = firework.getFireworkMeta();
-            meta.addEffect(
-                    FireworkEffect.builder().with(FireworkEffect.Type.BALL).withColor(org.bukkit.Color.RED).build());
-            firework.setFireworkMeta(meta);
+        Location location = koth.getCenter();
+        Runnable fireworkTask = () -> createFirework(location, FireworkEffect.Type.BALL);
+        Runnable fireworkTaskLater1 = () -> createFirework(location, FireworkEffect.Type.STAR);
+        Runnable fireworkTaskLater2 = () -> createFirework(location, FireworkEffect.Type.CREEPER);
+
+        if (Bukkit.isPrimaryThread()) {
+            fireworkTask.run();
+        } else {
+            Bukkit.getScheduler().runTask(MineKoth.getInstance(), fireworkTask);
         }
+        Bukkit.getScheduler().runTaskLater(MineKoth.getInstance(), fireworkTaskLater1, 20L);
+        Bukkit.getScheduler().runTaskLater(MineKoth.getInstance(), fireworkTaskLater2, 40L);
     }
 
-    private void sendTitle(Player player, boolean isWinner, String winnerName) {
+    private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {
         String title = isWinner ? ChatColor.GREEN + "YOU WON" : ChatColor.RED + "YOU LOSE";
-        String subtitle = ChatColor.YELLOW + "Koth Winner: " + winnerName;
+        String subtitle = ChatColor.YELLOW + "Koth Winner: " + winner == null ? "N/A" : winner.getName();
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
+        if (isWinner) {
+            ParticleUtil.generateSpiral(player.getLocation(), "HAPPY_VILLAGER", 0.5, 2, 3,
+                    20);
+            GlowingUtility.setGlowing(player, ChatColor.GREEN);
+        }
     }
 
     public void end() {
         state = KothEventState.CAPTURED;
-        playersInZone.clear();
-        playersCapturing.clear();
+        endTime = System.currentTimeMillis();
     }
 
-    private static class CapturingPlayers {
-        private final List<Player> players;
-
-        public CapturingPlayers(Player player) {
-            this.players = new ArrayList<>();
-            this.players.add(player);
-        }
-
-        public List<Player> getPlayers() {
-            return players;
-        }
-
-        public void addPlayer(Player player) {
-            players.add(player);
-        }
-
-        public void removePlayer(Player player) {
-            players.remove(player);
-        }
+    public long getTimeSinceEnd() {
+        return System.currentTimeMillis() - endTime;
     }
 
     public Koth getKoth() {
@@ -224,20 +276,45 @@ public class KothEvent {
         }
     }
 
+    public CapturingPlayers getGroup(int index) {
+        return playersCapturing.size() > index ? playersCapturing.get(index) : null;
+    }
+
+    public CapturingPlayers getTopGroup() {
+        return getGroup(0);
+    }
+
+    public Player getTopPlayer() {
+        CapturingPlayers topGroup = getTopGroup();
+        return topGroup != null ? topGroup.getPlayers().get(0) : null;
+    }
+
+    public boolean isTopPlayer(Player player) {
+        return player == getTopPlayer();
+    }
+
     public boolean isCapturing(Player player) {
-        return playersInZone.containsKey(player);
+        return playersInZone.contains(player);
     }
 
-    public long getTimeOfCapture(Player player) {
-        return playersInZone.get(player);
+    public long getTimeCapturedStarted() {
+        return timeCaptureStarted;
     }
 
-    public long getTimeCaptured(Player player) {
-        return System.currentTimeMillis() - getTimeOfCapture(player);
+    public void updateTimeCaptured() {
+        this.timeCaptureStarted = System.currentTimeMillis();
+    }
+
+    public int getTimeToCapture() {
+        return timetoCapture;
+    }
+
+    public long getTimeLeftToCapture() {
+        return (timeCaptureStarted + timetoCapture * 1000) - System.currentTimeMillis();
     }
 
     public String getTimeLeftToCaptureFormatted() {
-        long time = captureTime * 1000 - getTimeCaptured(playersCapturing.get(0).getPlayers().get(0));
+        long time = (timeCaptureStarted + timetoCapture * 1000) - System.currentTimeMillis();
         long minutes = time / 60000;
         long seconds = (time % 60000) / 1000;
         if (seconds < 0) {
@@ -249,7 +326,8 @@ public class KothEvent {
         return String.format("%d", seconds);
     }
 
-    // Get koth time limit and check if it was exceded comparing it with start time and current time
+    // Get koth time limit and check if it was exceded comparing it with start time
+    // and current time
     public String getTimeLeftToFinishFormatted() {
         long time = (startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis();
         long minutes = time / 60000;
@@ -261,5 +339,18 @@ public class KothEvent {
             return String.format("%02d:%02d", minutes, seconds);
         }
         return String.format("%d", seconds);
+    }
+
+    public void clearPlayers() {
+        Player topPlayer = getTopPlayer();
+        if (topPlayer != null) {
+            FoliaAPI.runTask(() -> {
+                MineKoth.getInstance().getParticleScheduler().removeTrail(topPlayer);
+                GlowingUtility.unsetGlowing(topPlayer);
+            });
+        }
+
+        playersCapturing.clear();
+        playersInZone.clear();
     }
 }

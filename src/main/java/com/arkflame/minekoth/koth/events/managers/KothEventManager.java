@@ -73,10 +73,17 @@ public class KothEventManager {
      */
     public void tick() {
         if (currentEvent != null) {
-            currentEvent.tick();
-            
-            if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
-                end();
+            try {
+                currentEvent.tick();
+
+                if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
+                    if (currentEvent.getTimeSinceEnd() > 3000L) {
+                        currentEvent.clearPlayers();
+                        currentEvent = null;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
