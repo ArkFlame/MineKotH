@@ -2,7 +2,6 @@ package com.arkflame.minekoth.koth.events;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
-import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
@@ -249,8 +248,7 @@ public class KothEvent {
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
-            ParticleUtil.generateSpiral(player.getLocation(), "HAPPY_VILLAGER", 0.5, 2, 3,
-                    20);
+            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
             GlowingUtility.setGlowing(player, ChatColor.GREEN);
         }
     }
