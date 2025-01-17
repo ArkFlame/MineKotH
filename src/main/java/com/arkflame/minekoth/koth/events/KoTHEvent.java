@@ -160,7 +160,6 @@ public class KothEvent {
 
     public void setCaptured(CapturingPlayers winners) {
         distributeRewards(winners);
-        playFireworks();
         end();
     }
 
@@ -209,15 +208,15 @@ public class KothEvent {
             }
         }
 
-        FoliaAPI.runTask(() -> {
             // Show win/lose effects titles and subtitles
             for (Player player : Bukkit.getOnlinePlayers()) {
-                displayWinLoseEffects(player, isWinner(player), topPlayer);
+                FoliaAPI.runTaskForEntity(player, () -> {
+                    displayWinLoseEffects(player, isWinner(player), topPlayer);
+                }, () -> {}, 1L);
             }
-        });
     }
 
-    private Firework createFirework(Location location, FireworkEffect.Type type) {
+    public Firework createFirework(Location location, FireworkEffect.Type type) {
         Firework firework = location.getWorld().spawn(location, Firework.class);
         FireworkMeta meta = firework.getFireworkMeta();
         meta.addEffect(
@@ -225,21 +224,6 @@ public class KothEvent {
         meta.setPower(1);
         firework.setFireworkMeta(meta);
         return firework;
-    }
-
-    private void playFireworks() {
-        Location location = koth.getCenter();
-        Runnable fireworkTask = () -> createFirework(location, FireworkEffect.Type.BALL);
-        Runnable fireworkTaskLater1 = () -> createFirework(location, FireworkEffect.Type.STAR);
-        Runnable fireworkTaskLater2 = () -> createFirework(location, FireworkEffect.Type.CREEPER);
-
-        if (Bukkit.isPrimaryThread()) {
-            fireworkTask.run();
-        } else {
-            Bukkit.getScheduler().runTask(MineKoth.getInstance(), fireworkTask);
-        }
-        Bukkit.getScheduler().runTaskLater(MineKoth.getInstance(), fireworkTaskLater1, 20L);
-        Bukkit.getScheduler().runTaskLater(MineKoth.getInstance(), fireworkTaskLater2, 40L);
     }
 
     private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {

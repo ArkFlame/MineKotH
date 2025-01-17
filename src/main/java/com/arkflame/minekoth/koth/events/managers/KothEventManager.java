@@ -3,10 +3,12 @@ package com.arkflame.minekoth.koth.events.managers;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
 import org.bukkit.ChatColor;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -76,7 +78,15 @@ public class KothEventManager {
             try {
                 currentEvent.tick();
 
+                // The koth was captured
                 if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
+                    Koth koth = currentEvent.getKoth();
+                    Location location = koth.getCenter();
+
+                    // Play 3 fireworks in the last 3 seconds
+                    FoliaAPI.runTaskForRegion(location, () -> currentEvent.createFirework(location, FireworkEffect.Type.BALL));
+
+                    // Check if 3 seconds passed since end
                     if (currentEvent.getTimeSinceEnd() > 3000L) {
                         currentEvent.clearPlayers();
                         currentEvent = null;

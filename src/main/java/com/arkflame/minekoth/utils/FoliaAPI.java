@@ -5,7 +5,9 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -16,10 +18,21 @@ import com.arkflame.minekoth.MineKoth;
 public class FoliaAPI {
     private static final BukkitScheduler bS = Bukkit.getScheduler();
     private static final Object globalRegionScheduler = getGlobalRegionScheduler();
+    private static final Object regionScheduler = getRegionScheduler();
     
     private static Object getGlobalRegionScheduler() {
         try {
             Method method = Server.class.getDeclaredMethod("getGlobalRegionScheduler");
+            method.setAccessible(true);
+            return method.invoke(Bukkit.getServer());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    private static Object getRegionScheduler() {
+        try {
+            Method method = Server.class.getDeclaredMethod("getRegionScheduler");
             method.setAccessible(true);
             return method.invoke(Bukkit.getServer());
         } catch (Exception e) {
@@ -121,6 +134,58 @@ public class FoliaAPI {
             Object entityScheduler = getSchedulerMethod.invoke(entity);
             Method runAtFixedRateMethod = entityScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class, Runnable.class, long.class, long.class);
             runAtFixedRateMethod.invoke(entityScheduler, MineKoth.getInstance(), task, retired, initialDelay, period);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void runTaskForRegion(World world, int chunkX, int chunkZ, Runnable run) {
+        if (!isFolia()) {
+            bS.runTask(MineKoth.getInstance(), run);
+            return;
+        }
+        try {
+            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, World.class, int.class, int.class, Runnable.class);
+            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), world, chunkX, chunkZ, run);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void runTaskForRegion(Location location, Runnable run) {
+        if (!isFolia()) {
+            bS.runTask(MineKoth.getInstance(), run);
+            return;
+        }
+        try {
+            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, Location.class, Runnable.class);
+            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), location, run);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void runTaskForRegionRepeating(Location location, Consumer<Object> task, long initialDelay, long period) {
+        if (!isFolia()) {
+            bS.runTaskTimer(MineKoth.getInstance(), () -> task.accept(null), initialDelay, period);
+            return;
+        }
+        try {
+            Method runAtFixedRateMethod = regionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Location.class, Consumer.class, long.class, long.class);
+            runAtFixedRateMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, initialDelay, period);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void runTaskForRegionDelayed(Location location, Consumer<Object> task, long delay) {
+        if (!isFolia()) {
+            bS.runTaskLater(MineKoth.getInstance(), () -> task.accept(null), delay);
+            return;
+        }
+        try {
+            Method runDelayedMethod = regionScheduler.getClass().getMethod("runDelayed", Plugin.class, Location.class, Consumer.class, long.class);
+            runDelayedMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, delay);
         } catch (Exception e) {
             e.printStackTrace();
         }
