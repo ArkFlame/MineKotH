@@ -102,6 +102,8 @@ public class GlowingUtility {
             return; // Glowing not supported or invalid parameters
         }
 
+        player.removePotionEffect(PotionEffectType.GLOWING);
+        
         String playerName = player.getName();
         ChatColor color = PLAYER_TO_COLOR_CACHE.remove(playerName);
 
@@ -112,8 +114,6 @@ public class GlowingUtility {
                 team.removeEntry(playerName);
             }
         }
-
-        player.removePotionEffect(PotionEffectType.GLOWING);
     }
 
     /**
