@@ -14,180 +14,144 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.arkflame.minekoth.MineKoth;
 
-@SuppressWarnings("unchecked")
 public class FoliaAPI {
-    private static final BukkitScheduler bS = Bukkit.getScheduler();
-    private static final Object globalRegionScheduler = getGlobalRegionScheduler();
-    private static final Object regionScheduler = getRegionScheduler();
-    
-    private static Object getGlobalRegionScheduler() {
+
+    private static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
+    private static final Plugin PLUGIN = MineKoth.getInstance();
+
+    private static final Object GLOBAL_REGION_SCHEDULER = initializeScheduler("getGlobalRegionScheduler");
+    private static final Object REGION_SCHEDULER = initializeScheduler("getRegionScheduler");
+
+    private static Object initializeScheduler(String methodName) {
         try {
-            Method method = Server.class.getDeclaredMethod("getGlobalRegionScheduler");
+            Method method = Server.class.getDeclaredMethod(methodName);
             method.setAccessible(true);
             return method.invoke(Bukkit.getServer());
         } catch (Exception e) {
             return null;
         }
     }
-    
-    private static Object getRegionScheduler() {
-        try {
-            Method method = Server.class.getDeclaredMethod("getRegionScheduler");
-            method.setAccessible(true);
-            return method.invoke(Bukkit.getServer());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
+
     public static boolean isFolia() {
-    	try { Class.forName("io.papermc.paper.threadedregions.RegionizedServer"); return (true && globalRegionScheduler != null); } catch (Exception ig) { return false; }
-    }
-    
-    public static void runTaskAsync(Runnable run) {
-        if (!isFolia()) {
-        	bS.runTaskAsynchronously(MineKoth.getInstance(), run);
-            return;
-        }
-        Executors.defaultThreadFactory().newThread(run).start();
-    }
-    
-    public static void runTaskTimerAsync(Consumer<Object> run, long delay, long period) {
-        if (!isFolia()) {
-        	bS.runTaskTimerAsynchronously(MineKoth.getInstance(), () -> run.accept(null), delay, period);
-            return;
-        }
         try {
-        	Method m = globalRegionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class, long.class, long.class);
-            m.setAccessible(true);
-            m.invoke(globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return GLOBAL_REGION_SCHEDULER != null;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
-    
-    public static void runTaskTimer(Consumer<Object> run, long delay, long period) {
-        if (!isFolia()) {
-        	bS.runTaskTimer(MineKoth.getInstance(), () -> run.accept(null), delay, period);
-            return;
-        }
-        try {
-        	Method m = globalRegionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class, long.class, long.class);
-            m.setAccessible(true);
-            m.invoke(globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public static void runTask(Runnable run) {
-        if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), run);
-            return;
-        }
 
+    private static void invokeSchedulerMethod(Object scheduler, String methodName, Object... args) {
         try {
-            Method executeMethod = globalRegionScheduler.getClass().getMethod("run", Plugin.class, Consumer.class);
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
+            Method method = scheduler.getClass().getMethod(methodName, getParameterTypes(args));
+            method.setAccessible(true);
+            method.invoke(scheduler, args);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    public static void runTask(Consumer<Object> run) {
-        if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), () -> run.accept(null));
-            return;
-        }
-        try {
-        	Method executeMethod = globalRegionScheduler.getClass().getMethod("run", Plugin.class, Consumer.class);
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(globalRegionScheduler, MineKoth.getInstance(), run);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    private static Class<?>[] getParameterTypes(Object... args) {
+        return java.util.Arrays.stream(args).map(Object::getClass).toArray(Class<?>[]::new);
+    }
+
+    public static void runTaskAsync(Runnable task) {
+        if (isFolia()) {
+            Executors.defaultThreadFactory().newThread(task).start();
+        } else {
+            SCHEDULER.runTaskAsynchronously(PLUGIN, task);
         }
     }
-    
-    public static void runTaskForEntity(Entity entity, Runnable run, Runnable retired, long delay) {
-    	if (!isFolia()) {
-    		bS.runTaskLater(MineKoth.getInstance(), run, delay);
-    		return;
-    	} 
-    	try {
-            Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
-            Object entityScheduler = getSchedulerMethod.invoke(entity);
-            Method executeMethod = entityScheduler.getClass().getMethod("execute", Plugin.class, Runnable.class, Runnable.class, long.class);
-            executeMethod.invoke(entityScheduler, MineKoth.getInstance(), run, retired, delay);
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	} 
+
+    public static void runTaskTimerAsync(Consumer<Object> task, long delay, long period) {
+        if (isFolia()) {
+            invokeSchedulerMethod(GLOBAL_REGION_SCHEDULER, "runAtFixedRate", PLUGIN, task, delay, period);
+        } else {
+            SCHEDULER.runTaskTimerAsynchronously(PLUGIN, () -> task.accept(null), delay, period);
+        }
     }
-    
+
+    public static void runTaskTimer(Consumer<Object> task, long delay, long period) {
+        if (isFolia()) {
+            invokeSchedulerMethod(GLOBAL_REGION_SCHEDULER, "runAtFixedRate", PLUGIN, task, delay, period);
+        } else {
+            SCHEDULER.runTaskTimer(PLUGIN, () -> task.accept(null), delay, period);
+        }
+    }
+
+    public static void runTask(Runnable task) {
+        if (isFolia()) {
+            invokeSchedulerMethod(GLOBAL_REGION_SCHEDULER, "run", PLUGIN, (Consumer<Object>) ignored -> task.run());
+        } else {
+            SCHEDULER.runTask(PLUGIN, task);
+        }
+    }
+
+    public static void runTask(Consumer<Object> task) {
+        if (isFolia()) {
+            invokeSchedulerMethod(GLOBAL_REGION_SCHEDULER, "run", PLUGIN, task);
+        } else {
+            SCHEDULER.runTask(PLUGIN, () -> task.accept(null));
+        }
+    }
+
+    public static void runTaskForEntity(Entity entity, Runnable task, Runnable retired, long delay) {
+        if (isFolia()) {
+            try {
+                Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
+                Object entityScheduler = getSchedulerMethod.invoke(entity);
+                invokeSchedulerMethod(entityScheduler, "execute", PLUGIN, task, retired, delay);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            SCHEDULER.runTaskLater(PLUGIN, task, delay);
+        }
+    }
+
     public static void runTaskForEntityRepeating(Entity entity, Consumer<Object> task, Runnable retired, long initialDelay, long period) {
-        if (!isFolia()) {
-            bS.runTaskTimer(MineKoth.getInstance(), () -> task.accept(null), initialDelay, period);
-            return;
-        }
-        try {
-            Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
-            Object entityScheduler = getSchedulerMethod.invoke(entity);
-            Method runAtFixedRateMethod = entityScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class, Runnable.class, long.class, long.class);
-            runAtFixedRateMethod.invoke(entityScheduler, MineKoth.getInstance(), task, retired, initialDelay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public static void runTaskForRegion(World world, int chunkX, int chunkZ, Runnable run) {
-        if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), run);
-            return;
-        }
-        try {
-            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, World.class, int.class, int.class, Runnable.class);
-            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), world, chunkX, chunkZ, run);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isFolia()) {
+            try {
+                Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
+                Object entityScheduler = getSchedulerMethod.invoke(entity);
+                invokeSchedulerMethod(entityScheduler, "runAtFixedRate", PLUGIN, task, retired, initialDelay, period);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            SCHEDULER.runTaskTimer(PLUGIN, () -> task.accept(null), initialDelay, period);
         }
     }
 
-    public static void runTaskForRegion(Location location, Runnable run) {
-        if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), run);
-            return;
+    public static void runTaskForRegion(World world, int chunkX, int chunkZ, Runnable task) {
+        if (isFolia()) {
+            invokeSchedulerMethod(REGION_SCHEDULER, "execute", PLUGIN, world, chunkX, chunkZ, task);
+        } else {
+            SCHEDULER.runTask(PLUGIN, task);
         }
-        try {
-            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, Location.class, Runnable.class);
-            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), location, run);
-        } catch (Exception e) {
-            e.printStackTrace();
+    }
+
+    public static void runTaskForRegion(Location location, Runnable task) {
+        if (isFolia()) {
+            invokeSchedulerMethod(REGION_SCHEDULER, "execute", PLUGIN, location, task);
+        } else {
+            SCHEDULER.runTask(PLUGIN, task);
         }
     }
 
     public static void runTaskForRegionRepeating(Location location, Consumer<Object> task, long initialDelay, long period) {
-        if (!isFolia()) {
-            bS.runTaskTimer(MineKoth.getInstance(), () -> task.accept(null), initialDelay, period);
-            return;
-        }
-        try {
-            Method runAtFixedRateMethod = regionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Location.class, Consumer.class, long.class, long.class);
-            runAtFixedRateMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, initialDelay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isFolia()) {
+            invokeSchedulerMethod(REGION_SCHEDULER, "runAtFixedRate", PLUGIN, location, task, initialDelay, period);
+        } else {
+            SCHEDULER.runTaskTimer(PLUGIN, () -> task.accept(null), initialDelay, period);
         }
     }
-    
+
     public static void runTaskForRegionDelayed(Location location, Consumer<Object> task, long delay) {
-        if (!isFolia()) {
-            bS.runTaskLater(MineKoth.getInstance(), () -> task.accept(null), delay);
-            return;
-        }
-        try {
-            Method runDelayedMethod = regionScheduler.getClass().getMethod("runDelayed", Plugin.class, Location.class, Consumer.class, long.class);
-            runDelayedMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, delay);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isFolia()) {
+            invokeSchedulerMethod(REGION_SCHEDULER, "runDelayed", PLUGIN, location, task, delay);
+        } else {
+            SCHEDULER.runTaskLater(PLUGIN, () -> task.accept(null), delay);
         }
     }
 }
