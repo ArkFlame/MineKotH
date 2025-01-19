@@ -88,6 +88,9 @@ public class KothEvent {
                 // Update effects
                 updateEffects(player);
                 updateEffects(oldTopPlayer);
+
+                Titles.sendTitle(player, "Capturing", "You started capturing the koth", 10, 20, 10);
+                Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
         } else {
             if (playersInZone.contains(player)) {
@@ -104,6 +107,8 @@ public class KothEvent {
                     updateEffects(oldTopPlayer);
                     updateEffects(topPlayer);
                 }
+                Titles.sendTitle(player, "Leaving Koth", "You are no longer capturing", 10, 20, 10);
+                Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS");
             }
         }
     }
