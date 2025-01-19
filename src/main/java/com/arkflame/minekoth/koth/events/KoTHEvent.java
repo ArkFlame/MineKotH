@@ -89,7 +89,12 @@ public class KothEvent {
                 updateEffects(player);
                 updateEffects(oldTopPlayer);
 
-                Titles.sendTitle(player, "Capturing", "You started capturing the koth", 10, 20, 10);
+                Player topPlayer = getTopPlayer();
+                if (player == topPlayer) {
+                    Titles.sendTitle(player, "Capturing", "You started capturing the koth", 10, 20, 10);
+                } else {
+                    Titles.sendTitle(player, "Entering Zone", "You started capturing the koth", 10, 20, 10);
+                }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
         } else {
@@ -107,7 +112,11 @@ public class KothEvent {
                     updateEffects(oldTopPlayer);
                     updateEffects(topPlayer);
                 }
-                Titles.sendTitle(player, "Leaving Koth", "You are no longer capturing", 10, 20, 10);
+                if (player == topPlayer) {
+                    Titles.sendTitle(player, "Leaving Koth", "You are no longer capturing", 10, 20, 10);
+                } else {
+                    Titles.sendTitle(player, "Leaving Koth", "You left the koth zone", 10, 20, 10);
+                }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS");
             }
         }
