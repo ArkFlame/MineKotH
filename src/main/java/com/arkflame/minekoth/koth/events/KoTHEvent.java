@@ -21,6 +21,7 @@ import org.bukkit.entity.Firework;
 import java.util.*;
 
 public class KothEvent {
+    private final List<Integer> countdownIntervals = Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1);
 
     public enum KothEventState {
         UNCAPTURED,
@@ -93,7 +94,8 @@ public class KothEvent {
                 if (player == topPlayer) {
                     Titles.sendTitle(player, "&aCapturing", "&aYou started capturing the koth", 10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "&aEntering Zone", "&c" + topPlayer.getName() + " is capturing", 10, 20, 10);
+                    Titles.sendTitle(player, "&aEntering Zone", "&c" + topPlayer.getName() + " is capturing", 10, 20,
+                            10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
@@ -183,9 +185,22 @@ public class KothEvent {
             if (getTimeLeftToCapture() <= 0) {
                 setCaptured(topGroup);
             } else {
+                Player topPlayer = getTopPlayer();
+                long secondsLeft = getTimeLeftToCapture() / 1000;
+                boolean sendTimeLeftTitle = countdownIntervals.contains((int) secondsLeft);
+
                 for (Player player : topGroup.getPlayers()) {
                     Titles.sendActionBar(player,
                             ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
+
+                    if (sendTimeLeftTitle) {
+                    boolean isTopPlayer = player == topPlayer;
+                        Titles.sendTitle(
+                                "&e" + secondsLeft,
+                                isTopPlayer ? "&aYou are capturing" : "&c" + topPlayer.getName() + " is capturing",
+                                10, 20, 10);
+                        Sounds.play(1.0f, 1.0f, "CLICK");
+                    }
                 }
             }
         } else if (state == KothEventState.UNCAPTURED) {
@@ -222,12 +237,13 @@ public class KothEvent {
             }
         }
 
-            // Show win/lose effects titles and subtitles
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                FoliaAPI.runTaskForEntity(player, () -> {
-                    displayWinLoseEffects(player, isWinner(player), topPlayer);
-                }, () -> {}, 1L);
-            }
+        // Show win/lose effects titles and subtitles
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            FoliaAPI.runTaskForEntity(player, () -> {
+                displayWinLoseEffects(player, isWinner(player), topPlayer);
+            }, () -> {
+            }, 1L);
+        }
     }
 
     public Firework createFirework(Location location, FireworkEffect.Type type) {

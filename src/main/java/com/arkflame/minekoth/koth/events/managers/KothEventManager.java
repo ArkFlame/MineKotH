@@ -7,7 +7,6 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
-import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,8 +27,8 @@ public class KothEventManager {
         }
         currentEvent = new KothEvent(koth);
         Titles.sendTitle(
-                ChatColor.GREEN + koth.getName(),
-                ChatColor.YELLOW + "Capture the Hill!",
+                "&a" + koth.getName(),
+                "&e" + "Capture the Hill!",
                 10, 20, 10);
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {

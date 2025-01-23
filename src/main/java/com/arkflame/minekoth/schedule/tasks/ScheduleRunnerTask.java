@@ -6,7 +6,6 @@ import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.LocalDateTime;
@@ -50,8 +49,8 @@ public class ScheduleRunnerTask extends BukkitRunnable {
 
         if (countdownIntervals.contains((int) secondsLeft)) {
             Titles.sendTitle(
-                    ChatColor.YELLOW.toString() + secondsLeft,
-                    ChatColor.GREEN + "koth " + koth.getName() + " starting",
+                    "&e" + secondsLeft,
+                    "&a" + "koth " + koth.getName() + " starting",
                     10, 20, 10);
             Sounds.play(1.0f, 1.0f, "CLICK");
         }
