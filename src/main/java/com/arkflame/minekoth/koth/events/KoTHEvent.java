@@ -182,11 +182,11 @@ public class KothEvent {
     public void tick() {
         if (state == KothEventState.CAPTURING) {
             CapturingPlayers topGroup = playersCapturing.get(0);
-            if (getTimeLeftToCapture() <= 0) {
+            long secondsLeft = getTimeLeftToCapture() / 1000;
+            if (secondsLeft <= 0) {
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = getTopPlayer();
-                long secondsLeft = getTimeLeftToCapture() / 1000;
                 boolean sendTimeLeftTitle = countdownIntervals.contains((int) secondsLeft);
 
                 for (Player player : topGroup.getPlayers()) {
