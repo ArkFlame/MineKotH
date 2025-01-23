@@ -112,7 +112,7 @@ public class KothCommand implements CommandExecutor {
                 }
                 MineKoth.getInstance().getKothEventManager().end();
                 sender.sendMessage(ChatColor.GREEN + "Event stopped.");
-                Titles.sendTitle(ChatColor.GREEN + "Stopped", ChatColor.YELLOW + "Koth stopped by " + player.getName(),
+                Titles.sendTitle("&aStopped", "&eKoth stopped by " + player.getName(),
                         10, 60, 10);
                 break;
             case "capture":

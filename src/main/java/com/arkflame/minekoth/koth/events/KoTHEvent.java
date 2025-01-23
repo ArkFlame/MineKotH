@@ -91,9 +91,9 @@ public class KothEvent {
 
                 Player topPlayer = getTopPlayer();
                 if (player == topPlayer) {
-                    Titles.sendTitle(player, "Capturing", "You started capturing the koth", 10, 20, 10);
+                    Titles.sendTitle(player, "&aCapturing", "&aYou started capturing the koth", 10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "Entering Zone", "You started capturing the koth", 10, 20, 10);
+                    Titles.sendTitle(player, "&aEntering Zone", "&c" + topPlayer.getName() + " is capturing", 10, 20, 10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
@@ -112,10 +112,10 @@ public class KothEvent {
                     updateEffects(oldTopPlayer);
                     updateEffects(topPlayer);
                 }
-                if (player == topPlayer) {
-                    Titles.sendTitle(player, "Leaving Koth", "You are no longer capturing", 10, 20, 10);
+                if (player == oldTopPlayer) {
+                    Titles.sendTitle(player, "&cLeaving Koth", "&7You are no longer capturing", 10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "Leaving Koth", "You left the koth zone", 10, 20, 10);
+                    Titles.sendTitle(player, "&cLeaving Koth", "&7You left the koth zone", 10, 20, 10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS");
             }
@@ -193,7 +193,7 @@ public class KothEvent {
 
             if (System.currentTimeMillis() - startTime >= timeLimit) {
                 end();
-                Titles.sendTitle(ChatColor.GREEN + "Time Limit", ChatColor.YELLOW + "No koth winners", 10, 60, 10);
+                Titles.sendTitle("&aTime Limit", "&eNo koth winners", 10, 60, 10);
             }
         }
     }
@@ -241,8 +241,8 @@ public class KothEvent {
     }
 
     private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {
-        String title = isWinner ? ChatColor.GREEN + "YOU WON" : ChatColor.RED + "YOU LOSE";
-        String subtitle = ChatColor.YELLOW + "Koth Winner: " + winner == null ? "N/A" : winner.getName();
+        String title = isWinner ? "&aYOU WON" : "&cYOU LOSE";
+        String subtitle = "&eKoth Winner: &b" + winner == null ? "N/A" : winner.getName();
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
