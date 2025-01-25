@@ -17,6 +17,7 @@ import com.arkflame.minekoth.setup.listeners.SetupChatListener;
 import com.arkflame.minekoth.setup.listeners.SetupInteractListener;
 import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
+import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 
 public class MineKoth extends JavaPlugin {
@@ -73,6 +74,7 @@ public class MineKoth extends JavaPlugin {
     @Override
     public void onEnable() {
         setInstance(this);
+        saveDefaultConfig();
 
         // Managers
         particleScheduler = new ParticleScheduler(this);
@@ -106,5 +108,10 @@ public class MineKoth extends JavaPlugin {
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             new MineKothPlaceholderExtension().register();
         }
+
+        String webhookUrl = getConfig().getString("webhook-url");
+
+        // Initialize the DiscordHook
+        DiscordHook.init(webhookUrl);
     }
 }

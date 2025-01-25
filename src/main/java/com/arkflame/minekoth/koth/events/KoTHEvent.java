@@ -4,6 +4,7 @@ import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.utils.ChatColors;
+import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.Sounds;
@@ -176,7 +177,20 @@ public class KothEvent {
     }
 
     public void setCaptured(CapturingPlayers winners) {
+        Player topPlayer = getTopPlayer();
         distributeRewards(winners);
+
+        // Notify Discord
+        DiscordHook.sendKothCaptured(koth.getName(), topPlayer.getName());
+
+        // Show win/lose effects titles and subtitles
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            FoliaAPI.runTaskForEntity(player, () -> {
+                displayWinLoseEffects(player, isWinner(player), topPlayer);
+            }, () -> {
+            }, 1L);
+        }
+
         end();
     }
 
@@ -209,6 +223,10 @@ public class KothEvent {
 
             if (System.currentTimeMillis() - startTime >= timeLimit) {
                 end();
+
+                // Notify Discord
+                DiscordHook.sendKothTimeLimit(koth.getName());
+
                 Titles.sendTitle("&aTime Limit", "&eNo koth winners", 10, 60, 10);
             }
         }
@@ -225,14 +243,6 @@ public class KothEvent {
         if (topPlayer != null) {
             Rewards rewards = koth.getRewards();
             rewards.giveRewards(topPlayer);
-        }
-
-        // Show win/lose effects titles and subtitles
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            FoliaAPI.runTaskForEntity(player, () -> {
-                displayWinLoseEffects(player, isWinner(player), topPlayer);
-            }, () -> {
-            }, 1L);
         }
     }
 

@@ -3,6 +3,7 @@ package com.arkflame.minekoth.koth.events.managers;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -34,6 +35,9 @@ public class KothEventManager {
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
             currentEvent.updatePlayerState(player, player.getLocation());
         }
+
+        // Notify Discord
+        DiscordHook.sendKothStart(koth.getName());
     }
 
     /**
