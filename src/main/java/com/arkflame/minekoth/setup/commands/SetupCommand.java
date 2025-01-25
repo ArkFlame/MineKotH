@@ -48,6 +48,34 @@ public class SetupCommand {
                 if (!session.isComplete()) {
                     player.sendMessage(
                             ChatColor.RED + "Setup is not complete. Finish all steps before using this command.");
+                    if (!session.isNameSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the name of the koth first.");
+                    }
+                    if (!session.isFirstPositionSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the first position of the koth first.");
+                    }
+                    if (!session.isSecondPositionSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the second position of the koth first.");
+                    }
+                    if (!session.isTimesSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the times of the koth first.");
+                    }
+                    if (!session.isTimeLimitSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the time limit of the koth first.");
+                    }
+                    if (!session.isCaptureTimeSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the capture time of the koth first.");
+                    }
+                    if (!session.isRewardsSet()) {
+                        player.sendMessage(
+                                ChatColor.RED + "You must set the rewards of the koth first.");
+                    }
                     break;
                 }
 
@@ -61,10 +89,20 @@ public class SetupCommand {
                 }
 
                 // Save the koth instance to your storage system here.
-                Koth koth = new Koth(sessionId, session.getName(),
-                        player.getWorld().getName(), session.getFirstPosition(),
-                        session.getSecondPosition(), session.getTimeLimit(), session.getCaptureTime(),
-                        new Rewards(session.getRewardsCommands(), session.getRewards()), session.getTimes());
+                Koth koth = new Koth(
+                    sessionId, 
+                    session.getName(),
+                    session.getWorldName(), 
+                    session.getFirstPosition(),
+                    session.getSecondPosition(), 
+                    session.getTimeLimit(), 
+                    session.getCaptureTime(),
+                    new Rewards(
+                        session.getRewardsCommands(), 
+                        session.getRewards(), 
+                        session.getLootType(),
+                        session.getLootAmount()),
+                    session.getTimes());
 
                 MineKoth.getInstance().getSessionManager().removeSession(player);
 

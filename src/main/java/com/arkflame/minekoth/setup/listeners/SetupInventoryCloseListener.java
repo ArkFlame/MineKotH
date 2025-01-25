@@ -1,10 +1,16 @@
 package com.arkflame.minekoth.setup.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.setup.session.SetupSession;
@@ -20,10 +26,17 @@ public class SetupInventoryCloseListener implements Listener {
         }
 
         if (session.isDaysSet() && !session.isRewardsSet()) {
-            session.setRewards(event.getInventory().getContents());
-            player.sendMessage(ChatColor.GREEN + "Rewards set. Please enter commands without / and using %player% for rewards.");
-            player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
-            player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
+            List<ItemStack> items = new ArrayList<>();
+            Inventory inventory = event.getInventory();
+            for (int i = 0; i < 27; i++) {
+                ItemStack item = inventory.getItem(i);
+                if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
+                    items.add(item);
+                }
+            }
+            session.setRewards(items.toArray(new ItemStack[0]));
+            player.sendMessage(ChatColor.GREEN + "Rewards set.");
+            player.sendMessage(ChatColor.GREEN + "Enter the type of loot (default/random).");
         }
     }
 

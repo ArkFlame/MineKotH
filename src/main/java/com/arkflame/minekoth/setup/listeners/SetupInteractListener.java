@@ -45,6 +45,7 @@ public class SetupInteractListener implements Listener {
         if (!session.isFirstPositionSet()) {
             Location loc = event.getClickedBlock().getLocation();
             session.setFirstPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
+            session.setWorldName(loc.getWorld().getName());
             player.sendMessage(ChatColor.GREEN + "Position 1 set at: " + ChatColor.AQUA + Locations.toString(loc));
             return;
         }

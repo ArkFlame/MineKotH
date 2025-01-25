@@ -11,6 +11,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Times;
@@ -83,6 +84,36 @@ public class SetupChatListener implements Listener {
             player.sendMessage(ChatColor.GREEN + "Days set to: " + ChatColor.AQUA + message);
             player.sendMessage(ChatColor.GREEN + "Put rewards in the chest.");
             openRewardsInventory(player);
+            return;
+        }
+
+        if (!session.isLootTypeSet()) {
+            if (!session.isValidLootType(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid loot type. Please enter a valid one. (DEFAULT, RANDOM)");
+                return;
+            }
+            session.setLootType(message);
+            player.sendMessage(ChatColor.GREEN + "Loot type set to: " + ChatColor.AQUA + message);
+            if (session.getLootType() == LootType.RANDOM && !session.isLootAmountSet()) {
+                player.sendMessage(ChatColor.GREEN + "Enter the loot amount.");
+            } else {
+                player.sendMessage(ChatColor.GREEN + "Enter the rewards commands.");
+                player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
+                player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
+            }
+            return;
+        }
+
+        if (session.getLootType() == LootType.RANDOM && !session.isLootAmountSet()) {
+            if (!session.isValidLootAmount(message)) {
+                player.sendMessage(ChatColor.RED + "Invalid loot amount. Please enter a valid one. (e.g., 1)");
+                return;
+            }
+            session.setLootAmount(Integer.parseInt(message));
+            player.sendMessage(ChatColor.GREEN + "Loot amount set to: " + ChatColor.AQUA + message);
+            player.sendMessage(ChatColor.GREEN + "Enter the rewards commands.");
+            player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
+            player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
             return;
         }
 

@@ -2,6 +2,7 @@ package com.arkflame.minekoth.koth.events;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
@@ -194,7 +195,7 @@ public class KothEvent {
                             ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
 
                     if (sendTimeLeftTitle) {
-                    boolean isTopPlayer = player == topPlayer;
+                        boolean isTopPlayer = player == topPlayer;
                         Titles.sendTitle(
                                 "&e" + secondsLeft,
                                 isTopPlayer ? "&aYou are capturing" : "&c" + topPlayer.getName() + " is capturing",
@@ -222,19 +223,8 @@ public class KothEvent {
         Player topPlayer = winners.getPlayers().get(0);
 
         if (topPlayer != null) {
-            // Execute reward commands
-            FoliaAPI.runTask(() -> {
-                for (String command : koth.getRewards().getRewardsCommands()) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
-                }
-            });
-
-            // Give reward items
-            for (ItemStack item : koth.getRewards().getRewardsItems()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    topPlayer.getInventory().addItem(item);
-                }
-            }
+            Rewards rewards = koth.getRewards();
+            rewards.giveRewards(topPlayer);
         }
 
         // Show win/lose effects titles and subtitles
