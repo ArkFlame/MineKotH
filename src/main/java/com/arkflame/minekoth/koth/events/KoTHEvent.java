@@ -1,5 +1,9 @@
 package com.arkflame.minekoth.koth.events;
 
+import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.MineClansAPI;
+import com.arkflame.mineclans.models.Faction;
+import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
@@ -128,6 +132,19 @@ public class KothEvent {
 
     private boolean isSameTeam(Player p1, Player p2) {
         // Placeholder logic for determining if two players are on the same team.
+        if (true) { // MineClans plugin enabled && MineClans config enabled
+            MineClansAPI mineClansAPI = MineClans.getInstance().getAPI();
+
+            FactionPlayer fp1 = mineClansAPI.getFactionPlayer(p1);
+            FactionPlayer fp2 = mineClansAPI.getFactionPlayer(p2);
+            if (fp1 != null && fp2 != null) {
+                Faction f1 = fp1.getFaction();
+                Faction f2 = fp2.getFaction();
+                if (f1 != null && f2 != null) {
+                    return f1.equals(f2);
+                }
+            }
+        }
         return false;
     }
 
@@ -139,7 +156,8 @@ public class KothEvent {
     private void addToCapturingPlayers(Player player) {
         playersInZone.add(player);
         for (CapturingPlayers group : playersCapturing) {
-            if (isSameTeam(group.getPlayers().get(0), player)) {
+            Player firstPlayer = group.getPlayers().get(0);
+            if (firstPlayer != player && isSameTeam(group.getPlayers().get(0), player)) {
                 group.addPlayer(player);
                 return;
             }
@@ -204,15 +222,31 @@ public class KothEvent {
                 Player topPlayer = getTopPlayer();
                 boolean sendTimeLeftTitle = countdownIntervals.contains((int) secondsLeft);
 
-                for (Player player : topGroup.getPlayers()) {
-                    Titles.sendActionBar(player,
-                            ChatColors.color("&aTime left to capture: &e" + getTimeLeftToCaptureFormatted()));
+                for (Player player : playersInZone) {
+                    boolean isTopPlayer = player == topPlayer;
+                    boolean isTopGroup = topGroup != null && topGroup.containsPlayer(player);
+                    if (isTopPlayer) {
+                        Titles.sendActionBar(
+                                player,
+                                ChatColors.color("&aYou are capturing! &e" + getTimeLeftToCaptureFormatted()));
+                    } else if (isTopGroup) {
+                        Titles.sendActionBar(
+                                player,
+                                ChatColors.color("&a" + topPlayer.getName() + " is capturing! &e"
+                                        + getTimeLeftToCaptureFormatted()));
+                    } else {
+                        Titles.sendActionBar(
+                                player,
+                                ChatColors.color("&c" + topPlayer.getName() + " is capturing! &e"
+                                        + getTimeLeftToCaptureFormatted()));
+                    }
 
                     if (sendTimeLeftTitle) {
-                        boolean isTopPlayer = player == topPlayer;
                         Titles.sendTitle(
                                 "&e" + secondsLeft,
-                                isTopPlayer ? "&aYou are capturing" : "&c" + topPlayer.getName() + " is capturing",
+                                isTopPlayer ? "&aYou are capturing"
+                                        : isTopGroup ? "&a" + topPlayer.getName() + " is capturing"
+                                                : "&c" + topPlayer.getName() + " is capturing",
                                 10, 20, 10);
                         Sounds.play(1.0f, 1.0f, "CLICK");
                     }
@@ -258,7 +292,7 @@ public class KothEvent {
 
     private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {
         String title = isWinner ? "&aYOU WON" : "&cYOU LOSE";
-        String subtitle = "&eKoth Winner: &b" + winner == null ? "N/A" : winner.getName();
+        String subtitle = "&eWINNER: &b" + (winner == null ? "N/A" : winner.getName());
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
@@ -354,12 +388,14 @@ public class KothEvent {
     }
 
     public void clearPlayers() {
-        Player topPlayer = getTopPlayer();
-        if (topPlayer != null) {
-            FoliaAPI.runTask(() -> {
-                MineKoth.getInstance().getParticleScheduler().removeTrail(topPlayer);
-                GlowingUtility.unsetGlowing(topPlayer);
-            });
+        CapturingPlayers topGroup = getTopGroup();
+        for (Player player : topGroup.getPlayers()) {
+            if (player != null) {
+                FoliaAPI.runTask(() -> {
+                    MineKoth.getInstance().getParticleScheduler().removeTrail(player);
+                    GlowingUtility.unsetGlowing(player);
+                });
+            }
         }
 
         playersCapturing.clear();
