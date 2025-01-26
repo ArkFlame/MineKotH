@@ -3,6 +3,7 @@ package com.arkflame.minekoth.koth.events.managers;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
@@ -10,6 +11,7 @@ import com.arkflame.minekoth.utils.Titles;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class KothEventManager {
@@ -33,7 +35,14 @@ public class KothEventManager {
                 10, 20, 10);
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
-            currentEvent.updatePlayerState(player, player.getLocation());
+            currentEvent.updatePlayerState(player, player.getLocation(), player.isDead());
+        }
+        Location center = koth.getCenter();
+        if (center != null) {
+            World world = center.getWorld();
+            if (world != null) {
+                world.strikeLightning(center);
+            }
         }
 
         // Notify Discord
@@ -49,6 +58,7 @@ public class KothEventManager {
         if (currentEvent == null) {
             return;
         }
+        currentEvent.clearPlayers();
         currentEvent.end();
         currentEvent = null;
         MineKoth.getInstance().getScheduleManager().calculateNextKoth();
@@ -95,8 +105,7 @@ public class KothEventManager {
 
                     // Check if 3 seconds passed since end
                     if (currentEvent.getTimeSinceEnd() > 3000L) {
-                        currentEvent.clearPlayers();
-                        currentEvent = null;
+                        end();
                     }
                 }
             } catch (Exception ex) {
@@ -106,8 +115,15 @@ public class KothEventManager {
     }
 
     public void updatePlayerState(Player player, Location to) {
+        updatePlayerState(player, to, false);
+    }
+
+    public void updatePlayerState(Player player, Location to, boolean dead) {
         if (currentEvent != null) {
-            currentEvent.updatePlayerState(player, to);
+            if (currentEvent.getState() == KothEventState.CAPTURED) {
+                return;
+            }
+            currentEvent.updatePlayerState(player, to, dead);
         }
     }
 }

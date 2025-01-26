@@ -81,6 +81,7 @@ public class Koth {
     public void setTimes(String times) { this.times = times; }
 
     public Location getCenter() {
+        if (firstPosition == null || secondPosition == null) return null;
         double x = (firstPosition.getX() + secondPosition.getX()) / 2;
         double y = (firstPosition.getY() + secondPosition.getY()) / 2;
         double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;

@@ -16,11 +16,9 @@ import com.arkflame.minekoth.utils.Titles;
 
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.entity.Firework;
 
@@ -73,12 +71,9 @@ public class KothEvent {
             return;
 
         if (isTopPlayer(player)) {
-            GlowingUtility.setGlowing(player, ChatColor.RED);
-            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
-                    5);
+            applyCapturingEffect(player);
         } else {
-            GlowingUtility.unsetGlowing(player);
-            MineKoth.getInstance().getParticleScheduler().removeTrail(player);
+            clearEffects(player);
         }
     }
 
@@ -100,7 +95,7 @@ public class KothEvent {
                 if (player == topPlayer) {
                     Titles.sendTitle(player, "&aCapturing", "&aYou started capturing the koth", 10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "&aEntering Zone", "&c" + topPlayer.getName() + " is capturing", 10, 20,
+                    Titles.sendTitle(player, "&aEntering Zone", (oldTopGroup.containsPlayer(player) ? "&a" : "&c") + topPlayer.getName() + " is capturing", 10, 20,
                             10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
@@ -296,8 +291,9 @@ public class KothEvent {
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
-            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
-            GlowingUtility.setGlowing(player, ChatColor.GREEN);
+            applyWinnerEffect(player);
+        } else {
+            clearEffects(player);
         }
     }
 
@@ -314,8 +310,8 @@ public class KothEvent {
         return koth;
     }
 
-    public void updatePlayerState(Player player, Location to) {
-        if (koth.isInside(to)) {
+    public void updatePlayerState(Player player, Location to, boolean dead) {
+        if (koth.isInside(to) && !dead) {
             updatePlayerState(player, true);
         } else {
             updatePlayerState(player, false);
@@ -387,16 +383,52 @@ public class KothEvent {
         return String.format("%d", seconds);
     }
 
-    public void clearPlayers() {
-        CapturingPlayers topGroup = getTopGroup();
-        for (Player player : topGroup.getPlayers()) {
-            if (player != null) {
-                FoliaAPI.runTask(() -> {
-                    MineKoth.getInstance().getParticleScheduler().removeTrail(player);
-                    GlowingUtility.unsetGlowing(player);
-                });
-            }
+    public void clearAllEffects() {
+        for (Player player : playersInZone) {
+            clearEffects(player);
         }
+    }
+
+    private void clearTopGroupEffects() {
+        CapturingPlayers topGroup = getTopGroup();
+        if (topGroup == null) {
+            return;
+        }
+        for (Player player : topGroup.getPlayers()) {
+            clearEffects(player);
+        }
+    }
+
+    private void applyCapturingEffect(Player player) {
+        if (player != null) {
+            FoliaAPI.runTask(() -> {
+                MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
+                        5);
+                GlowingUtility.setGlowing(player, ChatColor.RED);
+            });
+        }
+    }
+
+    private void applyWinnerEffect(Player player) {
+        if (player != null) {
+            FoliaAPI.runTask(() -> {
+                MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
+                GlowingUtility.setGlowing(player, ChatColor.GREEN);
+            });
+        }
+    }
+
+    public void clearEffects(Player player) {
+        if (player != null) {
+            FoliaAPI.runTask(() -> {
+                MineKoth.getInstance().getParticleScheduler().removeTrail(player);
+                GlowingUtility.unsetGlowing(player);
+            });
+        }
+    }
+
+    public void clearPlayers() {
+        clearTopGroupEffects();
 
         playersCapturing.clear();
         playersInZone.clear();
