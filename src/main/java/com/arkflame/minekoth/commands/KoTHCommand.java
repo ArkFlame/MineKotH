@@ -11,6 +11,8 @@ import com.arkflame.minekoth.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
+import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.commands.ScheduleCommand;
@@ -93,21 +95,25 @@ public class KothCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "No schedules available.");
                     break;
                 }
-                if (MineKoth.getInstance().getKothEventManager().isEventActive()) {
-                    sender.sendMessage(ChatColor.RED + "An event is already active.");
-                    break;
-                }
                 Koth koth = schedule.getKoth();
                 if (koth == null) {
                     sender.sendMessage(ChatColor.RED + "Invalid koth.");
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().start(koth);
-                sender.sendMessage(ChatColor.GREEN + "Schedules started.");
+                sender.sendMessage(ChatColor.GREEN + "Ran next schedule (" + koth.getName() + ")");
+                sender.sendMessage(ChatColor.GREEN + "Koths running:");
+                for (KothEvent k : MineKoth.getInstance().getKothEventManager().getRunningKoths()) {
+                    sender.sendMessage(ChatColor.GREEN + " - " + k.getKoth().getName());
+                }
                 break;
             case "stop":
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
                     sender.sendMessage(ChatColor.RED + "No event is active.");
+                    break;
+                }
+                if (MineKoth.getInstance().getKothEventManager().getKothEvent().getState() == KothEventState.CAPTURED) {
+                    sender.sendMessage(ChatColor.RED + "Koth is already captured, wait.");
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().end();
@@ -118,6 +124,10 @@ public class KothCommand implements CommandExecutor {
             case "capture":
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
                     sender.sendMessage(ChatColor.RED + "No event is active.");
+                    break;
+                }
+                if (MineKoth.getInstance().getKothEventManager().getKothEvent().getState() == KothEventState.CAPTURED) {
+                    sender.sendMessage(ChatColor.RED + "Koth is already captured, wait.");
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().getKothEvent().setCaptured(new CapturingPlayers(player));

@@ -19,7 +19,7 @@ public class ScheduleRunnerTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (MineKoth.getInstance().getKothEventManager().getKothEvent() != null) {
+        if (MineKoth.getInstance().getKothEventManager().isEventActive()) {
             return;
         }
 

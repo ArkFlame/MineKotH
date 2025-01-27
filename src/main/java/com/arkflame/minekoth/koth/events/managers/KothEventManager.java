@@ -9,6 +9,10 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,7 +20,13 @@ import org.bukkit.entity.Player;
 
 public class KothEventManager {
 
-    private KothEvent currentEvent;
+    private List<KothEvent> events = new ArrayList<>();
+
+    private KothEvent runNewEvent(Koth koth) {
+        KothEvent event = new KothEvent(koth);
+        events.add(event);
+        return event;
+    }
 
     /**
      * Starts a new kothEvent if one is not already active.
@@ -25,10 +35,7 @@ public class KothEventManager {
      * @throws IllegalStateException if an event is already active.
      */
     public void start(Koth koth) {
-        if (currentEvent != null) {
-            return;
-        }
-        currentEvent = new KothEvent(koth);
+        KothEvent currentEvent = runNewEvent(koth);
         Titles.sendTitle(
                 "&a" + koth.getName(),
                 "&e" + "Capture the Hill!",
@@ -49,18 +56,29 @@ public class KothEventManager {
         DiscordHook.sendKothStart(koth.getName());
     }
 
+    private void end(KothEvent currentEvent) {
+        currentEvent.clearPlayers();
+        currentEvent.end();
+        if (events.contains(currentEvent)) {
+            events.remove(currentEvent);
+        }
+    }
+
     /**
      * Ends the currently active kothEvent.
      * 
      * @throws IllegalStateException if no event is active.
      */
     public void end() {
-        if (currentEvent == null) {
+        if (!isEventActive()) {
             return;
         }
-        currentEvent.clearPlayers();
-        currentEvent.end();
-        currentEvent = null;
+        Iterator<KothEvent> iterator = events.iterator();
+        while (iterator.hasNext()) {
+            KothEvent currentEvent = iterator.next();
+            iterator.remove();
+            end(currentEvent);
+        }
         MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
 
@@ -70,7 +88,7 @@ public class KothEventManager {
      * @return The active kothEvent, or null if none is active.
      */
     public KothEvent getKothEvent() {
-        return currentEvent;
+        return events.size() > 0 ? events.get(0) : null;
     }
 
     /**
@@ -79,7 +97,7 @@ public class KothEventManager {
      * @return True if an event is active, false otherwise.
      */
     public boolean isEventActive() {
-        return currentEvent != null;
+        return !events.isEmpty();
     }
 
     /**
@@ -87,29 +105,31 @@ public class KothEventManager {
      * This should be called periodically (e.g., in a scheduled task).
      */
     public void tick() {
-        if (currentEvent != null) {
-            try {
-                currentEvent.tick();
+        for (KothEvent currentEvent : getRunningKoths()) {
+            if (currentEvent != null) {
+                try {
+                    currentEvent.tick();
 
-                // The koth was captured
-                if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
-                    Koth koth = currentEvent.getKoth();
-                    Location location = koth.getCenter();
+                    // The koth was captured
+                    if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
+                        Koth koth = currentEvent.getKoth();
+                        Location location = koth.getCenter();
 
-                    // Play 3 fireworks in the last 3 seconds
-                    FoliaAPI.runTaskForRegion(location, () -> {
-                        if (currentEvent != null) {
-                            currentEvent.createFirework(location, FireworkEffect.Type.BALL);
+                        // Play 3 fireworks in the last 3 seconds
+                        FoliaAPI.runTaskForRegion(location, () -> {
+                            if (currentEvent != null) {
+                                currentEvent.createFirework(location, FireworkEffect.Type.BALL);
+                            }
+                        });
+
+                        // Check if 3 seconds passed since end
+                        if (currentEvent.getTimeSinceEnd() > 3000L) {
+                            end(currentEvent);
                         }
-                    });
-
-                    // Check if 3 seconds passed since end
-                    if (currentEvent.getTimeSinceEnd() > 3000L) {
-                        end();
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
         }
     }
@@ -119,11 +139,17 @@ public class KothEventManager {
     }
 
     public void updatePlayerState(Player player, Location to, boolean dead) {
-        if (currentEvent != null) {
-            if (currentEvent.getState() == KothEventState.CAPTURED) {
-                return;
+        for (KothEvent currentEvent : events) {
+            if (currentEvent != null) {
+                if (currentEvent.getState() == KothEventState.CAPTURED) {
+                    return;
+                }
+                currentEvent.updatePlayerState(player, to, dead);
             }
-            currentEvent.updatePlayerState(player, to, dead);
         }
+    }
+
+    public KothEvent[] getRunningKoths() {
+        return events.toArray(new KothEvent[0]);
     }
 }

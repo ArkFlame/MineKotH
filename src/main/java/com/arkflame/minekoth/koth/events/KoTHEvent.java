@@ -194,7 +194,7 @@ public class KothEvent {
         distributeRewards(winners);
 
         // Notify Discord
-        DiscordHook.sendKothCaptured(koth.getName(), topPlayer.getName());
+        DiscordHook.sendKothCaptured(koth.getName(), topPlayer == null ? "No Winner" : topPlayer.getName());
 
         // Show win/lose effects titles and subtitles
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -432,5 +432,9 @@ public class KothEvent {
 
         playersCapturing.clear();
         playersInZone.clear();
+    }
+
+    public Collection<Player> getPlayersInZone() {
+        return playersInZone;
     }
 }
