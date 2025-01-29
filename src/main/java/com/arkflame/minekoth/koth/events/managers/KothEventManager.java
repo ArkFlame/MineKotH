@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 public class KothEventManager {
 
@@ -125,6 +127,15 @@ public class KothEventManager {
                         // Check if 3 seconds passed since end
                         if (currentEvent.getTimeSinceEnd() > 3000L) {
                             end(currentEvent);
+                        }
+                    } else {
+                        for (Player player : currentEvent.getPlayersInZone()) {
+                            if (!player.isDead() && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                                FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
+                                    player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                                    player.sendMessage(ChatColor.RED + "You have been revealed!");
+                                });
+                            }
                         }
                     }
                 } catch (Exception ex) {
