@@ -125,6 +125,7 @@ public class MineKoth extends JavaPlugin {
     public void onDisable() {
         DiscordHook.shutdown();
         MenuUtil.shutdown();
+        HologramUtility.clearHolograms();
 
         // TODO: Save all koths
 
