@@ -134,4 +134,8 @@ private static void sendDiscordMessage(String title, String description, int col
                 .replace("\r", "\\r");
     }
 
+    public static void shutdown() {
+        DiscordHook.webhookUrl = null;
+    }
+
 }

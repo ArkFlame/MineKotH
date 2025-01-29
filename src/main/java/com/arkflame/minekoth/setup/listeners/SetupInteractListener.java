@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Position;
+import com.arkflame.minekoth.menus.KothEditMenu;
+import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.Locations;
 
@@ -31,15 +33,10 @@ public class SetupInteractListener implements Listener {
 
         event.setCancelled(true);
 
-        if (lastInteract.containsKey(player) && System.currentTimeMillis() - lastInteract.get(player) < 1000) {
+        if (lastInteract.containsKey(player) && System.currentTimeMillis() - lastInteract.get(player) < 500) {
             return;
         } else {
             lastInteract.put(player, System.currentTimeMillis());
-        }
-
-        if (!session.isNameSet()) {
-            player.sendMessage(ChatColor.RED + "You must set the name of the koth first.");
-            return;
         }
 
         if (!session.isFirstPositionSet()) {
@@ -47,15 +44,27 @@ public class SetupInteractListener implements Listener {
             session.setFirstPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
             session.setWorldName(loc.getWorld().getName());
             player.sendMessage(ChatColor.GREEN + "Position 1 set at: " + ChatColor.AQUA + Locations.toString(loc));
-            return;
-        }
-
-        if (!session.isSecondPositionSet()) {
+        } else if (!session.isSecondPositionSet()) {
             Location loc = event.getClickedBlock().getLocation();
+            if (!session.isValidPosition(loc)) {
+                player.sendMessage(ChatColor.RED + "The world must be the same as the first position.");
+                return;
+            }
             session.setSecondPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
             player.sendMessage(ChatColor.GREEN + "Position 2 set at: " + ChatColor.AQUA + Locations.toString(loc));
-            player.sendMessage(ChatColor.GREEN + "Enter the times to run the koth (e.g., 8pm 9pm 10pm).");
-            return;
+            // Send message with size of area Area Size (22x22)
+            Position first = session.getFirstPosition();
+            Position second = session.getSecondPosition();
+            player.sendMessage(ChatColor.GREEN + "Area size (" + first.getXLength(second) + "x" + first.getZLength(second) + "): " + ChatColor.AQUA + first.getArea(second) + " blocks");
+            if (!session.isTimesSet()) {
+                player.sendMessage(ChatColor.GREEN + "Enter the times to run the koth (e.g., 8pm 9pm 10pm).");
+            }
+        }
+
+        
+        if (session.isEditing() && session.isComplete()) {
+            SetupCommand.handleFinish(player, null);
+            new KothEditMenu(MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
         }
     }
 

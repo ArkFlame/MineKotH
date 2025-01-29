@@ -15,8 +15,9 @@ public class Koth {
     private int timeToCapture;
     private Rewards rewards;
     private String times;
+    private String days;
 
-    public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times) {
+    public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times, String days) {
         this.id = id;
         this.name = name;
         this.worldName = worldName;
@@ -26,6 +27,7 @@ public class Koth {
         this.timeToCapture = timeToCapture;
         this.rewards = rewards;
         this.times = times;
+        this.days = days;
     }
 
     public World getWorld() {
@@ -79,6 +81,9 @@ public class Koth {
 
     public String getTimes() { return times; }
     public void setTimes(String times) { this.times = times; }
+
+    public String getDays() { return days; }
+    public void setDays(String days) { this.days = days; }
 
     public Location getCenter() {
         if (firstPosition == null || secondPosition == null) return null;

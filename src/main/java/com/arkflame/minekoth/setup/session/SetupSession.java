@@ -3,8 +3,11 @@ package com.arkflame.minekoth.setup.session;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Position;
 import com.arkflame.minekoth.koth.Rewards.LootType;
 
@@ -21,10 +24,28 @@ public class SetupSession {
     private ItemStack[] rewards;
     private List<String> rewardsCommands = new ArrayList<>();
     private LootType lootType;
-    private int lootAmount;
+    private int lootAmount = -1;
     private String worldName;
 
+    private boolean editing = false;
+
     public SetupSession() {
+    }
+
+    public SetupSession(Koth koth) {
+        this.id = koth.getId();
+        this.name = koth.getName();
+        this.worldName = koth.getWorldName();
+        this.firstPosition = new Position(koth.getFirstPosition());
+        this.secondPosition = new Position(koth.getSecondPosition());
+        this.timeLimit = koth.getTimeLimit();
+        this.captureTime = koth.getTimeToCapture();
+        this.rewards = koth.getRewards().getRewardsItems().toArray(new ItemStack[0]);
+        this.times = koth.getTimes();
+        this.days = koth.getDays();
+        this.lootType = koth.getRewards().getLootType();
+
+        this.editing = true;
     }
 
     public SetupSession(int id) {
@@ -127,7 +148,7 @@ public class SetupSession {
 
     public boolean isComplete() {
         return isNameSet() && isTimesSet() && isFirstPositionSet() && isSecondPositionSet() && isTimeLimitSet()
-                && isCaptureTimeSet() && isRewardsSet() && isDaysSet() && isLootTypeSet();
+                && isCaptureTimeSet() && isRewardsSet() && isDaysSet() && isLootTypeSet() && isLootAmountSet();
     }
 
     public void setRewards(ItemStack[] rewards) {
@@ -159,7 +180,8 @@ public class SetupSession {
             return false;
         }
 
-        // Regular expression to match 12-hour (with am/pm), 24-hour time formats, and multiple times separated by commas
+        // Regular expression to match 12-hour (with am/pm), 24-hour time formats, and
+        // multiple times separated by commas
         String timePattern = "^(?:(1[0-2]|[1-9])(am|pm)|([01]?[0-9]|2[0-3]):([0-5]?[0-9])|(24:00))(,\\s?(?:(1[0-2]|[1-9])(am|pm)|([01]?[0-9]|2[0-3]):([0-5]?[0-9])|(24:00)))*$";
         return message.toLowerCase().matches(timePattern);
     }
@@ -169,7 +191,8 @@ public class SetupSession {
             return false;
         }
 
-        // Regular expression to match valid time limits: number followed by s, m, h, or their variations
+        // Regular expression to match valid time limits: number followed by s, m, h, or
+        // their variations
         String timeLimitPattern = "^\\d+\\s?(s|sec|m|min|h|hour|hours|minute)$";
         return message.toLowerCase().matches(timeLimitPattern);
     }
@@ -179,7 +202,8 @@ public class SetupSession {
             return false;
         }
 
-        // Regular expression to match valid time limits: number followed by s, m, h, or their variations
+        // Regular expression to match valid time limits: number followed by s, m, h, or
+        // their variations
         String timeLimitPattern = "^\\d+\\s?(s|sec|m|min|h|hour|hours|minute)$";
         return message.toLowerCase().matches(timeLimitPattern);
     }
@@ -189,7 +213,8 @@ public class SetupSession {
             return false;
         }
 
-        // Regular expression to match valid days of the week or "ALL", with optional commas and spaces
+        // Regular expression to match valid days of the week or "ALL", with optional
+        // commas and spaces
         String daysPattern = "^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL)(,\\s?(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL))*$";
         return message.toUpperCase().matches(daysPattern);
     }
@@ -212,7 +237,9 @@ public class SetupSession {
     }
 
     public void setLootType(String message) {
-        if (isValidLootType(message)) {
+        if (message == null) {
+            this.lootType = null;
+        } else if (isValidLootType(message)) {
             this.lootType = LootType.valueOf(message.toUpperCase());
         } else {
             throw new IllegalArgumentException("Invalid loot type: " + message);
@@ -220,7 +247,7 @@ public class SetupSession {
     }
 
     public boolean isLootAmountSet() {
-        return lootAmount > 0;
+        return lootAmount > -1 || getLootType() == LootType.DEFAULT;
     }
 
     public boolean isValidLootAmount(String message) {
@@ -230,18 +257,22 @@ public class SetupSession {
 
         try {
             int amount = Integer.parseInt(message);
-            return amount > 0;
+            return amount > -1;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
     public void setLootAmount(int amount) {
-        if (amount > 0) {
+        if (amount > -1) {
             this.lootAmount = amount;
         } else {
             throw new IllegalArgumentException("Loot amount must be greater than 0");
         }
+    }
+
+    public void unsetLootAmount() {
+        this.lootAmount = -1;
     }
 
     public String getWorldName() {
@@ -250,5 +281,21 @@ public class SetupSession {
 
     public void setWorldName(String worldName) {
         this.worldName = worldName;
+    }
+
+    public void setRewardsCommands(List<String> rewardsCommands) {
+        this.rewardsCommands = rewardsCommands;
+    }
+
+    public boolean isRewardsCommandsSet() {
+        return this.rewardsCommands != null && !this.rewardsCommands.isEmpty();
+    }
+
+    public boolean isEditing() {
+        return editing;
+    }
+
+    public boolean isValidPosition(Location loc) {
+        return loc != null && loc.getWorld().getName().equals(worldName);
     }
 }

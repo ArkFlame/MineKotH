@@ -25,7 +25,7 @@ public class SetupInventoryCloseListener implements Listener {
             return;
         }
 
-        if (session.isDaysSet() && !session.isRewardsSet()) {
+        if (!session.isRewardsSet()) {
             List<ItemStack> items = new ArrayList<>();
             Inventory inventory = event.getInventory();
             for (int i = 0; i < 27; i++) {
@@ -35,8 +35,12 @@ public class SetupInventoryCloseListener implements Listener {
                 }
             }
             session.setRewards(items.toArray(new ItemStack[0]));
-            player.sendMessage(ChatColor.GREEN + "Rewards set.");
-            player.sendMessage(ChatColor.GREEN + "Enter the type of loot (default/random).");
+            player.sendMessage(ChatColor.GREEN + "Rewards set. (" + items.size() + " items)");
+            if (!session.isLootTypeSet()) {
+                player.sendMessage(ChatColor.GREEN + "Enter the type of loot (default/random).");
+            }
+        } else {
+            player.sendMessage("Rewards is already set");
         }
     }
 

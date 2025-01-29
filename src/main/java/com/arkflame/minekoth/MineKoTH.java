@@ -19,6 +19,7 @@ import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.MenuUtil;
 
 public class MineKoth extends JavaPlugin {
     private static MineKoth instance;
@@ -113,5 +114,17 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize the DiscordHook
         DiscordHook.init(webhookUrl);
+
+        // Initialize the MenuUtil
+        MenuUtil.registerEvents(this);
+    }
+
+    public void onDisable() {
+        DiscordHook.shutdown();
+        MenuUtil.shutdown();
+
+        // TODO: Save all koths
+
+        // TODO: Save all schedules
     }
 }

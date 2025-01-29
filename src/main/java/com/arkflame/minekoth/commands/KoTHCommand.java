@@ -161,6 +161,7 @@ public class KothCommand implements CommandExecutor {
         player.sendMessage(ChatColor.YELLOW + "World: " + koth.getWorldName());
         player.sendMessage(ChatColor.YELLOW + "Time Limit: " + koth.getTimeLimit());
         player.sendMessage(ChatColor.YELLOW + "Time to Capture: " + koth.getTimeToCapture());
-        player.sendMessage(ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + koth.getRewards().getRewardsCommands());
+        player.sendMessage(ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + koth.getRewards().getRewardsItems().size());
+        player.sendMessage(ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + koth.getRewards().getRewardsCommands());
     }
 }
