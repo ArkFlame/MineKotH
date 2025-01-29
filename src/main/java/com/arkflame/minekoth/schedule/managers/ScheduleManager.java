@@ -168,4 +168,10 @@ public class ScheduleManager {
     public List<Schedule> getAllSchedules() {
         return new ArrayList<>(schedulesById.values());
     }
+
+    public Schedule[] getSchedulesByKoth(int id) {
+        return schedulesById.values().stream()
+                .filter(schedule -> schedule.getKothId() == id)
+                .toArray(Schedule[]::new);
+    }
 }

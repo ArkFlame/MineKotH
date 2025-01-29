@@ -19,6 +19,7 @@ import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.HologramUtility;
 import com.arkflame.minekoth.utils.MenuUtil;
 
 public class MineKoth extends JavaPlugin {
@@ -76,6 +77,8 @@ public class MineKoth extends JavaPlugin {
     public void onEnable() {
         setInstance(this);
         saveDefaultConfig();
+
+        HologramUtility.initialize(this);
 
         // Managers
         particleScheduler = new ParticleScheduler(this);

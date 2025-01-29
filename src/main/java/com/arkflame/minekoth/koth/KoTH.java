@@ -101,7 +101,8 @@ public class Koth {
     public void spawnHologram() {
         Location center = getCenter();
         if (center == null) return;
-        HologramUtility.createHologram("koth_" + id, center, "&e%koth_name_" + id + "%", "&a%koth_time_" + id + "%");
+        center.add(0, 1, 0);
+        HologramUtility.createHologram("koth_" + id, center, "&e%minekoth_koth_name_" + id + "%", "&a%minekoth_koth_state_" + id + "%", "&b%minekoth_koth_time_" + id + "%");
     }
 
     public void despawnHologram() {
