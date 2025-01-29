@@ -3,6 +3,9 @@ package com.arkflame.minekoth.koth;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import com.arkflame.minekoth.utils.HologramUtility;
+
 import org.bukkit.Bukkit;
 
 public class Koth {
@@ -28,6 +31,7 @@ public class Koth {
         this.rewards = rewards;
         this.times = times;
         this.days = days;
+        spawnHologram();
     }
 
     public World getWorld() {
@@ -92,5 +96,15 @@ public class Koth {
         double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
 
         return new Location(getWorld(), x, y, z);
+    }
+
+    public void spawnHologram() {
+        Location center = getCenter();
+        if (center == null) return;
+        HologramUtility.createHologram("koth_" + id, center, "&e%koth_name_" + id + "%", "&a%koth_time_" + id + "%");
+    }
+
+    public void despawnHologram() {
+        HologramUtility.deleteHologram("koth_" + id);
     }
 }

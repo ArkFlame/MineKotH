@@ -28,6 +28,7 @@ public class SetupSession {
     private String worldName;
 
     private boolean editing = false;
+    private boolean editingRewards = false;
 
     public SetupSession() {
     }
@@ -293,6 +294,14 @@ public class SetupSession {
 
     public boolean isEditing() {
         return editing;
+    }
+
+    public boolean isEditingRewards() {
+        return editingRewards;
+    }
+
+    public void setEditingRewards(boolean editingRewards) {
+        this.editingRewards = editingRewards;
     }
 
     public boolean isValidPosition(Location loc) {

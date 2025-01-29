@@ -170,6 +170,7 @@ public class KothEditMenu extends Menu {
         session.setRewardsCommands(new ArrayList<>());
         session.setLootType(null);
         session.unsetLootAmount();
+        session.setEditingRewards(true);
         player.closeInventory();
         player.sendMessage(ChatColor.GREEN + "Put rewards in the chest.");
         MineKoth.getInstance().getSessionManager().addSession(player, session);

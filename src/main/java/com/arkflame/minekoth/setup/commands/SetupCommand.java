@@ -80,6 +80,10 @@ public class SetupCommand {
         }
 
         saveKoth(player, session);
+
+        if (session.isEditing() && session.isComplete()) {
+            new KothEditMenu(MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
+        }
     }
 
     private static void handleSetup(Player player, String[] args) {

@@ -46,7 +46,11 @@ public class KothManager {
      * @return the deleted koth or null if it doesn't exist.
      */
     public Koth deleteKoth(int id) {
-        return koths.remove(id);
+        Koth removedKoth = koths.remove(id);
+        if (removedKoth != null) {
+            removedKoth.despawnHologram();
+        }
+        return removedKoth;
     }
 
     /**
