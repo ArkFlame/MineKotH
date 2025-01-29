@@ -44,7 +44,7 @@ public class SetupCommand {
             ChatColor.YELLOW + " /koth setup start - Start a new koth setup session.",
             ChatColor.YELLOW + " /koth setup cancel - Cancel the current koth setup session.",
             ChatColor.YELLOW + " /koth setup finish - Finish the current koth setup session.",
-            ChatColor.YELLOW + " /koth setup <id> - Edit an existing koth."
+            ChatColor.YELLOW + " /koth setup <id/name> - Edit an existing koth."
         );
     }
 
@@ -88,24 +88,25 @@ public class SetupCommand {
 
     private static void handleSetup(Player player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, ChatColor.RED + "Please specify a KOTH ID.");
+            sendMessage(player, ChatColor.RED + "Please specify a koth ID/name. /koth setup <id/name>");
             return;
         }
 
+        String kothIdOrName = String.join(" ", args).substring(args[0].length() + 1);
+        Koth koth;
         try {
-            int id = Integer.parseInt(args[1]);
-            Koth koth = MineKoth.getInstance().getKothManager().getKothById(id);
-            
-            if (koth == null) {
-                sendMessage(player, ChatColor.RED + "KOTH with id " + id + " not found.");
-                return;
-            }
-
-            new KothEditMenu(koth).open(player);
-            sendMessage(player, ChatColor.GREEN + "KOTH edit started! Enter the name of the koth.");
+            koth = MineKoth.getInstance().getKothManager().getKothById(Integer.parseInt(kothIdOrName));
         } catch (NumberFormatException e) {
-            sendMessage(player, ChatColor.RED + "Invalid KOTH ID. It must be a number.");
+            koth = MineKoth.getInstance().getKothManager().getKothByName(kothIdOrName);
         }
+        
+        if (koth == null) {
+            sendMessage(player, ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrName);
+            return;
+        }
+
+        new KothEditMenu(koth).open(player);
+        sendMessage(player, ChatColor.GREEN + "KOTH edit started! Enter the name of the koth.");
     }
 
     private static boolean validateSession(Player player, SetupSession session) {

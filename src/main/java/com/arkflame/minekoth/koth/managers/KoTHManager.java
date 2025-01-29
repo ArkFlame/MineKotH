@@ -61,4 +61,13 @@ public class KothManager {
     public Map<Integer, Koth> getAllkoths() {
         return new HashMap<>(koths);
     }
+
+    public Koth getKothByName(String kothName) {
+        for (Koth koth : koths.values()) {
+            if (koth.getName().equalsIgnoreCase(kothName)) {
+                return koth;
+            }
+        }
+        return null;
+    }
 }
