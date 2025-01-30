@@ -165,13 +165,12 @@ public class KothEventManager {
                             currentEvent.getStats().updateCapture(player.getUniqueId());
                             long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId()).getTotalTimeCaptured() / 1000;
                             if (timeCaptured > 0 && timeCaptured % 30 == 0) {
-                                player.sendMessage(ChatColor.GREEN + "You have captured the hill for " + timeCaptured + " seconds!");
                                 if (timeCaptured == 30) {
                                     player.getInventory().addItem(new ItemStack(Materials.get("DIAMOND")));
-                                    player.sendMessage(ChatColor.GREEN + "You have been awarded a diamond for capturing the hill for 30 seconds!");
+                                    Titles.sendActionBar(player, ChatColor.GREEN + "You have been awarded a diamond for capturing the hill for 30 seconds!");
                                 } else {
                                     player.getInventory().addItem(new ItemStack(Materials.get("ENDER_PEARL")));
-                                    player.sendMessage(ChatColor.GREEN + "You have been awarded an ender pearl for capturing the hill for 30 more seconds!");
+                                    Titles.sendActionBar(player, ChatColor.GREEN + "You have been awarded an ender pearl for capturing the hill for 30 more seconds!");
                                 }
                             }
                         }
