@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,6 +126,13 @@ public class Titles {
             sendPacket(player, actionBarPacket);
         } catch (Exception e) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+        }
+    }
+
+    public static void sendTitle(Collection<Player> players, String title, String subtitle, int fadeIn, int stay,
+            int fadeOut) {
+        for (Player player : players) {
+            sendTitle(player, title, subtitle, fadeIn, stay, fadeOut);
         }
     }
 }

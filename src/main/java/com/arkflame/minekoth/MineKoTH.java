@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.arkflame.minekoth.commands.KothCommand;
 import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerMoveListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
+import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
@@ -32,6 +33,7 @@ public class MineKoth extends JavaPlugin {
     private ScheduleRunnerTask scheduleRunnerTask;
     private KothEventTickTask kothEventTickTask;
     private ParticleScheduler particleScheduler;
+    private RandomEventsManager randomEventsManager;
 
     public ParticleScheduler getParticleScheduler() {
         return particleScheduler;
@@ -73,6 +75,10 @@ public class MineKoth extends JavaPlugin {
         return kothEventTickTask;
     }
 
+    public RandomEventsManager getRandomEventsManager() {
+        return randomEventsManager;
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
@@ -87,6 +93,9 @@ public class MineKoth extends JavaPlugin {
         langManager = new LangManager(getDataFolder());
         scheduleRunnerTask = new ScheduleRunnerTask();
         kothEventTickTask = new KothEventTickTask();
+
+        // Random Events
+        randomEventsManager = new RandomEventsManager();
 
         // Bukkit Stuff
         PluginManager pluginManager = getServer().getPluginManager();

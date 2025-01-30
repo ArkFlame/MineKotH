@@ -46,6 +46,8 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                     return kothId == null ? getKothName() : getKothNameById(kothId);
                 case "state":
                     return kothId == null ? getKothState() : getKothStateById(kothId);
+                case "capturer":
+                    return kothId == null ? getKothCapturer() : getKothCapturerById(kothId);
                 case "time":
                     return kothId == null ? getKothTime() : getKothTimeById(kothId);
                 case "location":
@@ -92,7 +94,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
     private String getKothState() {
         KothEvent event = getCurrentKothEvent();
         if (event != null) {
-            return event.getState().toString();
+            return event.getState().getFancyName();
         }
         return getNextSchedule() != null ? "Starting" : NONE;
     }
@@ -101,7 +103,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
         for (KothEvent event : plugin.getKothEventManager().getRunningKoths()) {
             if (event.getKoth().getId() == koth.getId()) {
-                return event.getState().toString();
+                return event.getState().getFancyName();
             }
         }
         return getNextSchedule() != null ? "Starting" : NONE;
@@ -215,5 +217,25 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         long minutes = timeInMillis / 60000;
         long seconds = (timeInMillis % 60000) / 1000;
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    public String getKothCapturer() {
+        KothEvent event = getCurrentKothEvent();
+        if (event != null) {
+            Player player = event.getTopPlayer();
+            return player != null ? player.getName() : NONE;
+        }
+        return NONE;
+    }
+
+    public String getKothCapturerById(String kothId) {
+        Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
+        for (KothEvent event : plugin.getKothEventManager().getRunningKoths()) {
+            if (event != null && event.getKoth().getId() == koth.getId()) {
+                Player player = event.getTopPlayer();
+                return player != null ? player.getName() : NONE;
+            }
+        }
+        return NONE;
     }
 }

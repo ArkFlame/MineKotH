@@ -2,10 +2,12 @@ package com.arkflame.minekoth.koth.events.managers;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.PotionEffectUtil;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
@@ -18,6 +20,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class KothEventManager {
@@ -50,7 +53,7 @@ public class KothEventManager {
         if (center != null) {
             World world = center.getWorld();
             if (world != null) {
-                world.strikeLightning(center);
+                world.strikeLightningEffect(center);
             }
         }
 
@@ -129,11 +132,30 @@ public class KothEventManager {
                             end(currentEvent);
                         }
                     } else {
+                        MineKoth.getInstance().getRandomEventsManager().tick(currentEvent);
+
                         for (Player player : currentEvent.getPlayersInZone()) {
-                            if (!player.isDead() && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                                 FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
                                     player.removePotionEffect(PotionEffectType.INVISIBILITY);
                                     player.sendMessage(ChatColor.RED + "You have been revealed!");
+                                    Titles.sendTitle(player, "", "&cYou have been revealed!", 10, 20, 10);
+                                });
+                            }
+
+                            CapturingPlayers topGroup = currentEvent.getTopGroup();
+                            if (topGroup == null || topGroup.containsPlayer(player)) {
+                                FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
+                                    PotionEffectUtil.applyAllValidEffects(
+                                            player,
+                                            0,
+                                            40,
+                                            // Speed is consistently named across versions
+                                            "SPEED",
+                                            // Strength had alternative names in some versions
+                                            "STRENGTH", "INCREASE_DAMAGE",
+                                            // Regeneration was also named differently
+                                            "REGENERATION", "REGEN");
                                 });
                             }
                         }

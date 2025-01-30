@@ -1,10 +1,13 @@
 package com.arkflame.minekoth.utils;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class Sounds {
-    private Sounds() {}
+    private Sounds() {
+    }
 
     /**
      * Attempts to get the first valid Sound from a list of names.
@@ -45,6 +48,13 @@ public class Sounds {
     public static void play(float volume, float pitch, String... sounds) {
         for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
             play(player, volume, pitch, sounds);
+        }
+    }
+
+    public static void play(World world, Location dropLocation, float f, float g, String... sounds) {
+        Sound sound = get(sounds);
+        if (sound != null) {
+            world.playSound(dropLocation, sound, f, g);
         }
     }
 }

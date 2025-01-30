@@ -31,7 +31,11 @@ public class KothEvent {
         UNCAPTURED,
         CAPTURING,
         STALEMATE,
-        CAPTURED
+        CAPTURED;
+
+        public String getFancyName() {
+            return name().substring(0, 1) + name().substring(1).toLowerCase();
+        }
     }
 
     private final Koth koth;
@@ -95,8 +99,9 @@ public class KothEvent {
                 if (player == topPlayer) {
                     Titles.sendTitle(player, "&aCapturing", "&aYou started capturing the koth", 10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "&aEntering Zone", (oldTopGroup.containsPlayer(player) ? "&a" : "&c") + topPlayer.getName() + " is capturing", 10, 20,
-                            10);
+                    Titles.sendTitle(player, "&aEntering Zone",
+                            (oldTopGroup.containsPlayer(player) ? "&a" : "&c") + topPlayer.getName() + " is capturing",
+                            10, 20, 10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
@@ -215,6 +220,7 @@ public class KothEvent {
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = getTopPlayer();
+                String topPlayerName = topPlayer == null ? "No Winner" : topPlayer.getName();
                 boolean sendTimeLeftTitle = countdownIntervals.contains((int) secondsLeft);
 
                 for (Player player : playersInZone) {
@@ -227,23 +233,25 @@ public class KothEvent {
                     } else if (isTopGroup) {
                         Titles.sendActionBar(
                                 player,
-                                ChatColors.color("&a" + topPlayer.getName() + " is capturing! &e"
+                                ChatColors.color("&a" + topPlayerName + " is capturing! &e"
                                         + getTimeLeftToCaptureFormatted()));
                     } else {
                         Titles.sendActionBar(
                                 player,
-                                ChatColors.color("&c" + topPlayer.getName() + " is capturing! &e"
+                                ChatColors.color("&c" + topPlayerName + " is capturing! &e"
                                         + getTimeLeftToCaptureFormatted()));
                     }
 
                     if (sendTimeLeftTitle) {
-                        Titles.sendTitle(
+                        Titles.sendTitle(player,
                                 "&e" + secondsLeft,
-                                isTopPlayer ? "&aYou are capturing"
-                                        : isTopGroup ? "&a" + topPlayer.getName() + " is capturing"
-                                                : "&c" + topPlayer.getName() + " is capturing",
+                                isTopPlayer
+                                        ? "&aYou are capturing"
+                                        : isTopGroup
+                                                ? "&a" + topPlayerName + " is capturing"
+                                                : "&c" + topPlayerName + " is capturing",
                                 10, 20, 10);
-                        Sounds.play(1.0f, 1.0f, "CLICK");
+                        Sounds.play(player, 1.0f, 1.0f, "CLICK");
                     }
                 }
             }

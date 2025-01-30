@@ -55,9 +55,9 @@ public class Koth {
         double zMax = Math.max(firstPosition.getZ(), secondPosition.getZ());
 
         return location.getWorld().getName().equals(worldName) &&
-               location.getX() >= xMin && location.getX() <= xMax &&
-               location.getY() >= yMin && location.getY() <= yMax &&
-               location.getZ() >= zMin && location.getZ() <= zMax;
+               location.getX() >= xMin && location.getX() <= xMax + 1 &&
+               location.getY() >= yMin && location.getY() <= yMax + 1.5 &&
+               location.getZ() >= zMin && location.getZ() <= zMax + 1;
     }
 
     public boolean isInside(Player player) {
@@ -101,8 +101,8 @@ public class Koth {
     public void spawnHologram() {
         Location center = getCenter();
         if (center == null) return;
-        center.add(0, 1, 0);
-        HologramUtility.createHologram("koth_" + id, center, "&e%minekoth_koth_name_" + id + "%", "&a%minekoth_koth_state_" + id + "%", "&b%minekoth_koth_time_" + id + "%");
+        center.add(0.5, 2, 0.5);
+        HologramUtility.createHologram("koth_" + id, center, "&e%minekoth_koth_name_" + id + "%", "&a%minekoth_koth_state_" + id + "% by " + "%minekoth_koth_capturer_" + id + "%", "&b%minekoth_koth_time_" + id + "%", "&e&l(Stay to capture)");
     }
 
     public void despawnHologram() {
