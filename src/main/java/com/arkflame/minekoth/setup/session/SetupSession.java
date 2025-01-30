@@ -305,6 +305,6 @@ public class SetupSession {
     }
 
     public boolean isValidPosition(Location loc) {
-        return loc != null && loc.getWorld().getName().equals(worldName) && loc.getBlockY() == firstPosition.getY();
+        return loc != null && loc.getWorld().getName().equals(worldName);
     }
 }

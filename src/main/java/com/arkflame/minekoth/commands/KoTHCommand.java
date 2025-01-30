@@ -1,12 +1,14 @@
 package com.arkflame.minekoth.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.setup.commands.SetupCommand;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
@@ -153,8 +155,12 @@ public class KothCommand implements CommandExecutor {
                     break;
                 }
 
-                player.teleport(tpKoth.getCenter());
-                Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
+                Location center = tpKoth.getCenter();
+
+                FoliaAPI.runTask(() -> {
+                    player.teleport(center);
+                    Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
+                });
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
                 break;
