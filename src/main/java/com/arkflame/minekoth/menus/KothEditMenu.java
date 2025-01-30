@@ -1,23 +1,19 @@
 package com.arkflame.minekoth.menus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import com.arkflame.mineclans.utils.Materials;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.setup.listeners.SetupChatListener;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.MenuUtil.Menu;
 import com.arkflame.minekoth.utils.MenuUtil.MenuItem;
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.utils.Materials;
 
 public class KothEditMenu extends Menu {
     private final Koth koth;

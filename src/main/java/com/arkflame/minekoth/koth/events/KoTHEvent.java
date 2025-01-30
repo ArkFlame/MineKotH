@@ -209,10 +209,7 @@ public class KothEvent {
 
         // Show win/lose effects titles and subtitles
         for (Player player : Bukkit.getOnlinePlayers()) {
-            FoliaAPI.runTaskForEntity(player, () -> {
-                displayWinLoseEffects(player, isWinner(player), topPlayer);
-            }, () -> {
-            }, 1L);
+            displayWinLoseEffects(player, isWinner(player), topPlayer);
         }
 
         end();
@@ -415,29 +412,23 @@ public class KothEvent {
 
     private void applyCapturingEffect(Player player) {
         if (player != null) {
-            FoliaAPI.runTask(() -> {
-                MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
-                        5);
-                GlowingUtility.setGlowing(player, ChatColor.RED);
-            });
+            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
+                    5);
+            GlowingUtility.setGlowing(player, ChatColor.RED);
         }
     }
 
     private void applyWinnerEffect(Player player) {
         if (player != null) {
-            FoliaAPI.runTask(() -> {
-                MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
-                GlowingUtility.setGlowing(player, ChatColor.GREEN);
-            });
+            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
+            GlowingUtility.setGlowing(player, ChatColor.GREEN);
         }
     }
 
     public void clearEffects(Player player) {
         if (player != null) {
-            FoliaAPI.runTask(() -> {
-                MineKoth.getInstance().getParticleScheduler().removeTrail(player);
-                GlowingUtility.unsetGlowing(player);
-            });
+            MineKoth.getInstance().getParticleScheduler().removeTrail(player);
+            GlowingUtility.unsetGlowing(player);
         }
     }
 

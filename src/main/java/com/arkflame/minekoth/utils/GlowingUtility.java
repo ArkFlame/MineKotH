@@ -3,7 +3,6 @@ package com.arkflame.minekoth.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -89,7 +88,7 @@ public class GlowingUtility {
             // Folia does not support this
         }
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0));
+        PotionEffectUtil.applyAllValidEffects(player, 0, Integer.MAX_VALUE, "GLOWING");
     }
 
     /**

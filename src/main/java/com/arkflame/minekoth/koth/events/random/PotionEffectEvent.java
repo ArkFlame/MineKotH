@@ -35,13 +35,11 @@ public class PotionEffectEvent extends RandomEvent {
 
         // Apply effects to all players inside
         for (Player player : event.getPlayersInZone()) {
-            FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
-                for (String effect : selectedEffects) {
-                    PotionEffectUtil.applyAllValidEffects(player, 0, 600, effect);
-                }
-                Sounds.play(player, 1.0f, 1.0f, "ENTITY_WITCH_DRINK");
-                ParticleUtil.generateCircle(player.getLocation().add(0, 1, 0), "SPELL_WITCH", 1.0, 30);
-            });
+            for (String effect : selectedEffects) {
+                PotionEffectUtil.applyAllValidEffects(player, 0, 600, effect);
+            }
+            Sounds.play(player, 1.0f, 1.0f, "ENTITY_WITCH_DRINK");
+            ParticleUtil.generateCircle(player.getLocation().add(0, 1, 0), "SPELL_WITCH", 1.0, 30);
             Titles.sendTitle(player, "§6Potion Effect", "§7You have been given random potion effects!", 5, 20, 5);
         }
     }

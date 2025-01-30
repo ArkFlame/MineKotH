@@ -41,16 +41,16 @@ public class SetupInteractListener implements Listener {
 
         if (!session.isFirstPositionSet()) {
             Location loc = event.getClickedBlock().getLocation();
-            session.setFirstPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
+            session.setFirstPosition(new Position(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             session.setWorldName(loc.getWorld().getName());
             player.sendMessage(ChatColor.GREEN + "Position 1 set at: " + ChatColor.AQUA + Locations.toString(loc));
         } else if (!session.isSecondPositionSet()) {
             Location loc = event.getClickedBlock().getLocation();
             if (!session.isValidPosition(loc)) {
-                player.sendMessage(ChatColor.RED + "The world must be the same as the first position.");
+                player.sendMessage(ChatColor.RED + "The world and Y coordinates must be the same as the first position.");
                 return;
             }
-            session.setSecondPosition(new Position(loc.getX(), loc.getY(), loc.getZ()));
+            session.setSecondPosition(new Position(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             player.sendMessage(ChatColor.GREEN + "Position 2 set at: " + ChatColor.AQUA + Locations.toString(loc));
             // Send message with size of area Area Size (22x22)
             Position first = session.getFirstPosition();

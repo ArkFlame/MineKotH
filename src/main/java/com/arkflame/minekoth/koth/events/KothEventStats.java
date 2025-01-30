@@ -44,4 +44,9 @@ public class KothEventStats {
         KothEventPlayerStats stats = getPlayerStats(playerId);
         stats.addDamageDone(damage);
     }
+
+    public void addDeath(UUID uniqueId) {
+        KothEventPlayerStats stats = getPlayerStats(uniqueId);
+        stats.addDeath();
+    }
 }

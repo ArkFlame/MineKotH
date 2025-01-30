@@ -44,14 +44,14 @@ public class Titles {
             return;
         }
 
+        title = ChatColors.color(title);
+        subtitle = subtitle != null ? ChatColors.color(subtitle) : null;
+
         try {
             player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
         } catch (NoSuchMethodError e) {
             // Do nothing
         }
-
-        title = ChatColors.color(title);
-        subtitle = subtitle != null ? ChatColors.color(subtitle) : null;
 
         try {
             Object chatTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class)

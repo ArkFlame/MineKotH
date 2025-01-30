@@ -11,21 +11,23 @@ import java.util.stream.Collectors;
 
 /**
  * Utility class for handling potion effects with version compatibility.
- * Allows applying effects using multiple possible names to support different Bukkit versions.
+ * Allows applying effects using multiple possible names to support different
+ * Bukkit versions.
  */
 public final class PotionEffectUtil {
-    
+
     private PotionEffectUtil() {
         // Private constructor to prevent instantiation of utility class
     }
 
     /**
-     * Attempts to apply the first valid potion effect from the given names to a player.
+     * Attempts to apply the first valid potion effect from the given names to a
+     * player.
      * 
-     * @param player The player to receive the effect
-     * @param amplifier The amplifier level of the effect (0 = level 1)
+     * @param player        The player to receive the effect
+     * @param amplifier     The amplifier level of the effect (0 = level 1)
      * @param durationTicks Duration of the effect in ticks (20 ticks = 1 second)
-     * @param names Variable number of possible effect names to try
+     * @param names         Variable number of possible effect names to try
      * @return true if any effect was successfully applied, false otherwise
      */
     public static boolean tryApplyEffect(Player player, int amplifier, int durationTicks, String... names) {
@@ -44,10 +46,10 @@ public final class PotionEffectUtil {
     /**
      * Applies all valid potion effects from the given names to a player.
      * 
-     * @param player The player to receive the effects
-     * @param amplifier The amplifier level for all effects (0 = level 1)
+     * @param player        The player to receive the effects
+     * @param amplifier     The amplifier level for all effects (0 = level 1)
      * @param durationTicks Duration for all effects in ticks (20 ticks = 1 second)
-     * @param names Variable number of possible effect names to apply
+     * @param names         Variable number of possible effect names to apply
      * @return The number of effects successfully applied
      */
     public static int applyAllValidEffects(Player player, int amplifier, int durationTicks, String... names) {
@@ -56,7 +58,9 @@ public final class PotionEffectUtil {
         }
 
         List<PotionEffectType> validEffects = findAllValidEffects(names);
-        validEffects.forEach(effect -> applyEffect(player, effect, amplifier, durationTicks));
+        if (!validEffects.isEmpty()) {
+            validEffects.forEach(effect -> applyEffect(player, effect, amplifier, durationTicks));
+        }
         return validEffects.size();
     }
 
@@ -104,13 +108,16 @@ public final class PotionEffectUtil {
     /**
      * Applies a potion effect to a player with the specified parameters.
      * 
-     * @param player The player to receive the effect
-     * @param effectType The type of effect to apply
-     * @param amplifier The amplifier level (0 = level 1)
+     * @param player        The player to receive the effect
+     * @param effectType    The type of effect to apply
+     * @param amplifier     The amplifier level (0 = level 1)
      * @param durationTicks Duration in ticks (20 ticks = 1 second)
      */
     private static void applyEffect(Player player, PotionEffectType effectType, int amplifier, int durationTicks) {
-        PotionEffect effect = new PotionEffect(effectType, durationTicks, amplifier);
-        player.addPotionEffect(effect, true);
+        FoliaAPI.runTaskForEntity(player, () -> {
+            PotionEffect effect = new PotionEffect(effectType, durationTicks, amplifier);
+            player.addPotionEffect(effect, true);
+        }, () -> {
+        }, 1L);
     }
 }

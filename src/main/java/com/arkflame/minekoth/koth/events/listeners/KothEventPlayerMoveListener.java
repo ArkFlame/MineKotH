@@ -1,15 +1,17 @@
 package com.arkflame.minekoth.koth.events.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
+import com.arkflame.minekoth.utils.Materials;
 
 public class KothEventPlayerMoveListener implements Listener {
     private KothEventManager kothEventManager;
@@ -31,7 +33,24 @@ public class KothEventPlayerMoveListener implements Listener {
             Player killer = player.getKiller();
             if (killer != null && kothEvent.getKoth().isInside(killer.getLocation())) {
                 kothEvent.getStats().addPlayerKill(killer.getUniqueId());
+                int totalKills = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getTotalPlayerKills();
+                if (totalKills == 1) {
+                    killer.getInventory().addItem(new ItemStack(Materials.get("REDSTONE_BLOCK"), 1));
+                    killer.sendMessage("You received a reward for your first kill!");
+                }
+                int killstreak = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getCurrentKillStreak();
+                if (killstreak == 2) {
+                    killer.getInventory().addItem(new ItemStack(Materials.get("DIRT"), 1));
+                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                } else if (killstreak == 3) {
+                    killer.getInventory().addItem(new ItemStack(Materials.get("STONE"), 1));
+                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                } else if (killstreak >= 4) {
+                    killer.getInventory().addItem(new ItemStack(Materials.get("GOLD_INGOT"), 1));
+                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                }
             }
+            kothEvent.getStats().addDeath(player.getUniqueId());
         }
         kothEventManager.updatePlayerState(player, player.getLocation(), true);
     }
@@ -39,5 +58,19 @@ public class KothEventPlayerMoveListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         kothEventManager.updatePlayerState(event.getPlayer(), event.getTo());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        KothEvent kothEvent = kothEventManager.getKothEvent();
+        if (kothEvent != null) {
+            if (event.getDamager() instanceof Player) {
+                kothEvent.getStats().addDamageDone(event.getDamager().getUniqueId(), (int) event.getDamage());
+            }
+
+            if (event.getEntity() instanceof Player) {
+                kothEvent.getStats().addDamageReceived(event.getEntity().getUniqueId(), (int) event.getDamage());
+            }
+        }
     }
 }

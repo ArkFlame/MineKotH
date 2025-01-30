@@ -1,6 +1,5 @@
 package com.arkflame.minekoth.koth.events.managers;
 
-import com.arkflame.mineclans.utils.Materials;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
@@ -9,6 +8,7 @@ import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.Materials;
 import com.arkflame.minekoth.utils.PotionEffectUtil;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -148,34 +148,36 @@ public class KothEventManager {
 
                             CapturingPlayers topGroup = currentEvent.getTopGroup();
                             if (topGroup == null || topGroup.containsPlayer(player)) {
-                                FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
-                                    PotionEffectUtil.applyAllValidEffects(
-                                            player,
-                                            0,
-                                            40,
-                                            // Speed is consistently named across versions
-                                            "SPEED",
-                                            // Strength had alternative names in some versions
-                                            "STRENGTH", "INCREASE_DAMAGE",
-                                            // Regeneration was also named differently
-                                            "REGENERATION", "REGEN");
-                                });
+                                PotionEffectUtil.applyAllValidEffects(
+                                        player,
+                                        0,
+                                        40,
+                                        // Speed is consistently named across versions
+                                        "SPEED",
+                                        // Strength had alternative names in some versions
+                                        "STRENGTH", "INCREASE_DAMAGE",
+                                        // Regeneration was also named differently
+                                        "REGENERATION", "REGEN");
                             }
 
                             currentEvent.getStats().updateCapture(player.getUniqueId());
-                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId()).getTotalTimeCaptured() / 1000;
+                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId())
+                                    .getTotalTimeCaptured() / 1000;
                             if (timeCaptured > 0 && timeCaptured % 30 == 0) {
                                 if (timeCaptured == 30) {
                                     player.getInventory().addItem(new ItemStack(Materials.get("DIAMOND")));
-                                    Titles.sendActionBar(player, ChatColor.GREEN + "You have been awarded a diamond for capturing the hill for 30 seconds!");
+                                    Titles.sendActionBar(player, ChatColor.GREEN
+                                            + "You have been awarded a diamond for capturing the hill for 30 seconds!");
                                 } else {
                                     player.getInventory().addItem(new ItemStack(Materials.get("ENDER_PEARL")));
-                                    Titles.sendActionBar(player, ChatColor.GREEN + "You have been awarded an ender pearl for capturing the hill for 30 more seconds!");
+                                    Titles.sendActionBar(player, ChatColor.GREEN
+                                            + "You have been awarded an ender pearl for capturing the hill for 30 more seconds!");
                                 }
                             }
                         }
 
-                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstPosition().add(0, 0.5, 0), currentEvent.getKoth().getSecondPosition().add(0, 0.5, 0), "COLOURED_DUST", 100);
+                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstPosition().add(0, 0.5, 0),
+                                currentEvent.getKoth().getSecondPosition().add(0, 0.5, 0), "COLOURED_DUST", 100);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

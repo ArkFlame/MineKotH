@@ -3,6 +3,8 @@ package com.arkflame.minekoth.koth.events;
 public class KothEventPlayerStats {
     private int totalPlayerKills;
     private int totalMobKills;
+    private int totalDeaths;
+    private int currentKillStreak;
     private long totalTimeCaptured; // in milliseconds
     private long firstCaptureTime; // timestamp in milliseconds
     private long lastCaptureTime; // timestamp in milliseconds
@@ -19,10 +21,13 @@ public class KothEventPlayerStats {
         this.lastKillTime = 0;
         this.totalDamageReceived = 0;
         this.totalDamageDone = 0;
+        this.totalDeaths = 0;
+        this.currentKillStreak = 0;
     }
 
     public void addPlayerKill() {
         totalPlayerKills++;
+        currentKillStreak++;
         lastKillTime = System.currentTimeMillis(); // Set last kill time to current time in milliseconds
     }
 
@@ -77,5 +82,18 @@ public class KothEventPlayerStats {
 
     public int getTotalDamageDone() {
         return totalDamageDone;
+    }
+
+    public int getCurrentKillStreak() {
+        return currentKillStreak;
+    }
+
+    public int getDeaths() {
+        return totalDeaths;
+    }
+
+    public int addDeath() {
+        currentKillStreak = 0;
+        return totalDeaths++;
     }
 }
