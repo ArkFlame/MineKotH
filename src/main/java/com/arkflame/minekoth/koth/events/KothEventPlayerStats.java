@@ -35,7 +35,7 @@ public class KothEventPlayerStats {
             firstCaptureTime = System.currentTimeMillis(); // Set first capture time if not set
         }
         lastCaptureTime = System.currentTimeMillis(); // Update last capture time
-        totalTimeCaptured = lastCaptureTime - firstCaptureTime; // Add the time captured in milliseconds
+        totalTimeCaptured = totalTimeCaptured + 1000; // Add the time captured in milliseconds
     }
 
     public void addDamageReceived(int damage) {
