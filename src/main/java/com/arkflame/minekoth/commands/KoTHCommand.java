@@ -103,6 +103,10 @@ public class KothCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid koth.");
                     break;
                 }
+                if (MineKoth.getInstance().getKothEventManager().getKothEvent(koth) != null) {
+                    sender.sendMessage(ChatColor.RED + "Koth is already running.");
+                    break;
+                }
                 MineKoth.getInstance().getKothEventManager().start(koth);
                 sender.sendMessage(ChatColor.GREEN + "Ran next schedule (" + koth.getName() + ")");
                 sender.sendMessage(ChatColor.GREEN + "Koths running:");
