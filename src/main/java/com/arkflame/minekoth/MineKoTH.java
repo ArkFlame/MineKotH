@@ -1,6 +1,8 @@
 package com.arkflame.minekoth;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.minekoth.commands.KothCommand;
@@ -23,6 +25,8 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.HologramUtility;
 import com.arkflame.minekoth.utils.MenuUtil;
 
+import net.milkbowl.vault.economy.Economy;
+
 public class MineKoth extends JavaPlugin {
     private static MineKoth instance;
     private SetupSessionManager sessionManager = new SetupSessionManager();
@@ -34,6 +38,7 @@ public class MineKoth extends JavaPlugin {
     private KothEventTickTask kothEventTickTask;
     private ParticleScheduler particleScheduler;
     private RandomEventsManager randomEventsManager;
+    private Economy economy;
 
     public ParticleScheduler getParticleScheduler() {
         return particleScheduler;
@@ -79,12 +84,26 @@ public class MineKoth extends JavaPlugin {
         return randomEventsManager;
     }
 
+    public Economy getEconomy() {
+        return economy;
+    }
+
+    public boolean isEconomyPresent() {
+        return economy != null;
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
         saveDefaultConfig();
 
         HologramUtility.initialize(this);
+        
+        // Initialize Vault economy
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        if (rsp != null) {
+            this.economy = rsp.getProvider();
+        }
 
         // Managers
         particleScheduler = new ParticleScheduler(this);

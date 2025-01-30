@@ -8,6 +8,7 @@ import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.koth.Rewards.LootType;
+import com.arkflame.minekoth.koth.events.bets.KothEventBets;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.GlowingUtility;
@@ -48,6 +49,7 @@ public class KothEvent {
     private long timeCaptureStarted;
     private long endTime;
     private KothEventStats stats;
+    private KothEventBets bets;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
@@ -58,6 +60,7 @@ public class KothEvent {
         this.stalemateEnabled = false;
         this.startTime = System.currentTimeMillis();
         this.stats = new KothEventStats();
+        this.bets = new KothEventBets();
     }
 
     public KothEventStats getStats() {
@@ -203,6 +206,9 @@ public class KothEvent {
     public void setCaptured(CapturingPlayers winners) {
         Player topPlayer = getTopPlayer();
         giveRewards(winners);
+        if (topPlayer != null) {
+            bets.giveRewards(topPlayer.getName());
+        }
 
         // Notify Discord
         DiscordHook.sendKothCaptured(koth.getName(), topPlayer == null ? "No Winner" : topPlayer.getName());
@@ -448,5 +454,9 @@ public class KothEvent {
 
     public Collection<Player> getPlayersInZone() {
         return playersInZone;
+    }
+
+    public KothEventBets getKothEventBets() {
+        return bets;
     }
 }

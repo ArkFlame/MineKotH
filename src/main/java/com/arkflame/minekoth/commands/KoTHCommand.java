@@ -162,6 +162,44 @@ public class KothCommand implements CommandExecutor {
                     Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
                 });
                 break;
+            case "bet":
+                // participant can be any online player
+                // kothId or name is optional, if not input, kothEventManager.getKothEvent() is used
+                if (args.length < 3) {
+                    player.sendMessage(ChatColor.RED + "Usage: /koth bet <amount> <participant> [kothId/name]");
+                    break;
+                }
+                // Join all args from kothId/name to the end to get the kothid or name
+                String kothIdOrNameBet = String.join(" ", args).substring(args[0].length() + args[1].length() + args[2].length() + 3);
+                KothEvent betKothEvent = null;
+                Koth betKoth = null;
+                try {
+                    betKoth = MineKoth.getInstance().getKothManager().getKothById(Integer.parseInt(kothIdOrNameBet));
+                } catch (NumberFormatException e) {
+                    betKoth = MineKoth.getInstance().getKothManager().getKothByName(kothIdOrNameBet);
+                }
+
+                if (betKoth != null) {
+                    betKothEvent = MineKoth.getInstance().getKothEventManager().getKothEvent(betKoth);
+                }
+
+                if (betKothEvent == null && kothIdOrNameBet.isEmpty()) {
+                    betKothEvent = MineKoth.getInstance().getKothEventManager().getKothEvent();
+                }
+
+                if (betKothEvent == null) {
+                    player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrNameBet);
+                    player.sendMessage(ChatColor.RED + "Available Koths: " + MineKoth.getInstance().getKothManager().getAllkoths().keySet());
+                    break;
+                }
+
+                if (args.length < 3) {
+                    player.sendMessage(ChatColor.RED + "Usage: /koth bet <amount> <participant> <kothId/name>");
+                    break;
+                }
+
+                betKothEvent.getKothEventBets().placeBet(player, args[2], Double.parseDouble(args[1]));
+                break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
                 break;

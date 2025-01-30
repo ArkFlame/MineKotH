@@ -204,4 +204,13 @@ public class KothEventManager {
     public KothEvent[] getRunningKoths() {
         return events.toArray(new KothEvent[0]);
     }
+
+    public KothEvent getKothEvent(Koth betKoth) {
+        for (KothEvent currentEvent : events) {
+            if (currentEvent.getKoth() == betKoth) {
+                return currentEvent;
+            }
+        }
+        return null;
+    }
 }

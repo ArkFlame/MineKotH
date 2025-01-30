@@ -5,6 +5,7 @@ main: ${mainClass}
 version: ${version}
 url: ${url}
 folia-supported: true
+soft-depend: [Vault, MineClans, DecentHolograms, PlaceholderAPI]
 commands:
   koth:
     description: Main koth command
