@@ -10,7 +10,6 @@ import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
-import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;

@@ -2,12 +2,13 @@ package com.arkflame.minekoth.setup.commands;
 
 import org.bukkit.entity.Player;
 
-import com.arkflame.mineclans.modernlib.utils.ChatColors;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.session.SetupSession;
+import com.arkflame.minekoth.utils.ChatColors;
+
 import net.md_5.bungee.api.ChatColor;
 import java.util.Collections;
 import java.util.HashMap;
