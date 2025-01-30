@@ -1,4 +1,4 @@
-![MineKoth Banner](minekoth-banner.jpg)
+![MineKoth Banner](images/minekoth-banner.jpg)
 
 # MineKoth: Master King of the Hill Events in Minecraft
 
