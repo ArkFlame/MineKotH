@@ -161,6 +161,7 @@ public class KothCommand implements CommandExecutor {
                     player.teleport(center);
                     Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
                 });
+                break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
                 break;
