@@ -3,6 +3,7 @@ package com.arkflame.minekoth.koth.events.bets;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.ChatColors;
@@ -39,6 +40,12 @@ public class KothEventBets {
             return false;
         }
 
+        Player participantPlayer = MineKoth.getInstance().getServer().getPlayer(participant);
+        if (participantPlayer == null) {
+            sendMessage(player, "&cParticipant not found. Bet not placed.");
+            return false;
+        }
+
         Economy economy = MineKoth.getInstance().getEconomy();
 
         // Check if the player has enough money
@@ -56,11 +63,11 @@ public class KothEventBets {
         }
 
         // Add the bet to the participant's map
-        bets.computeIfAbsent(participant, k -> new ConcurrentHashMap<>())
-                .merge(player.getUniqueId(), amount, Double::sum);
+        bets.computeIfAbsent(participantPlayer.getName(), k -> new ConcurrentHashMap<>())
+                .merge(participantPlayer.getUniqueId(), amount, Double::sum);
 
         // Send a fancy message to the player
-        sendMessage(player, "&aYou have successfully placed a bet of &6" + amount + " &aon &b" + participant + "&a!");
+        sendMessage(player, "&aYou have successfully placed a bet of &6" + amount + " &aon &b" + participantPlayer.getName() + "&a!");
 
         return true;
     }

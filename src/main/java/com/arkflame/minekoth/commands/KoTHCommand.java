@@ -145,7 +145,7 @@ public class KothCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.RED + "Usage: /koth tp <id/name>");
                     break;
                 }
-                
+
                 String kothIdOrName = String.join(" ", args).substring(args[0].length() + 1);
                 Koth tpKoth;
                 try {
@@ -168,13 +168,15 @@ public class KothCommand implements CommandExecutor {
                 break;
             case "bet":
                 // participant can be any online player
-                // kothId or name is optional, if not input, kothEventManager.getKothEvent() is used
+                // kothId or name is optional, if not input, kothEventManager.getKothEvent() is
+                // used
                 if (args.length < 3) {
                     player.sendMessage(ChatColor.RED + "Usage: /koth bet <amount> <participant> [kothId/name]");
                     break;
                 }
                 // Join all args from kothId/name to the end to get the kothid or name
-                String kothIdOrNameBet = String.join(" ", args).substring(args[0].length() + args[1].length() + args[2].length() + 3);
+                String kothIdOrNameBet = String.join(" ", args)
+                        .substring(args[0].length() + args[1].length() + args[2].length() + 2).strip();
                 KothEvent betKothEvent = null;
                 Koth betKoth = null;
                 try {
@@ -192,8 +194,15 @@ public class KothCommand implements CommandExecutor {
                 }
 
                 if (betKothEvent == null) {
-                    player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrNameBet);
-                    player.sendMessage(ChatColor.RED + "Available Koths: " + MineKoth.getInstance().getKothManager().getAllkoths().keySet());
+                    if (MineKoth.getInstance().getKothEventManager().getRunningKoths().length == 0) {
+                        player.sendMessage(ChatColor.RED + "No koths are running.");
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrNameBet);
+                        player.sendMessage(ChatColor.RED + "Available Koths:");
+                        for (KothEvent running : MineKoth.getInstance().getKothEventManager().getRunningKoths()) {
+                            player.sendMessage(ChatColor.RED + " - " + running.getKoth().getName());
+                        }
+                    }
                     break;
                 }
 
@@ -234,7 +243,9 @@ public class KothCommand implements CommandExecutor {
         player.sendMessage(ChatColor.YELLOW + "World: " + koth.getWorldName());
         player.sendMessage(ChatColor.YELLOW + "Time Limit: " + koth.getTimeLimit());
         player.sendMessage(ChatColor.YELLOW + "Time to Capture: " + koth.getTimeToCapture());
-        player.sendMessage(ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + koth.getRewards().getRewardsItems().size());
-        player.sendMessage(ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + koth.getRewards().getRewardsCommands());
+        player.sendMessage(
+                ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + koth.getRewards().getRewardsItems().size());
+        player.sendMessage(
+                ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + koth.getRewards().getRewardsCommands());
     }
 }
