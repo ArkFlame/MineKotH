@@ -8,6 +8,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 
 public class KothEventPlayerMoveListener implements Listener {
@@ -24,8 +25,14 @@ public class KothEventPlayerMoveListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        Bukkit.getServer().broadcastMessage("Player " + event.getEntity().getName() + " died.");
         Player player = event.getEntity();
+        KothEvent kothEvent = kothEventManager.getKothEvent();
+        if (kothEvent != null) {
+            Player killer = player.getKiller();
+            if (killer != null && kothEvent.getKoth().isInside(killer.getLocation())) {
+                kothEvent.getStats().addPlayerKill(killer.getUniqueId());
+            }
+        }
         kothEventManager.updatePlayerState(player, player.getLocation(), true);
     }
 

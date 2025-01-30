@@ -25,7 +25,7 @@ import org.bukkit.entity.Firework;
 import java.util.*;
 
 public class KothEvent {
-    private final List<Integer> countdownIntervals = Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1);
+    private static final List<Integer> COUNTDOWN_INTERVALS = Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1);
 
     public enum KothEventState {
         UNCAPTURED,
@@ -47,6 +47,7 @@ public class KothEvent {
     private long startTime;
     private long timeCaptureStarted;
     private long endTime;
+    private KothEventStats stats;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
@@ -56,6 +57,11 @@ public class KothEvent {
         this.timetoCapture = koth.getTimeToCapture();
         this.stalemateEnabled = false;
         this.startTime = System.currentTimeMillis();
+        this.stats = new KothEventStats();
+    }
+
+    public KothEventStats getStats() {
+        return stats;
     }
 
     public KothEventState getState() {
@@ -221,7 +227,7 @@ public class KothEvent {
             } else {
                 Player topPlayer = getTopPlayer();
                 String topPlayerName = topPlayer == null ? "No Winner" : topPlayer.getName();
-                boolean sendTimeLeftTitle = countdownIntervals.contains((int) secondsLeft);
+                boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) secondsLeft);
 
                 for (Player player : playersInZone) {
                     boolean isTopPlayer = player == topPlayer;

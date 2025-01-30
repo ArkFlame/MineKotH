@@ -159,6 +159,8 @@ public class KothEventManager {
                                             "REGENERATION", "REGEN");
                                 });
                             }
+
+                            currentEvent.getStats().updateCapture(player.getUniqueId());
                         }
 
                         ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstPosition().add(0, 0.5, 0), currentEvent.getKoth().getSecondPosition().add(0, 0.5, 0), "COLOURED_DUST", 100);

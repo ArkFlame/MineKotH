@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.setup.commands.SetupCommand;
+import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
@@ -132,6 +133,28 @@ public class KothCommand implements CommandExecutor {
                 }
                 MineKoth.getInstance().getKothEventManager().getKothEvent().setCaptured(new CapturingPlayers(player));
                 break;
+            case "teleport":
+            case "tp":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Usage: /koth tp <id/name>");
+                    break;
+                }
+                
+                String kothIdOrName = String.join(" ", args).substring(args[0].length() + 1);
+                Koth tpKoth;
+                try {
+                    tpKoth = MineKoth.getInstance().getKothManager().getKothById(Integer.parseInt(kothIdOrName));
+                } catch (NumberFormatException e) {
+                    tpKoth = MineKoth.getInstance().getKothManager().getKothByName(kothIdOrName);
+                }
+
+                if (tpKoth == null) {
+                    player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrName);
+                    break;
+                }
+
+                player.teleport(tpKoth.getCenter());
+                Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
                 break;
@@ -152,6 +175,7 @@ public class KothCommand implements CommandExecutor {
         player.sendMessage(ChatColor.YELLOW + " /koth start" + ChatColor.WHITE + " - Start the next scheduled koth.");
         player.sendMessage(ChatColor.YELLOW + " /koth stop" + ChatColor.WHITE + " - Stop the current koth event.");
         player.sendMessage(ChatColor.YELLOW + " /koth capture" + ChatColor.WHITE + " - Capture the current koth");
+        player.sendMessage(ChatColor.YELLOW + " /koth tp <id/name>" + ChatColor.WHITE + " - Teleport to a koth");
     }
 
     private void sendkothInfo(Player player, Koth koth) {
