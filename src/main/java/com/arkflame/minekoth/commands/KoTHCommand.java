@@ -162,7 +162,7 @@ public class KothCommand implements CommandExecutor {
                 Location center = tpKoth.getCenter();
 
                 FoliaAPI.runTask(() -> {
-                    player.teleport(center);
+                    FoliaAPI.teleportPlayer(player, center, true);
                     Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
                 });
                 break;

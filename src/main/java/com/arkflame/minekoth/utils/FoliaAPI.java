@@ -3,6 +3,7 @@ package com.arkflame.minekoth.utils;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -11,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -219,5 +221,22 @@ public class FoliaAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static CompletableFuture<Boolean> teleportPlayer(Player e, Location location, Boolean async) {
+        if (async) {
+            try {
+                Method teleportMethod = Player.class.getMethod("teleportAsync", Location.class);
+                teleportMethod.invoke(e, location);
+                return CompletableFuture.completedFuture(true);
+    
+            } catch (Exception ig) {
+                ig.printStackTrace();
+            }
+        } else {
+            e.teleport(location);
+            return CompletableFuture.completedFuture(true);
+        }
+        return CompletableFuture.completedFuture(false);
     }
 }
