@@ -5,6 +5,7 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
+import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.PotionEffectUtil;
@@ -159,6 +160,8 @@ public class KothEventManager {
                                 });
                             }
                         }
+
+                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstPosition().add(0, 0.5, 0), currentEvent.getKoth().getSecondPosition().add(0, 0.5, 0), "COLOURED_DUST", 100);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

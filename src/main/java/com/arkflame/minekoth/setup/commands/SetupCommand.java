@@ -1,6 +1,8 @@
 package com.arkflame.minekoth.setup.commands;
 
 import org.bukkit.entity.Player;
+
+import com.arkflame.mineclans.modernlib.utils.ChatColors;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
@@ -34,38 +36,41 @@ public class SetupCommand {
 
     public static void run(Player player, String[] args) {
         String subCommand = args.length <= 1 ? "help" : args[1].toLowerCase();
-        CommandHandler handler = COMMANDS.getOrDefault(subCommand, COMMANDS.getOrDefault("setup", (p, a) -> sendMessage(p, ChatColor.RED + "Unknown command. Use /koth setup help for help.")));
+        CommandHandler handler = COMMANDS.getOrDefault(subCommand, COMMANDS.getOrDefault("setup",
+                (p, a) -> sendMessage(p, ChatColor.RED + "Unknown command. Use /koth setup help for help.")));
         handler.handle(player, args);
     }
 
     private static void handleHelp(Player player, String[] args) {
         sendMessage(player,
-            ChatColor.GOLD + "Usage of setup commands:",
-            ChatColor.YELLOW + " /koth setup start - Start a new koth setup session.",
-            ChatColor.YELLOW + " /koth setup cancel - Cancel the current koth setup session.",
-            ChatColor.YELLOW + " /koth setup finish - Finish the current koth setup session.",
-            ChatColor.YELLOW + " /koth setup <id/name> - Edit an existing koth."
-        );
+                ChatColors.color("&7&m-------------------------------------"),
+                ChatColors.color("&cMineKOTH setup commands:"),
+                ChatColors.color("&e➤&7 /koth setup start - Start a new koth setup session."),
+                ChatColors.color("&e➤&7 /koth setup cancel - Cancel the current koth setup session."),
+                ChatColors.color("&e➤&7 /koth setup finish - Finish the current koth setup session."),
+                ChatColors.color("&e➤&7 /koth setup <id/name> - Edit an existing koth."),
+                ChatColors.color("&7&m-------------------------------------"));
     }
 
     private static void handleStart(Player player, String[] args) {
         if (hasActiveSession(player)) {
-            sendMessage(player, ChatColor.RED + "You are already in a setup session. Use /koth cancel to cancel.");
+            sendMessage(player, ChatColors.color(
+                    "&c✧ [MineKOTH] &e➤ &7You are already in a setup session. &cUse /koth setup cancel to cancel it."));
             return;
         }
-        
+
         MineKoth.getInstance().getSessionManager().addSession(player, new SetupSession());
-        sendMessage(player, ChatColor.GREEN + "KOTH creation started! Enter the name of the koth.");
+        sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7Koth creation started. &aPlease type the name."));
     }
 
     private static void handleCancel(Player player, String[] args) {
         if (!hasActiveSession(player)) {
-            sendMessage(player, ChatColor.RED + "You are not in a setup session.");
+            sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7You are not in a setup session."));
             return;
         }
-        
+
         MineKoth.getInstance().getSessionManager().removeSession(player);
-        sendMessage(player, ChatColor.RED + "KOTH creation cancelled.");
+        sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7Koth setup session cancelled."));
     }
 
     public static void handleFinish(Player player, String[] args) {
@@ -99,7 +104,7 @@ public class SetupCommand {
         } catch (NumberFormatException e) {
             koth = MineKoth.getInstance().getKothManager().getKothByName(kothIdOrName);
         }
-        
+
         if (koth == null) {
             sendMessage(player, ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrName);
             return;
@@ -115,7 +120,7 @@ public class SetupCommand {
         }
 
         sendMessage(player, ChatColor.RED + "Setup is not complete. Finish all steps before using this command.");
-        
+
         Map<String, Boolean> validations = new HashMap<>();
         validations.put("name", session.isNameSet());
         validations.put("first position", session.isFirstPositionSet());
@@ -153,34 +158,31 @@ public class SetupCommand {
 
     private static Koth createKothFromSession(int id, SetupSession session) {
         return new Koth(
-            id,
-            session.getName(),
-            session.getWorldName(),
-            session.getFirstPosition(),
-            session.getSecondPosition(),
-            session.getTimeLimit(),
-            session.getCaptureTime(),
-            new Rewards(
-                session.getRewardsCommands(),
-                session.getRewards(),
-                session.getLootType(),
-                session.getLootAmount()
-            ),
-            session.getTimes(),
-            session.getDays()
-        );
+                id,
+                session.getName(),
+                session.getWorldName(),
+                session.getFirstPosition(),
+                session.getSecondPosition(),
+                session.getTimeLimit(),
+                session.getCaptureTime(),
+                new Rewards(
+                        session.getRewardsCommands(),
+                        session.getRewards(),
+                        session.getLootType(),
+                        session.getLootAmount()),
+                session.getTimes(),
+                session.getDays());
     }
 
     private static void sendSuccessMessage(Player player, SetupSession session) {
         sendMessage(player,
-            ChatColor.GREEN + "KOTH setup complete! KOTH saved.",
-            ChatColor.GREEN + "Name: " + ChatColor.AQUA + session.getName(),
-            ChatColor.GREEN + "Times: " + ChatColor.AQUA + session.getTimes(),
-            ChatColor.GREEN + "Time Limit: " + ChatColor.AQUA + session.getTimeLimit() + " seconds",
-            ChatColor.GREEN + "Capture Time: " + ChatColor.AQUA + session.getCaptureTime() + " seconds",
-            ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + session.getRewards().length,
-            ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + session.getRewardsCommands()
-        );
+                ChatColor.GREEN + "KOTH setup complete! KOTH saved.",
+                ChatColor.GREEN + "Name: " + ChatColor.AQUA + session.getName(),
+                ChatColor.GREEN + "Times: " + ChatColor.AQUA + session.getTimes(),
+                ChatColor.GREEN + "Time Limit: " + ChatColor.AQUA + session.getTimeLimit() + " seconds",
+                ChatColor.GREEN + "Capture Time: " + ChatColor.AQUA + session.getCaptureTime() + " seconds",
+                ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + session.getRewards().length,
+                ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + session.getRewardsCommands());
     }
 
     private static boolean hasActiveSession(Player player) {

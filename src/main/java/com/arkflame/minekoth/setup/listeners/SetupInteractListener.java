@@ -56,7 +56,9 @@ public class SetupInteractListener implements Listener {
             Position first = session.getFirstPosition();
             Position second = session.getSecondPosition();
             player.sendMessage(ChatColor.GREEN + "Area size (" + first.getXLength(second) + "x" + first.getZLength(second) + "): " + ChatColor.AQUA + first.getArea(second) + " blocks");
-            if (!session.isTimesSet()) {
+            if (!session.isNameSet()) {
+                player.sendMessage(ChatColor.GREEN + "Enter the name of the koth.");
+            } else if (!session.isTimesSet()) {
                 player.sendMessage(ChatColor.GREEN + "Enter the times to run the koth (e.g., 8pm 9pm 10pm).");
             }
         }
