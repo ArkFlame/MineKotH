@@ -86,7 +86,11 @@ public class SetupChatListener implements Listener {
             }
         } else if (!session.isLootTypeSet()) {
             if (!session.isValidLootType(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid loot type. Please enter a valid one. (DEFAULT, RANDOM)");
+                player.sendMessage(ChatColor.RED + "Invalid loot type. Please enter a valid one.");
+                player.sendMessage(ChatColor.RED + " Default: Give all rewards to the winner");
+                player.sendMessage(ChatColor.RED + " Random: Give random rewards to the winner");
+                player.sendMessage(ChatColor.RED + " MineClans_Default: Give all rewards to clan members");
+                player.sendMessage(ChatColor.RED + " MineClans_Random: Give random rewards to clan members");
                 return;
             }
             session.setLootType(message);

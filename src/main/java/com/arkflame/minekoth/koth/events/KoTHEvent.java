@@ -7,6 +7,7 @@ import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
+import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
@@ -202,7 +203,7 @@ public class KothEvent {
 
     public void setCaptured(CapturingPlayers winners) {
         Player topPlayer = getTopPlayer();
-        distributeRewards(winners);
+        giveRewards(winners);
 
         // Notify Discord
         DiscordHook.sendKothCaptured(koth.getName(), topPlayer == null ? "No Winner" : topPlayer.getName());
@@ -277,12 +278,19 @@ public class KothEvent {
         return winners == null ? false : winners.containsPlayer(player);
     }
 
-    private void distributeRewards(CapturingPlayers winners) {
-        Player topPlayer = winners.getPlayers().get(0);
+    private void giveRewards(CapturingPlayers winners) {
+        Rewards rewards = koth.getRewards();
+        LootType lootType = rewards.getLootType();
 
-        if (topPlayer != null) {
-            Rewards rewards = koth.getRewards();
-            rewards.giveRewards(topPlayer);
+        if (lootType == LootType.MINECLANS_DEFAULT || lootType == LootType.MINECLANS_RANDOM) {
+            for (Player player : winners.getPlayers()) {
+                rewards.giveRewards(player);
+            }
+        } else {
+            Player topPlayer = winners.getPlayers().get(0);
+            if (topPlayer != null) {
+                rewards.giveRewards(topPlayer);
+            }
         }
     }
 

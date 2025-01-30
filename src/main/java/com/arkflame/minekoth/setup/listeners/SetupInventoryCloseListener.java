@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,6 +25,9 @@ public class SetupInventoryCloseListener implements Listener {
         if (session == null) {
             return;
         }
+        if (event.getInventory() == null || event.getInventory().getType() != InventoryType.CHEST) {
+            return;
+        }
 
         if (!session.isRewardsSet()) {
             List<ItemStack> items = new ArrayList<>();
@@ -37,7 +41,11 @@ public class SetupInventoryCloseListener implements Listener {
             session.setRewards(items.toArray(new ItemStack[0]));
             player.sendMessage(ChatColor.GREEN + "Rewards set. (" + items.size() + " items)");
             if (!session.isLootTypeSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the type of loot (default/random).");
+                player.sendMessage(ChatColor.GREEN + "Enter the type of loot type.");
+                player.sendMessage(ChatColor.GREEN + " Default: Give all rewards to the winner");
+                player.sendMessage(ChatColor.GREEN + " Random: Give random rewards to the winner");
+                player.sendMessage(ChatColor.GREEN + " MineClans_Default: Give all rewards to clan members");
+                player.sendMessage(ChatColor.GREEN + " MineClans_Random: Give random rewards to clan members");
             }
         } else {
             player.sendMessage("Rewards is already set");

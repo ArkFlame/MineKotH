@@ -16,7 +16,11 @@ public class Rewards {
         // Give all items to the winner
         DEFAULT,
         // Give a random item to the winner
-        RANDOM
+        RANDOM,
+        // Give all items to clan members
+        MINECLANS_DEFAULT, 
+        // Give a random item to clan members
+        MINECLANS_RANDOM
     }
 
     private Collection<ItemStack> items;
@@ -84,10 +88,8 @@ public class Rewards {
     }
 
     public void giveRewards(Player topPlayer) {
-        System.out.println("Giving rewards to " + topPlayer.getName());
         FoliaAPI.runTask(() -> {
-            if (lootType == LootType.DEFAULT) {
-                System.out.println("Give all rewards to " + topPlayer.getName());
+            if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
                 // Execute all reward commands
                 for (String command : getRewardsCommands()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
@@ -98,8 +100,7 @@ public class Rewards {
                         topPlayer.getInventory().addItem(item);
                     }
                 }
-            } else if (lootType == LootType.RANDOM) {
-                System.out.println("Give random rewards to " + topPlayer.getName());
+            } else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
                 // Combine items and commands into a single collection
                 ArrayList<Object> rewardsPool = new ArrayList<>();
                 rewardsPool.addAll(getRewardsItems());
@@ -108,8 +109,6 @@ public class Rewards {
                 // Shuffle and pick random rewards
                 Collections.shuffle(rewardsPool);
                 int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
-    
-                System.out.println("Giving " + rewardsToGive + " rewards to " + topPlayer.getName());
 
                 for (int i = 0; i < rewardsToGive; i++) {
                     Object reward = rewardsPool.get(i);
@@ -118,16 +117,10 @@ public class Rewards {
                         ItemStack item = (ItemStack) reward;
                         if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
                             topPlayer.getInventory().addItem(item);
-                            System.out.println("Giving " + item.getAmount() + " " + item.getType().name() + " to " + topPlayer.getName());
-                        } else{
-                            System.out.println("Item is null");
                         }
                     } else if (reward instanceof String) {
                         String command = (String) reward;
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
-                        System.out.println("Executing command: " + command);
-                    } else {
-                        System.out.println("Unknown reward type: " + reward == null ? "null" : reward.getClass().getName());
                     }
                 }
             }
