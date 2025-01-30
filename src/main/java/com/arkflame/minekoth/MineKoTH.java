@@ -98,11 +98,13 @@ public class MineKoth extends JavaPlugin {
         saveDefaultConfig();
 
         HologramUtility.initialize(this);
-        
+
         // Initialize Vault economy
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
-        if (rsp != null) {
-            this.economy = rsp.getProvider();
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+            if (rsp != null) {
+                this.economy = rsp.getProvider();
+            }
         }
 
         // Managers

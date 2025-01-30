@@ -18,7 +18,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.arkflame.minekoth.MineKoth;
 
-@SuppressWarnings("unchecked")
 public class FoliaAPI {
     private static final Map<String, Method> cachedMethods = new HashMap<>();
     
@@ -26,39 +25,100 @@ public class FoliaAPI {
     private static final Object globalRegionScheduler = getGlobalRegionScheduler();
     private static final Object regionScheduler = getRegionScheduler();
 
+    // Cache methods as early as possible
+    static {
+        cacheMethods();
+    }
+
     private static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         try {
-            if (cachedMethods.containsKey(methodName)) {
-                return cachedMethods.get(methodName);
-            }
-
-            Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
-            cachedMethods.put(methodName, method);
-            return method;
-        } catch (Exception e) {
-            // Ignore
+            return clazz.getMethod(methodName, parameterTypes);
+        } catch (NoSuchMethodException e) {
+            // Gracefully handle the case where the method does not exist
+            return null;
         }
-        return null;
+    }
+
+    private static void cacheMethods() {
+        // Cache methods for globalRegionScheduler
+        if (globalRegionScheduler != null) {
+            Method runAtFixedRateMethod = getMethod(globalRegionScheduler.getClass(), "runAtFixedRate", Plugin.class, Consumer.class, long.class, long.class);
+            if (runAtFixedRateMethod != null) {
+                cachedMethods.put("globalRegionScheduler.runAtFixedRate", runAtFixedRateMethod);
+            }
+    
+            Method runMethod = getMethod(globalRegionScheduler.getClass(), "run", Plugin.class, Consumer.class);
+            if (runMethod != null) {
+                cachedMethods.put("globalRegionScheduler.run", runMethod);
+            }
+        }
+    
+        // Cache methods for regionScheduler
+        if (regionScheduler != null) {
+            Method executeMethod = getMethod(regionScheduler.getClass(), "execute", Plugin.class, World.class, int.class, int.class, Runnable.class);
+            if (executeMethod != null) {
+                cachedMethods.put("regionScheduler.execute", executeMethod);
+            }
+    
+            Method executeLocationMethod = getMethod(regionScheduler.getClass(), "execute", Plugin.class, Location.class, Runnable.class);
+            if (executeLocationMethod != null) {
+                cachedMethods.put("regionScheduler.executeLocation", executeLocationMethod);
+            }
+    
+            Method runAtFixedRateMethod = getMethod(regionScheduler.getClass(), "runAtFixedRate", Plugin.class, Location.class, Consumer.class, long.class, long.class);
+            if (runAtFixedRateMethod != null) {
+                cachedMethods.put("regionScheduler.runAtFixedRate", runAtFixedRateMethod);
+            }
+    
+            Method runDelayedMethod = getMethod(regionScheduler.getClass(), "runDelayed", Plugin.class, Location.class, Consumer.class, long.class);
+            if (runDelayedMethod != null) {
+                cachedMethods.put("regionScheduler.runDelayed", runDelayedMethod);
+            }
+        }
+    
+        // Cache methods for entity scheduler
+        Method getSchedulerMethod = getMethod(Entity.class, "getScheduler");
+        if (getSchedulerMethod != null) {
+            cachedMethods.put("entity.getScheduler", getSchedulerMethod);
+        }
+    
+        Method executeEntityMethod = getMethod(Entity.class, "execute", Plugin.class, Runnable.class, Runnable.class, long.class);
+        if (executeEntityMethod != null) {
+            cachedMethods.put("entityScheduler.execute", executeEntityMethod);
+        }
+    
+        Method runAtFixedRateEntityMethod = getMethod(Entity.class, "runAtFixedRate", Plugin.class, Consumer.class, Runnable.class, long.class, long.class);
+        if (runAtFixedRateEntityMethod != null) {
+            cachedMethods.put("entityScheduler.runAtFixedRate", runAtFixedRateEntityMethod);
+        }
+    
+        // Cache method for Player teleportAsync
+        Method teleportAsyncMethod = getMethod(Player.class, "teleportAsync", Location.class);
+        if (teleportAsyncMethod != null) {
+            cachedMethods.put("player.teleportAsync", teleportAsyncMethod);
+        }
     }
 
     private static Object invokeMethod(Method method, Object object, Object... args) {
         try {
-            if (method != null) {
+            if (method != null && object != null) {
                 method.setAccessible(true);
                 return method.invoke(object, args);
             }
         } catch (Exception e) {
-            // Ignore
+            e.printStackTrace();
         }
         return null;
     }
 
     private static Object getGlobalRegionScheduler() {
-        return invokeMethod(getMethod(Server.class, "getGlobalRegionScheduler"), Bukkit.getServer());
+        Method method = getMethod(Server.class, "getGlobalRegionScheduler");
+        return invokeMethod(method, Bukkit.getServer());
     }
-
+    
     private static Object getRegionScheduler() {
-        return invokeMethod(getMethod(Server.class, "getRegionScheduler"), Bukkit.getServer());
+        Method method = getMethod(Server.class, "getRegionScheduler");
+        return invokeMethod(method, Bukkit.getServer());
     }
 
     public static boolean isFolia() {
@@ -83,8 +143,7 @@ public class FoliaAPI {
             bS.runTaskTimerAsynchronously(MineKoth.getInstance(), () -> run.accept(null), delay, period);
             return;
         }
-        // New system using the method cache
-        Method method = getMethod(globalRegionScheduler.getClass(), "runAtFixedRate", Plugin.class, Consumer.class, long.class, long.class);
+        Method method = cachedMethods.get("globalRegionScheduler.runAtFixedRate");
         invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
     }
 
@@ -93,14 +152,8 @@ public class FoliaAPI {
             bS.runTaskTimer(MineKoth.getInstance(), () -> run.accept(null), delay, period);
             return;
         }
-        try {
-            Method m = globalRegionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class,
-                    long.class, long.class);
-            m.setAccessible(true);
-            m.invoke(globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Method method = cachedMethods.get("globalRegionScheduler.runAtFixedRate");
+        invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
     }
 
     public static void runTask(Runnable run) {
@@ -108,15 +161,8 @@ public class FoliaAPI {
             bS.runTask(MineKoth.getInstance(), run);
             return;
         }
-
-        try {
-            Method executeMethod = globalRegionScheduler.getClass().getMethod("run", Plugin.class, Consumer.class);
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(globalRegionScheduler, MineKoth.getInstance(),
-                    (Consumer<Object>) ignored -> run.run());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Method method = cachedMethods.get("globalRegionScheduler.run");
+        invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
     }
 
     public static void runTask(Consumer<Object> run) {
@@ -124,13 +170,8 @@ public class FoliaAPI {
             bS.runTask(MineKoth.getInstance(), () -> run.accept(null));
             return;
         }
-        try {
-            Method executeMethod = globalRegionScheduler.getClass().getMethod("run", Plugin.class, Consumer.class);
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(globalRegionScheduler, MineKoth.getInstance(), run);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Method method = cachedMethods.get("globalRegionScheduler.run");
+        invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), run);
     }
 
     public static void runTaskForEntity(Entity entity, Runnable run, Runnable retired, long delay) {
@@ -138,15 +179,11 @@ public class FoliaAPI {
             bS.runTaskLater(MineKoth.getInstance(), run, delay);
             return;
         }
-        try {
-            Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
-            Object entityScheduler = getSchedulerMethod.invoke(entity);
-            Method executeMethod = entityScheduler.getClass().getMethod("execute", Plugin.class, Runnable.class,
-                    Runnable.class, long.class);
-            executeMethod.invoke(entityScheduler, MineKoth.getInstance(), run, retired, delay);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (entity == null) return;
+        Method getSchedulerMethod = cachedMethods.get("entity.getScheduler");
+        Object entityScheduler = invokeMethod(getSchedulerMethod, entity);
+        Method executeMethod = cachedMethods.get("entityScheduler.execute");
+        invokeMethod(executeMethod, entityScheduler, MineKoth.getInstance(), run, retired, delay);
     }
 
     public static void runTaskForEntityRepeating(Entity entity, Consumer<Object> task, Runnable retired,
@@ -155,15 +192,11 @@ public class FoliaAPI {
             bS.runTaskTimer(MineKoth.getInstance(), () -> task.accept(null), initialDelay, period);
             return;
         }
-        try {
-            Method getSchedulerMethod = entity.getClass().getMethod("getScheduler");
-            Object entityScheduler = getSchedulerMethod.invoke(entity);
-            Method runAtFixedRateMethod = entityScheduler.getClass().getMethod("runAtFixedRate", Plugin.class,
-                    Consumer.class, Runnable.class, long.class, long.class);
-            runAtFixedRateMethod.invoke(entityScheduler, MineKoth.getInstance(), task, retired, initialDelay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (entity == null) return;
+        Method getSchedulerMethod = cachedMethods.get("entity.getScheduler");
+        Object entityScheduler = invokeMethod(getSchedulerMethod, entity);
+        Method runAtFixedRateMethod = cachedMethods.get("entityScheduler.runAtFixedRate");
+        invokeMethod(runAtFixedRateMethod, entityScheduler, MineKoth.getInstance(), task, retired, initialDelay, period);
     }
 
     public static void runTaskForRegion(World world, int chunkX, int chunkZ, Runnable run) {
@@ -171,13 +204,9 @@ public class FoliaAPI {
             bS.runTask(MineKoth.getInstance(), run);
             return;
         }
-        try {
-            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, World.class, int.class,
-                    int.class, Runnable.class);
-            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), world, chunkX, chunkZ, run);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (world == null) return;
+        Method executeMethod = cachedMethods.get("regionScheduler.execute");
+        invokeMethod(executeMethod, regionScheduler, MineKoth.getInstance(), world, chunkX, chunkZ, run);
     }
 
     public static void runTaskForRegion(Location location, Runnable run) {
@@ -185,13 +214,9 @@ public class FoliaAPI {
             bS.runTask(MineKoth.getInstance(), run);
             return;
         }
-        try {
-            Method executeMethod = regionScheduler.getClass().getMethod("execute", Plugin.class, Location.class,
-                    Runnable.class);
-            executeMethod.invoke(regionScheduler, MineKoth.getInstance(), location, run);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (location == null) return;
+        Method executeMethod = cachedMethods.get("regionScheduler.executeLocation");
+        invokeMethod(executeMethod, regionScheduler, MineKoth.getInstance(), location, run);
     }
 
     public static void runTaskForRegionRepeating(Location location, Consumer<Object> task, long initialDelay,
@@ -200,13 +225,9 @@ public class FoliaAPI {
             bS.runTaskTimer(MineKoth.getInstance(), () -> task.accept(null), initialDelay, period);
             return;
         }
-        try {
-            Method runAtFixedRateMethod = regionScheduler.getClass().getMethod("runAtFixedRate", Plugin.class,
-                    Location.class, Consumer.class, long.class, long.class);
-            runAtFixedRateMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, initialDelay, period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (location == null) return;
+        Method runAtFixedRateMethod = cachedMethods.get("regionScheduler.runAtFixedRate");
+        invokeMethod(runAtFixedRateMethod, regionScheduler, MineKoth.getInstance(), location, task, initialDelay, period);
     }
 
     public static void runTaskForRegionDelayed(Location location, Consumer<Object> task, long delay) {
@@ -214,29 +235,21 @@ public class FoliaAPI {
             bS.runTaskLater(MineKoth.getInstance(), () -> task.accept(null), delay);
             return;
         }
-        try {
-            Method runDelayedMethod = regionScheduler.getClass().getMethod("runDelayed", Plugin.class, Location.class,
-                    Consumer.class, long.class);
-            runDelayedMethod.invoke(regionScheduler, MineKoth.getInstance(), location, task, delay);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (location == null) return;
+        Method runDelayedMethod = cachedMethods.get("regionScheduler.runDelayed");
+        invokeMethod(runDelayedMethod, regionScheduler, MineKoth.getInstance(), location, task, delay);
     }
 
     public static CompletableFuture<Boolean> teleportPlayer(Player e, Location location, Boolean async) {
-        if (async) {
-            try {
-                Method teleportMethod = Player.class.getMethod("teleportAsync", Location.class);
-                teleportMethod.invoke(e, location);
-                return CompletableFuture.completedFuture(true);
-    
-            } catch (Exception ig) {
-                ig.printStackTrace();
-            }
+        if (!isFolia()) {
+            e.teleport(location);
+            return CompletableFuture.completedFuture(true);
+        } else if (async) {
+            Method teleportMethod = cachedMethods.get("player.teleportAsync");
+            return CompletableFuture.completedFuture(invokeMethod(teleportMethod, e, location) != null);
         } else {
             e.teleport(location);
             return CompletableFuture.completedFuture(true);
         }
-        return CompletableFuture.completedFuture(false);
     }
 }
