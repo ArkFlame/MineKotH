@@ -19,7 +19,8 @@ public class KothEventBets {
     private static final int MONEY_SCALE = 2;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
 
-    private final ConcurrentMap<String, Map<UUID, Double>> bets = new ConcurrentHashMap<>(); // Stores bets for each participant
+    // Participant, Betting Player, Amount
+    private final ConcurrentMap<String, Map<UUID, Double>> bets = new ConcurrentHashMap<>();
 
     /**
      * Places a bet on a participant.
@@ -30,7 +31,7 @@ public class KothEventBets {
      * @return True if the bet was successful, false otherwise.
      */
     public boolean placeBet(OfflinePlayer player, String participant, double amount) {
-        if (!MineKoth.getInstance().isEconomyPresent()) {
+        if (!isEconomyAvailable()) {
             sendMessage(player, "&cVault is not present. Bet cannot be placed.");
             return false;
         }
@@ -64,10 +65,11 @@ public class KothEventBets {
 
         // Add the bet to the participant's map
         bets.computeIfAbsent(participantPlayer.getName(), k -> new ConcurrentHashMap<>())
-                .merge(participantPlayer.getUniqueId(), amount, Double::sum);
+                .merge(player.getUniqueId(), amount, Double::sum);
 
         // Send a fancy message to the player
-        sendMessage(player, "&aYou have successfully placed a bet of &6" + amount + " &aon &b" + participantPlayer.getName() + "&a!");
+        sendMessage(player, "&aYou have successfully placed a bet of &6" + amount + " &aon &b"
+                + participantPlayer.getName() + "&a!");
 
         return true;
     }
@@ -78,57 +80,98 @@ public class KothEventBets {
      * @param winner The name of the winning participant.
      */
     public void giveRewards(String winner) {
-        if (!MineKoth.getInstance().isEconomyPresent()) {
-            Bukkit.getOnlinePlayers().forEach(p -> sendMessage(p, "&cVault is not present. Rewards cannot be distributed."));
+        if (!isEconomyAvailable()) {
             return;
         }
 
-        Map<UUID, Double> winningBets = bets.getOrDefault(winner, Collections.emptyMap());
-
-        // Calculate the total pool (all bets)
-        BigDecimal totalPool = bets.values().stream()
-                .flatMap(map -> map.values().stream())
-                .map(BigDecimal::valueOf)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        // Calculate the total bets on the winner
-        BigDecimal totalWinningBets = winningBets.values().stream()
-                .map(BigDecimal::valueOf)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        Map<UUID, Double> winningBets = getWinningBets(winner);
+        BigDecimal totalPool = calculateTotalPool();
+        BigDecimal totalWinningBets = calculateTotalWinningBets(winningBets);
 
         if (totalWinningBets.compareTo(BigDecimal.ZERO) <= 0) {
-            Bukkit.getOnlinePlayers().forEach(p -> sendMessage(p, "&cNo bets were placed on the winner. No rewards to distribute."));
-            return;
+            return; // No valid bets on the winner
         }
 
         Economy economy = MineKoth.getInstance().getEconomy();
+        
+        // Distribute rewards only to those who placed bets on the winner
+        distributeRewards(winningBets, totalPool, totalWinningBets, economy, winner);
 
-        // Distribute rewards to winners based on their share
+        // Notify losers who did not win
+        notifyLosers(winningBets);
+
+        clearAllBets();
+    }
+
+    private boolean isEconomyAvailable() {
+        return MineKoth.getInstance().isEconomyPresent();
+    }
+
+    private Map<UUID, Double> getWinningBets(String winner) {
+        return bets.getOrDefault(winner, Collections.emptyMap());
+    }
+
+    private BigDecimal calculateTotalPool() {
+        return bets.values().stream()
+                .flatMap(map -> map.values().stream())
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateTotalWinningBets(Map<UUID, Double> winningBets) {
+        return winningBets.values().stream()
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void distributeRewards(Map<UUID, Double> winningBets, BigDecimal totalPool,
+                                   BigDecimal totalWinningBets, Economy economy, String winner) {
         for (Map.Entry<UUID, Double> entry : winningBets.entrySet()) {
             UUID playerId = entry.getKey();
-            double playerBet = entry.getValue();
-            BigDecimal playerShare = BigDecimal.valueOf(playerBet).divide(totalWinningBets, MONEY_SCALE, ROUNDING_MODE);
-            BigDecimal reward = playerShare.multiply(totalPool).setScale(MONEY_SCALE, ROUNDING_MODE);
+            BigDecimal reward = calculateReward(entry.getValue(), totalWinningBets, totalPool);
 
-            // Give the reward to the player
             OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
-            try {
-                economy.depositPlayer(player, reward.doubleValue());
-            } catch (Exception e) {
-                sendMessage(player, "&cFailed to deposit your reward. Please contact an administrator.");
-                continue;
+            if (depositReward(economy, player, reward)) {
+                sendMessage(player, "&6Congratulations! You won &a" + reward + " &6for betting on &b" + winner + "&6!");
             }
-
-            // Send a fancy message to the player
-            sendMessage(player, "&6Congratulations! You won &a" + reward + " &6for betting on &b" + winner + "&6!");
         }
+    }
 
-        // Clear all bets after distributing rewards
+    private BigDecimal calculateReward(double playerBet, BigDecimal totalWinningBets,
+                                       BigDecimal totalPool) {
+        BigDecimal playerShare = BigDecimal.valueOf(playerBet).divide(totalWinningBets, MONEY_SCALE, ROUNDING_MODE);
+        return playerShare.multiply(totalPool).setScale(MONEY_SCALE, ROUNDING_MODE);
+    }
+
+    private boolean depositReward(Economy economy, OfflinePlayer player, BigDecimal reward) {
+        try {
+            economy.depositPlayer(player, reward.doubleValue());
+            return true;
+        } catch (Exception e) {
+            sendMessage(player, "&cFailed to deposit your reward. Please contact an administrator.");
+            return false;
+        }
+    }
+
+    private void notifyLosers(Map<UUID, Double> winningBets) {
+        for (Map.Entry<String, Map<UUID, Double>> entry : bets.entrySet()) {
+            String participant = entry.getKey();
+            for (Map.Entry<UUID, Double> losingEntry : entry.getValue().entrySet()) {
+                UUID playerId = losingEntry.getKey();
+                if (!winningBets.containsKey(playerId)) { // Only notify those who lost
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
+                    double playerBet = losingEntry.getValue();
+                    sendMessage(player,
+                            "&cYou lost &a" + playerBet + " &cbet on &b" + participant + "&c.");
+                }
+            }
+        }
+    }
+
+    private void clearAllBets() {
         synchronized (bets) {
             bets.clear();
         }
-
-        Bukkit.getOnlinePlayers().forEach(p -> sendMessage(p, "&aRewards have been distributed for the winner: &b" + winner));
     }
 
     /**
