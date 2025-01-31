@@ -43,4 +43,16 @@ public class Position {
     public int getZLength(Position second) {
         return (int) Math.abs(this.z - second.getZ());
     }
+
+    public String serialize() {
+        return x + " " + y + " " + z;
+    }
+
+    public static Position deserialize(String serializedData) {
+        String[] parts = serializedData.split(" ");
+        double x = Double.parseDouble(parts[0]);
+        double y = Double.parseDouble(parts[1]);
+        double z = Double.parseDouble(parts[2]);
+        return new Position(x, y, z);
+    }
 }

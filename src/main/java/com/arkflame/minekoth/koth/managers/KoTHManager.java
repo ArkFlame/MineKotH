@@ -1,5 +1,6 @@
 package com.arkflame.minekoth.koth.managers;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 
 import java.util.HashMap;

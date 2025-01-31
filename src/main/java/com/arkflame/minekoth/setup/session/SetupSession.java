@@ -37,8 +37,8 @@ public class SetupSession {
         this.id = koth.getId();
         this.name = koth.getName();
         this.worldName = koth.getWorldName();
-        this.firstPosition = new Position(koth.getFirstPosition());
-        this.secondPosition = new Position(koth.getSecondPosition());
+        this.firstPosition = new Position(koth.getFirstLocation());
+        this.secondPosition = new Position(koth.getSecondLocation());
         this.timeLimit = koth.getTimeLimit();
         this.captureTime = koth.getTimeToCapture();
         this.rewards = koth.getRewards().getRewardsItems().toArray(new ItemStack[0]);

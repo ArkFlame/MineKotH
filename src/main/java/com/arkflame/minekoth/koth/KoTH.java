@@ -38,12 +38,20 @@ public class Koth {
         return Bukkit.getWorld(worldName);
     }
     
-    public Location getFirstPosition() {
+    public Location getFirstLocation() {
         return new Location(getWorld(), firstPosition.getX(), firstPosition.getY(), firstPosition.getZ());
     }
 
-    public Location getSecondPosition() {
+    public Location getSecondLocation() {
         return new Location(getWorld(), secondPosition.getX(), secondPosition.getY(), secondPosition.getZ());
+    }
+
+    public Position getFirstPosition() {
+        return firstPosition;
+    }
+
+    public Position getSecondPosition() {
+        return secondPosition;
     }
 
     public boolean isInside(Location location) {

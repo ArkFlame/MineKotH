@@ -6,10 +6,12 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.minekoth.commands.KothCommand;
+import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerMoveListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
+import com.arkflame.minekoth.koth.loaders.KothLoader;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.particles.ParticleScheduler;
@@ -39,6 +41,7 @@ public class MineKoth extends JavaPlugin {
     private ParticleScheduler particleScheduler;
     private RandomEventsManager randomEventsManager;
     private Economy economy;
+    private KothLoader kothLoader;
 
     public ParticleScheduler getParticleScheduler() {
         return particleScheduler;
@@ -92,6 +95,10 @@ public class MineKoth extends JavaPlugin {
         return economy != null;
     }
 
+    public KothLoader getKothLoader() {
+        return kothLoader;
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
@@ -117,6 +124,9 @@ public class MineKoth extends JavaPlugin {
 
         // Random Events
         randomEventsManager = new RandomEventsManager();
+
+        // Koth Loader
+        kothLoader = new KothLoader(this);
 
         // Bukkit Stuff
         PluginManager pluginManager = getServer().getPluginManager();
@@ -150,15 +160,16 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
+
+        // Load all koths
+        for (Koth koth : kothLoader.loadAll()) {
+            kothManager.addKoth(koth);
+        }
     }
 
     public void onDisable() {
         DiscordHook.shutdown();
         MenuUtil.shutdown();
         HologramUtility.clearHolograms();
-
-        // TODO: Save all koths
-
-        // TODO: Save all schedules
     }
 }

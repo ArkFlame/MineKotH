@@ -145,6 +145,7 @@ public class SetupCommand {
         if (sessionId != -1) {
             MineKoth.getInstance().getKothManager().deleteKoth(sessionId);
             MineKoth.getInstance().getScheduleManager().removeSchedulesByKoth(sessionId);
+            MineKoth.getInstance().getKothLoader().delete(sessionId);
         } else {
             sessionId = MineKoth.getInstance().getKothManager().getNextId();
         }
@@ -153,6 +154,7 @@ public class SetupCommand {
         MineKoth.getInstance().getSessionManager().removeSession(player);
         MineKoth.getInstance().getKothManager().addKoth(koth);
         MineKoth.getInstance().getScheduleManager().scheduleKoth(koth.getId(), session.getTimes(), session.getDays());
+        MineKoth.getInstance().getKothLoader().save(koth);
 
         sendSuccessMessage(player, session);
     }

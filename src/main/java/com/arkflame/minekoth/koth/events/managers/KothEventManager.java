@@ -175,8 +175,8 @@ public class KothEventManager {
                             }
                         }
 
-                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstPosition().add(0, 0.5, 0),
-                                currentEvent.getKoth().getSecondPosition().add(0, 0.5, 0), "COLOURED_DUST", 100);
+                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstLocation().add(0, 0.5, 0),
+                                currentEvent.getKoth().getSecondLocation().add(0, 0.5, 0), "COLOURED_DUST", 100);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

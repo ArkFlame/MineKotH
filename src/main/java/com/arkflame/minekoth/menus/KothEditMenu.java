@@ -42,8 +42,8 @@ public class KothEditMenu extends Menu {
         MenuItem regionItem = new MenuItem.Builder(Materials.get("GOLDEN_AXE", "GOLD_AXE"))
                 .name("§6§lRegion Selection")
                 .lore(
-                        "§7First Position: §f" + formatLocation(koth.getFirstPosition()),
-                        "§7Second Position: §f" + formatLocation(koth.getSecondPosition()),
+                        "§7First Position: §f" + formatLocation(koth.getFirstLocation()),
+                        "§7Second Position: §f" + formatLocation(koth.getSecondLocation()),
                         "",
                         "§8• §7Click to redefine the region",
                         "§8• §7You'll need to select two corners",

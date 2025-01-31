@@ -1,25 +1,21 @@
 package com.arkflame.minekoth.koth;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import com.arkflame.minekoth.utils.FoliaAPI;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class Rewards {
     public enum LootType {
-        // Give all items to the winner
         DEFAULT,
-        // Give a random item to the winner
         RANDOM,
-        // Give all items to clan members
         MINECLANS_DEFAULT, 
-        // Give a random item to clan members
         MINECLANS_RANDOM
     }
 
@@ -125,5 +121,37 @@ public class Rewards {
                 }
             }
         });
-    }    
+    }
+
+    public String serialize() {
+        String serializedItems = items.stream()
+                .map(item -> item.getType().name() + ":" + item.getAmount())
+                .collect(Collectors.joining(","));
+        String serializedCommands = String.join(",", commands);
+        return lootType.name() + ";" + lootAmount + ";" + serializedItems + ";" + serializedCommands;
+    }
+
+    public static Rewards deserialize(String serializedData) {
+        String[] parts = serializedData.split(";");
+        LootType lootType = LootType.valueOf(parts[0]);
+        int lootAmount = Integer.parseInt(parts[1]);
+        
+        Collection<ItemStack> items = new ArrayList<>();
+        if (!parts[2].isEmpty()) {
+            String[] itemsArray = parts[2].split(",");
+            for (String itemData : itemsArray) {
+                String[] itemParts = itemData.split(":");
+                ItemStack item = new ItemStack(Material.valueOf(itemParts[0]), Integer.parseInt(itemParts[1]));
+                items.add(item);
+            }
+        }
+
+        Collection<String> commands = new ArrayList<>();
+        if (parts.length > 3 && !parts[3].isEmpty()) {
+            String[] commandsArray = parts[3].split(",");
+            Collections.addAll(commands, commandsArray);
+        }
+
+        return new Rewards(commands, items.toArray(new ItemStack[0]), lootType, lootAmount);
+    }
 }

@@ -80,6 +80,7 @@ public class KothCommand implements CommandExecutor {
                     int id = Integer.parseInt(args[1]);
                     Koth removed = kothManager.deleteKoth(id);
                     scheduleManager.removeSchedulesByKoth(id);
+                    MineKoth.getInstance().getKothLoader().delete(id);
                     if (removed == null) {
                         player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
                         return true;
