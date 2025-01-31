@@ -35,6 +35,7 @@ public class ScheduleCommand {
                 try {
                     int id = Integer.parseInt(args[2]);
                     MineKoth.getInstance().getScheduleManager().removeSchedule(id);
+                    MineKoth.getInstance().getScheduleLoader().delete(id);
                     sender.sendMessage(ChatColor.GREEN + "Schedule removed.");
                 } catch (NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + "Invalid schedule ID.");

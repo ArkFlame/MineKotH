@@ -147,7 +147,7 @@ public class SetupCommand {
             MineKoth.getInstance().getScheduleManager().removeSchedulesByKoth(sessionId);
             MineKoth.getInstance().getKothLoader().delete(sessionId);
         } else {
-            sessionId = MineKoth.getInstance().getKothManager().getNextId();
+            sessionId = MineKoth.getInstance().getKothManager().generateUniqueId();
         }
 
         Koth koth = createKothFromSession(sessionId, session);

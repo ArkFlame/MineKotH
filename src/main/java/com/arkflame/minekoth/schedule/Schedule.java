@@ -103,4 +103,12 @@ public class Schedule {
             return String.format("%d", seconds);
         }
     }
+
+    public List<String> getDayNames() {
+        List<String> dayNames = new ArrayList<>(days.size());
+        for (DayOfWeek day : days) {
+            dayNames.add(day.name());
+        }
+        return dayNames;
+    }
 }

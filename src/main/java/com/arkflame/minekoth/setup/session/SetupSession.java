@@ -45,6 +45,7 @@ public class SetupSession {
         this.times = koth.getTimes();
         this.days = koth.getDays();
         this.lootType = koth.getRewards().getLootType();
+        this.lootAmount = koth.getRewards().getLootAmount();
 
         this.editing = true;
     }

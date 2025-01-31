@@ -16,6 +16,8 @@ import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.particles.ParticleScheduler;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
+import com.arkflame.minekoth.schedule.Schedule;
+import com.arkflame.minekoth.schedule.loaders.ScheduleLoader;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
 import com.arkflame.minekoth.schedule.tasks.ScheduleRunnerTask;
 import com.arkflame.minekoth.setup.listeners.SetupChatListener;
@@ -42,6 +44,7 @@ public class MineKoth extends JavaPlugin {
     private RandomEventsManager randomEventsManager;
     private Economy economy;
     private KothLoader kothLoader;
+    private ScheduleLoader scheduleLoader;
 
     public ParticleScheduler getParticleScheduler() {
         return particleScheduler;
@@ -99,6 +102,10 @@ public class MineKoth extends JavaPlugin {
         return kothLoader;
     }
 
+    public ScheduleLoader getScheduleLoader() {
+        return scheduleLoader;
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
@@ -127,6 +134,9 @@ public class MineKoth extends JavaPlugin {
 
         // Koth Loader
         kothLoader = new KothLoader(this);
+
+        // Schedule Loader
+        scheduleLoader = new ScheduleLoader(this);
 
         // Bukkit Stuff
         PluginManager pluginManager = getServer().getPluginManager();
@@ -164,6 +174,11 @@ public class MineKoth extends JavaPlugin {
         // Load all koths
         for (Koth koth : kothLoader.loadAll()) {
             kothManager.addKoth(koth);
+        }
+
+        // Load all schedules
+        for (Schedule schedule : scheduleLoader.loadAll()) {
+            scheduleManager.addSchedule(schedule);
         }
     }
 

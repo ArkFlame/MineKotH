@@ -1,6 +1,5 @@
 package com.arkflame.minekoth.koth.managers;
 
-import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 
 import java.util.HashMap;
@@ -8,15 +7,14 @@ import java.util.Map;
 
 public class KothManager {
     private Map<Integer, Koth> koths = new HashMap<>();
-    private int nextId = 1;
 
-    /**
-     * Get the next unique ID for a koth.
-     * 
-     * @return the next ID
-     */
-    public int getNextId() {
-        return nextId++;
+    public int generateUniqueId() {
+        // Generate a unique ID that is not currently used
+        int id = 1; // Start from 1 or any other base value
+        while (koths.containsKey(id)) {
+            id++;
+        }
+        return id;
     }
 
     /**

@@ -137,7 +137,7 @@ public class Rewards {
         int lootAmount = Integer.parseInt(parts[1]);
         
         Collection<ItemStack> items = new ArrayList<>();
-        if (!parts[2].isEmpty()) {
+        if (parts.length > 2 && !parts[2].isEmpty()) {
             String[] itemsArray = parts[2].split(",");
             for (String itemData : itemsArray) {
                 String[] itemParts = itemData.split(":");

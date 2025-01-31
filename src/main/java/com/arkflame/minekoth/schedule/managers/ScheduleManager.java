@@ -2,6 +2,7 @@ package com.arkflame.minekoth.schedule.managers;
 
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Times;
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.KothTime;
 
 import java.time.DayOfWeek;
@@ -15,6 +16,8 @@ public class ScheduleManager {
     private Schedule nextSchedule;
 
     public void addSchedule(Schedule schedule) {
+        // Ensure we are removing any existing schedule with the same ID
+        removeSchedule(schedule.getId());
         schedulesById.put(schedule.getId(), schedule);
         updateScheduleMapping(schedule);
         calculateNextKoth();
@@ -39,14 +42,19 @@ public class ScheduleManager {
 
         for (int id : schedulesToRemove) {
             removeSchedule(id);
+            MineKoth.getInstance().getScheduleLoader().delete(id);
         }
     }
 
     public Schedule scheduleKoth(int kothId, int hour, int minute, String ...dayNames) {
         Set<DayOfWeek> days = dayNames.length > 0 ? Times.parseDayNames(dayNames) : EnumSet.allOf(DayOfWeek.class);
         if (days.isEmpty()) return null;
+
+        // Generate a unique ID for the new schedule
+        int uniqueId = generateUniqueId();
+        
         Schedule schedule = new Schedule(
-                generateUniqueId(),
+                uniqueId,
                 kothId,
                 days,
                 hour,
@@ -54,6 +62,7 @@ public class ScheduleManager {
         );
 
         addSchedule(schedule);
+        MineKoth.getInstance().getScheduleLoader().save(schedule);
 
         return schedule;
     }
@@ -75,7 +84,12 @@ public class ScheduleManager {
     }
 
     private int generateUniqueId() {
-        return schedulesById.keySet().stream().max(Integer::compare).orElse(0) + 1;
+        // Generate a unique ID that is not currently used
+        int id = 1; // Start from 1 or any other base value
+        while (schedulesById.containsKey(id)) {
+            id++;
+        }
+        return id;
     }
 
     public Schedule getScheduleById(int id) {
@@ -139,6 +153,7 @@ public class ScheduleManager {
                 }
             }
         }
+        
         nextSchedule = nearest;
     }
 
