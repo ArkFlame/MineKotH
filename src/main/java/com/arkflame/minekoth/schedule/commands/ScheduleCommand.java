@@ -49,6 +49,10 @@ public class ScheduleCommand {
 
                 try {
                     int kothId = Integer.parseInt(args[2]);
+                    if (MineKoth.getInstance().getKothManager().getKothById(kothId) == null) {
+                        sender.sendMessage(ChatColor.RED + "Invalid koth ID.");
+                        return;
+                    }
                     String[] timeEntries = args[3].split(",");
                     for (String timeEntry : timeEntries) {
                         String[] dayNames = args.length > 4 ? args[4].split(",") : new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};

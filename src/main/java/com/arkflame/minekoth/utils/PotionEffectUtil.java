@@ -64,14 +64,17 @@ public final class PotionEffectUtil {
         return validEffects.size();
     }
 
-    public static void removeAllValidEffects(Player player, String ...effects) {
+    public static void removeAllValidEffects(Player player, String... effects) {
         if (player == null || effects == null || effects.length == 0) {
             return;
         }
 
         List<PotionEffectType> validEffects = findAllValidEffects(effects);
         if (!validEffects.isEmpty()) {
-            validEffects.forEach(effect -> player.removePotionEffect(effect));
+            FoliaAPI.runTaskForEntity(player, () -> {
+                validEffects.forEach(effect -> player.removePotionEffect(effect));
+            }, () -> {
+            }, 1L);
         }
     }
 
