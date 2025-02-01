@@ -20,6 +20,7 @@ public class PlayerDataListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         FoliaAPI.runTaskAsync(() -> {
             MineKoth.getInstance().getPlayerDataManager().save(event.getPlayer().getUniqueId().toString());
+            MineKoth.getInstance().getPlayerDataManager().remove(event.getPlayer().getUniqueId().toString());
         });
     }
 }
