@@ -3,9 +3,7 @@ package com.arkflame.minekoth.koth.events.random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Skeleton;
@@ -13,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
 import java.util.Random;
@@ -47,13 +46,14 @@ public class SkeletonHordeEvent extends RandomEvent {
                 // Give them better equipment
                 ItemStack bow = new ItemStack(Material.BOW);
                 bow.addEnchantment(Enchantment.getByName("ARROW_DAMAGE"), 2);
-                skeleton.getEquipment().setItemInMainHand(bow);
+                skeleton.getEquipment().setItemInHand(bow);
                 skeleton.getEquipment().setHelmet(new ItemStack(Material.CHAINMAIL_HELMET));
             });
         }
 
-        world.playSound(center, Sound.ENTITY_SKELETON_AMBIENT, 1.0f, 0.5f);
-        Titles.sendTitle(event.getPlayersInZone(), "§cSkeleton Horde", "§7A horde of skeletons has appeared!", 5, 20, 5);
+        Sounds.play(center, 1.0f, 0.5f, "ENTITY_SKELETON_AMBIENT");
+        Titles.sendTitle(event.getPlayersInZone(), "§cSkeleton Horde", "§7A horde of skeletons has appeared!", 5, 20,
+                5);
     }
 
     private boolean hasPlayersInside(KothEvent event) {

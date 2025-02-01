@@ -43,6 +43,22 @@ public class Sounds {
             player.playSound(player.getLocation(), sound, volume, pitch);
         }
     }
+    
+    /**
+     * Plays a sound at a specified location, if the sound is not null.
+     * You can use multiple sounds to play for 1.8 servers and 1.20 servers
+     *
+     * @param location The location to play the sound at.
+     * @param volume   The volume of the sound (0.0 to 1.0).
+     * @param pitch    The pitch of the sound (0.5 to 2.0).
+     * @param sounds   One or more String names of the Sound to play.
+     */
+   public static void play(Location location, float volume, float pitch, String... sounds) {
+       Sound sound = get(sounds);
+       if (sound != null) {
+           location.getWorld().playSound(location, sound, volume, pitch);
+       }
+   }
 
     // You can use multiple sounds to play for 1.8 servers and 1.20 servers
     public static void play(float volume, float pitch, String... sounds) {
