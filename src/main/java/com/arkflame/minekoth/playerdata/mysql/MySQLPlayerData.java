@@ -80,7 +80,7 @@ public class MySQLPlayerData extends PlayerData {
                 ps.setString(1, playerId);
                 ps.setString(2, entry.getKey());
                 ps.setBoolean(3, true);
-                ps.setNull(4, java.sql.Types.INTEGER);
+                ps.setInt(4, -1);
                 ps.setString(5, entry.getValue().getValue().toString());
                 ps.addBatch();
             }
