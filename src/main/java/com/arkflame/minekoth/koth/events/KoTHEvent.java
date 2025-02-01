@@ -9,6 +9,7 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.koth.events.bets.KothEventBets;
+import com.arkflame.minekoth.player.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.GlowingUtility;
@@ -286,15 +287,38 @@ public class KothEvent {
     private void giveRewards(CapturingPlayers winners) {
         Rewards rewards = koth.getRewards();
         LootType lootType = rewards.getLootType();
+        Player topPlayer = winners.getPlayers().get(0); // Assuming the first player is the winner
+        PlayerData winnerData = MineKoth.getInstance().getPlayerDataManager()
+                .getIfLoaded(topPlayer.getUniqueId().toString());
 
-        if (lootType == LootType.MINECLANS_DEFAULT || lootType == LootType.MINECLANS_RANDOM) {
-            for (Player player : winners.getPlayers()) {
-                rewards.giveRewards(player);
+        // Iterate through all players in the winners
+        for (Player player : winners.getPlayers()) {
+            int rewardCount = 0;
+            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                    .getIfLoaded(player.getUniqueId().toString());
+
+            switch (lootType) {
+                case RANDOM:
+                case DEFAULT:
+                    if (player.equals(topPlayer)) {
+                        rewardCount = rewards.giveRewards(player);
+                    }
+                    break;
+                case MINECLANS_RANDOM:
+                case MINECLANS_DEFAULT:
+                    rewardCount = rewards.giveRewards(player);
+                    break;
+                default:
+                    break;
             }
-        } else {
-            Player topPlayer = winners.getPlayers().get(0);
-            if (topPlayer != null) {
-                rewards.giveRewards(topPlayer);
+
+            if (rewardCount > 0 && playerData != null) {
+                playerData.incrementRewardsReceived(koth.getId(), rewardCount);
+            }
+
+            // Increment win count only for the top player
+            if (player.equals(topPlayer) && winnerData != null) {
+                winnerData.incrementWinCount(koth.getId());
             }
         }
     }

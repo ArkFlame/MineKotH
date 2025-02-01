@@ -6,6 +6,7 @@ import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.particles.ParticleUtil;
+import com.arkflame.minekoth.player.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
@@ -160,7 +161,13 @@ public class KothEventManager {
                             currentEvent.getStats().updateCapture(player.getUniqueId());
                             long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId())
                                     .getTotalTimeCaptured() / 1000;
-                            if (timeCaptured > 0 && timeCaptured % 30 == 0) {
+                            if (timeCaptured == 1) {
+                                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+                                if (playerData != null) {
+                                    playerData.incrementParticipationCount(currentEvent.getKoth().getId());
+                                }
+                                player.sendMessage(ChatColors.color("&a&lTIP:&a Stay on the koth to earn loot. Bet to earn money."));
+                            } else if (timeCaptured > 0 && timeCaptured % 30 == 0) {
                                 if (timeCaptured == 30) {
                                     player.getInventory().addItem(new ItemStack(Materials.get("DIAMOND")));
                                     Titles.sendActionBar(player, ChatColor.GREEN

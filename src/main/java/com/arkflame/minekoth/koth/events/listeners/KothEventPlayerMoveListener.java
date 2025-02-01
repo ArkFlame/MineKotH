@@ -9,8 +9,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
+import com.arkflame.minekoth.player.PlayerData;
 import com.arkflame.minekoth.utils.Materials;
 
 public class KothEventPlayerMoveListener implements Listener {
@@ -49,8 +51,16 @@ public class KothEventPlayerMoveListener implements Listener {
                     killer.getInventory().addItem(new ItemStack(Materials.get("GOLD_INGOT"), 1));
                     killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
                 }
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(killer.getUniqueId().toString());
+                if (playerData != null) {
+                    playerData.incrementKillCount(kothEvent.getKoth().getId());
+                }
             }
             kothEvent.getStats().addDeath(player.getUniqueId());
+            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+            if (playerData != null) {
+                playerData.incrementDeathCount(kothEvent.getKoth().getId());
+            }
         }
         kothEventManager.updatePlayerState(player, player.getLocation(), true);
     }

@@ -116,9 +116,9 @@ public class PlayerData {
         addTotal(DAMAGE_RECEIVED, damage);
     }
 
-    public void incrementRewardsReceived(int kothId) {
-        addByKoth(REWARDS_RECEIVED, kothId, 1);
-        addTotal(REWARDS_RECEIVED, 1);
+    public void incrementRewardsReceived(int kothId, int rewards) {
+        addByKoth(REWARDS_RECEIVED, kothId, rewards);
+        addTotal(REWARDS_RECEIVED, rewards);
     }
 
     // Methods to calculate and retrieve KDR

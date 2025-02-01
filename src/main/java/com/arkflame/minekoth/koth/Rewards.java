@@ -15,7 +15,7 @@ public class Rewards {
     public enum LootType {
         DEFAULT,
         RANDOM,
-        MINECLANS_DEFAULT, 
+        MINECLANS_DEFAULT,
         MINECLANS_RANDOM
     }
 
@@ -27,11 +27,11 @@ public class Rewards {
     public Rewards(Collection<String> commands, ItemStack[] itemsArray, LootType lootType, int lootAmount) {
         this.items = new ArrayList<>();
         this.commands = new ArrayList<>();
-        
+
         if (commands != null) {
             this.commands.addAll(commands);
         }
-        
+
         if (itemsArray != null) {
             Collections.addAll(this.items, itemsArray);
         }
@@ -83,9 +83,10 @@ public class Rewards {
         this.lootAmount = lootAmount;
     }
 
-    public void giveRewards(Player topPlayer) {
-        FoliaAPI.runTask(() -> {
-            if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
+    public int giveRewards(Player topPlayer) {
+        if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
+
+            FoliaAPI.runTask(() -> {
                 // Execute all reward commands
                 for (String command : getRewardsCommands()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
@@ -96,19 +97,23 @@ public class Rewards {
                         topPlayer.getInventory().addItem(item);
                     }
                 }
-            } else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
-                // Combine items and commands into a single collection
-                ArrayList<Object> rewardsPool = new ArrayList<>();
-                rewardsPool.addAll(getRewardsItems());
-                rewardsPool.addAll(getRewardsCommands());
-    
-                // Shuffle and pick random rewards
-                Collections.shuffle(rewardsPool);
-                int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
+            });
 
+            return getRewardsItems().size() + getRewardsCommands().size();
+        } else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
+            // Combine items and commands into a single collection
+            ArrayList<Object> rewardsPool = new ArrayList<>();
+            rewardsPool.addAll(getRewardsItems());
+            rewardsPool.addAll(getRewardsCommands());
+
+            // Shuffle and pick random rewards
+            Collections.shuffle(rewardsPool);
+            int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
+
+            FoliaAPI.runTask(() -> {
                 for (int i = 0; i < rewardsToGive; i++) {
                     Object reward = rewardsPool.get(i);
-    
+
                     if (reward instanceof ItemStack) {
                         ItemStack item = (ItemStack) reward;
                         if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
@@ -116,11 +121,16 @@ public class Rewards {
                         }
                     } else if (reward instanceof String) {
                         String command = (String) reward;
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                command.replace("%player%", topPlayer.getName()));
                     }
                 }
-            }
-        });
+            });
+
+            return rewardsToGive;
+        }
+
+        return 0;
     }
 
     public String serialize() {
@@ -135,7 +145,7 @@ public class Rewards {
         String[] parts = serializedData.split(";");
         LootType lootType = LootType.valueOf(parts[0]);
         int lootAmount = Integer.parseInt(parts[1]);
-        
+
         Collection<ItemStack> items = new ArrayList<>();
         if (parts.length > 2 && !parts[2].isEmpty()) {
             String[] itemsArray = parts[2].split(",");
