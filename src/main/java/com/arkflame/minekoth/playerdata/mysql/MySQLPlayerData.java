@@ -22,6 +22,7 @@ import com.arkflame.minekoth.playerdata.StatValue;
  * - value (VARCHAR)
  */
 public class MySQLPlayerData extends PlayerData {
+    private String PLAYER_DATA_TABLE_NAME = "minekoth_player_data";
 
     private final Connection connection;
     private final String playerId;
@@ -38,7 +39,7 @@ public class MySQLPlayerData extends PlayerData {
         // Clear any in-memory maps before loading new data.
         clearData();
 
-        String query = "SELECT stat_key, is_total, koth_id, value FROM player_data WHERE player_id = ?";
+        String query = "SELECT stat_key, is_total, koth_id, value FROM " + PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, playerId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -64,7 +65,7 @@ public class MySQLPlayerData extends PlayerData {
     @Override
     public void save() {
         // Delete previous entries for this player.
-        String deleteQuery = "DELETE FROM player_data WHERE player_id = ?";
+        String deleteQuery = "DELETE FROM " + PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
         try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
             deleteStmt.setString(1, playerId);
             deleteStmt.executeUpdate();
@@ -73,7 +74,7 @@ public class MySQLPlayerData extends PlayerData {
         }
 
         // Save total stats.
-        String insertQuery = "INSERT INTO player_data (player_id, stat_key, is_total, koth_id, value) VALUES (?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO " + PLAYER_DATA_TABLE_NAME + " (player_id, stat_key, is_total, koth_id, value) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(insertQuery)) {
             // Save totals.
             for (Map.Entry<String, StatValue> entry : getTotalStats().entrySet()) {
