@@ -11,6 +11,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
@@ -30,94 +31,91 @@ public class SetupChatListener implements Listener {
         event.setCancelled(true);
 
         String message = event.getMessage();
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
 
         if (!session.isNameSet()) {
             session.setName(message);
-            player.sendMessage(ChatColor.GREEN + "Name set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.name-set").replace("<value>", message));
             if (!session.isFirstPositionSet() || !session.isSecondPositionSet()) {
-                player.sendMessage(ChatColor.GREEN + "Right-click to set Position 1 and Position 2.");
+                player.sendMessage(lang.getMessage("messages.set-positions"));
             }
         } else if (!session.isFirstPositionSet() || !session.isSecondPositionSet()) {
-            player.sendMessage(ChatColor.RED + "You must set the positions of the koth first.");
+            player.sendMessage(lang.getMessage("messages.set-first-positions"));
             return;
         } else if (!session.isTimesSet()) {
             if (!session.isValidTimes(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid times. Please enter a valid one.");
+                player.sendMessage(lang.getMessage("messages.invalid-times"));
                 return;
             }
             session.setTimes(message);
-            player.sendMessage(ChatColor.GREEN + "Run times set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.times-set").replace("<value>", message));
             
             if (!session.isDaysSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter days (e.g., MONDAY, TUESDAY, ALL...).");
+                player.sendMessage(lang.getMessage("messages.enter-days"));
             }
         } else if (!session.isDaysSet()) {
             if (!session.isValidDays(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid days. Please enter a valid one.");
+                player.sendMessage(lang.getMessage("messages.invalid-days"));
                 return;
             }
             session.setDays(message);
-            player.sendMessage(ChatColor.GREEN + "Days set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.days-set").replace("<value>", message));
             
             if (!session.isTimeLimitSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the time limit (e.g., 30min).");
+                player.sendMessage(lang.getMessage("messages.enter-time-limit"));
             }
         } else if (!session.isTimeLimitSet()) {
             if (!session.isValidTimeLimit(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid time limit. Please enter a valid one.");
+                player.sendMessage(lang.getMessage("messages.invalid-time-limit"));
                 return;
             }
             session.setTimeLimit(Times.parseToSeconds(message));
-            player.sendMessage(ChatColor.GREEN + "Time limit set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.time-limit-set").replace("<value>", message));
             if (!session.isCaptureTimeSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the capture time (e.g., 5min).");
+                player.sendMessage(lang.getMessage("messages.enter-capture-time"));
             }
         } else if (!session.isCaptureTimeSet()) {
             if (!session.isValidCaptureTime(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid capture time. Please enter a valid one.");
+                player.sendMessage(lang.getMessage("messages.invalid-capture-time"));
                 return;
             }
             session.setCaptureTime(Times.parseToSeconds(message));
-            player.sendMessage(ChatColor.GREEN + "Capture time set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.capture-time-set").replace("<value>", message));
             
             if (!session.isRewardsSet()) {
-                player.sendMessage(ChatColor.GREEN + "Put rewards in the chest.");
+                player.sendMessage(lang.getMessage("messages.put-rewards"));
                 openRewardsInventory(player);
             }
         } else if (!session.isLootTypeSet()) {
             if (!session.isValidLootType(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid loot type. Please enter a valid one.");
-                player.sendMessage(ChatColor.RED + " Default: Give all rewards to the winner");
-                player.sendMessage(ChatColor.RED + " Random: Give random rewards to the winner");
-                player.sendMessage(ChatColor.RED + " MineClans_Default: Give all rewards to clan members");
-                player.sendMessage(ChatColor.RED + " MineClans_Random: Give random rewards to clan members");
+                player.sendMessage(lang.getMessage("messages.invalid-loot-type"));
                 return;
             }
             session.setLootType(message);
-            player.sendMessage(ChatColor.GREEN + "Loot type set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.loot-type-set").replace("<value>", message));
             if (!session.isLootAmountSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the loot amount.");
+                player.sendMessage(lang.getMessage("messages.enter-loot-amount"));
             } else if (!session.isRewardsCommandsSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the rewards commands.");
-                player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
-                player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
+                player.sendMessage(lang.getMessage("messages.enter-rewards-commands"));
+                player.sendMessage(lang.getMessage("messages.example-rewards-commands"));
+                player.sendMessage(lang.getMessage("messages.finish-setup"));
             }
         } else if (!session.isLootAmountSet()) {
             if (!session.isValidLootAmount(message)) {
-                player.sendMessage(ChatColor.RED + "Invalid loot amount. Please enter a valid one. (e.g., 1)");
+                player.sendMessage(lang.getMessage("messages.invalid-loot-amount"));
                 return;
             }
             session.setLootAmount(Integer.parseInt(message));
-            player.sendMessage(ChatColor.GREEN + "Loot amount set to: " + ChatColor.AQUA + message);
+            player.sendMessage(lang.getMessage("messages.loot-amount-set").replace("<value>", message));
             if (!session.isRewardsCommandsSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the rewards commands.");
-                player.sendMessage(ChatColor.GREEN + "Example: " + ChatColor.BLUE + "give %player% diamond 1");
-                player.sendMessage(ChatColor.GREEN + "Type /koth setup finish when done.");
+                player.sendMessage(lang.getMessage("messages.enter-rewards-commands"));
+                player.sendMessage(lang.getMessage("messages.example-rewards-commands"));
+                player.sendMessage(lang.getMessage("messages.finish-setup"));
             }
         } else {
             session.addRewardsCommand(Collections.singletonList(message));
-            player.sendMessage(ChatColor.GREEN + "Rewards commands added: " + ChatColor.AQUA + message);
-            player.sendMessage(ChatColor.GREEN + "koth setup complete. Type /koth setup to finish.");
+            player.sendMessage(lang.getMessage("messages.rewards-command-added").replace("<value>", message));
+            player.sendMessage(lang.getMessage("messages.setup-complete"));
         }
         if (session.isEditing() && !session.isEditingRewards() && session.isComplete()) {
             SetupCommand.handleFinish(player, null);
@@ -133,5 +131,4 @@ public class SetupChatListener implements Listener {
             player.openInventory(inventory);
         });
     }
-
 }

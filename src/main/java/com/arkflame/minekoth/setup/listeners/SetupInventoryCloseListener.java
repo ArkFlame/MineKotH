@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.setup.session.SetupSession;
 
 public class SetupInventoryCloseListener implements Listener {
@@ -29,6 +30,8 @@ public class SetupInventoryCloseListener implements Listener {
             return;
         }
 
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+
         if (!session.isRewardsSet()) {
             List<ItemStack> items = new ArrayList<>();
             Inventory inventory = event.getInventory();
@@ -39,17 +42,12 @@ public class SetupInventoryCloseListener implements Listener {
                 }
             }
             session.setRewards(items.toArray(new ItemStack[0]));
-            player.sendMessage(ChatColor.GREEN + "Rewards set. (" + items.size() + " items)");
+            player.sendMessage(lang.getMessage("messages.rewards-set").replace("<count>", String.valueOf(items.size())));
             if (!session.isLootTypeSet()) {
-                player.sendMessage(ChatColor.GREEN + "Enter the type of loot type.");
-                player.sendMessage(ChatColor.GREEN + " Default: Give all rewards to the winner");
-                player.sendMessage(ChatColor.GREEN + " Random: Give random rewards to the winner");
-                player.sendMessage(ChatColor.GREEN + " MineClans_Default: Give all rewards to clan members");
-                player.sendMessage(ChatColor.GREEN + " MineClans_Random: Give random rewards to clan members");
+                player.sendMessage(lang.getMessage("messages.enter-loot-type"));
             }
         } else {
-            player.sendMessage("Rewards is already set");
+            player.sendMessage(lang.getMessage("messages.rewards-already-set"));
         }
     }
-
 }

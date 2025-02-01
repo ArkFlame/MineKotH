@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.ChatColors;
 
 import java.math.BigDecimal;
@@ -32,18 +33,18 @@ public class KothEventBets {
      */
     public boolean placeBet(OfflinePlayer player, String participant, double amount) {
         if (!isEconomyAvailable()) {
-            sendMessage(player, "&cVault is not present. Bet cannot be placed.");
+            sendMessage(player, "messages.no-vault");
             return false;
         }
 
         if (amount <= 0) {
-            sendMessage(player, "&cBet amount must be positive. Bet not placed.");
+            sendMessage(player, "messages.negative-bet");
             return false;
         }
 
         Player participantPlayer = MineKoth.getInstance().getServer().getPlayer(participant);
         if (participantPlayer == null) {
-            sendMessage(player, "&cParticipant not found. Bet not placed.");
+            sendMessage(player, "messages.no-participant");
             return false;
         }
 
@@ -51,7 +52,7 @@ public class KothEventBets {
 
         // Check if the player has enough money
         if (!economy.has(player, amount)) {
-            sendMessage(player, "&cYou do not have enough money to place this bet.");
+            sendMessage(player, "messages.not-enough-money");
             return false;
         }
 
@@ -59,7 +60,7 @@ public class KothEventBets {
         try {
             economy.withdrawPlayer(player, amount);
         } catch (Exception e) {
-            sendMessage(player, "&cFailed to place your bet. Please try again.");
+            sendMessage(player, "messages.bet-failed");
             return false;
         }
 
@@ -68,8 +69,7 @@ public class KothEventBets {
                 .merge(player.getUniqueId(), amount, Double::sum);
 
         // Send a fancy message to the player
-        sendMessage(player, "&aYou have successfully placed a bet of &6" + amount + " &aon &b"
-                + participantPlayer.getName() + "&a!");
+        sendMessage(player, "messages.bet-success", amount, participantPlayer.getName());
 
         return true;
     }
@@ -132,7 +132,7 @@ public class KothEventBets {
 
             OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
             if (depositReward(economy, player, reward)) {
-                sendMessage(player, "&6Congratulations! You won &a" + reward + " &6for betting on &b" + winner + "&6!");
+                sendMessage(player, "messages.reward-success", reward.doubleValue(), winner);
             }
         }
     }
@@ -148,7 +148,7 @@ public class KothEventBets {
             economy.depositPlayer(player, reward.doubleValue());
             return true;
         } catch (Exception e) {
-            sendMessage(player, "&cFailed to deposit your reward. Please contact an administrator.");
+            sendMessage(player, "messages.reward-failed");
             return false;
         }
     }
@@ -161,8 +161,7 @@ public class KothEventBets {
                 if (!winningBets.containsKey(playerId)) { // Only notify those who lost
                     OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
                     double playerBet = losingEntry.getValue();
-                    sendMessage(player,
-                            "&cYou lost &a" + playerBet + " &cbet on &b" + participant + "&c.");
+                    sendMessage(player, "messages.bet-lost", playerBet, participant);
                 }
             }
         }
@@ -178,11 +177,20 @@ public class KothEventBets {
      * Sends a message to the player if they are online.
      *
      * @param player  The player to send the message to.
-     * @param message The message to send.
+     * @param key     The message key to look up.
+     * @param args    The message arguments to replace in the template.
      */
-    private void sendMessage(OfflinePlayer player, String message) {
+    private void sendMessage(OfflinePlayer player, String key, Object... args) {
         if (player.isOnline()) {
-            Objects.requireNonNull(player.getPlayer()).sendMessage(ChatColors.color(message));
+            Player onlinePlayer = player.getPlayer();
+            if (onlinePlayer != null) {
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(onlinePlayer);
+                String message = lang.getMessage(key);
+                for (int i = 0; i < args.length; i++) {
+                    message = message.replace("<" + i + ">", args[i].toString());
+                }
+                onlinePlayer.sendMessage(ChatColors.color(message));
+            }
         }
     }
 }
