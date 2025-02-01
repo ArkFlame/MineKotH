@@ -78,7 +78,7 @@ public class SetupCommand {
         saveKoth(player, session);
 
         if (session.isEditing() && session.isComplete()) {
-            new KothEditMenu(MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
+            new KothEditMenu(player, MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
         }
     }
 
@@ -101,7 +101,7 @@ public class SetupCommand {
             return;
         }
 
-        new KothEditMenu(koth).open(player);
+        new KothEditMenu(player, koth).open(player);
         player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.edit-started"));
     }
 
