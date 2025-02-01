@@ -5,15 +5,12 @@
 # Use <gradient:#STARTCOLOR>text</gradient:#ENDCOLOR> for gradients (e.g., red-to-blue).
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
-# ====================================================
-# Use '&' + color code for Minecraft colors (e.g., &c = red, &a = green).
-# Use <#HEXCODE> for hex colors (e.g., <#FF0000> = red, <#00FF00> = green).
-# Use <colorname> for named colors (e.g., <red>, <blue>, <gold>).
-# Use <gradient:#STARTCOLOR>text</gradient:#ENDCOLOR> for gradients (e.g., red-to-blue).
-# Use <rainbow>text</rainbow> for rainbow-colored text.
-# ====================================================
 messages:
-  players-only: "&c✖ &7Error: &cOnly players can use this command."
+  lightning-strike-title: "&cLightning Strike"
+  lightning-strike-subtitle: "&7You have been struck by lightning!"
+  potion-effect-title: "&6Potion Effect"
+  potion-effect-subtitle: "&7You have been given random potion effects!"
+  
   capturing-title: "&aCapturing"
   capturing-subtitle: "&aYou started capturing the koth"
   entering-zone-title: "&aEntering Zone"
