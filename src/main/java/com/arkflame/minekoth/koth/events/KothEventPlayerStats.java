@@ -5,7 +5,7 @@ public class KothEventPlayerStats {
     private int totalMobKills;
     private int totalDeaths;
     private int currentKillStreak;
-    private long totalTimeCaptured; // in milliseconds
+    private long totalTimeCaptured; // in seconds
     private long firstCaptureTime; // timestamp in milliseconds
     private long lastCaptureTime; // timestamp in milliseconds
     private long lastKillTime; // timestamp in milliseconds
@@ -40,7 +40,7 @@ public class KothEventPlayerStats {
             firstCaptureTime = System.currentTimeMillis(); // Set first capture time if not set
         }
         lastCaptureTime = System.currentTimeMillis(); // Update last capture time
-        totalTimeCaptured = totalTimeCaptured + 1000; // Add the time captured in milliseconds
+        totalTimeCaptured = totalTimeCaptured + 1; // Add the time captured in seconds
     }
 
     public void addDamageReceived(int damage) {
@@ -60,6 +60,11 @@ public class KothEventPlayerStats {
         return totalMobKills;
     }
 
+    /**
+     * Returns the total time captured by the player during the event.
+     * 
+     * @return total time captured in seconds.
+     */
     public long getTotalTimeCaptured() {
         return totalTimeCaptured;
     }

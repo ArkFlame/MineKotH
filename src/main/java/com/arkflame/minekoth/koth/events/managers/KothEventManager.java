@@ -158,11 +158,13 @@ public class KothEventManager {
                                         "REGENERATION", "REGEN");
                             }
 
+                            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+                            if (playerData != null) {
+                                playerData.addCaptureTime(currentEvent.getKoth().getId(), 1);
+                            }
                             currentEvent.getStats().updateCapture(player.getUniqueId());
-                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId())
-                                    .getTotalTimeCaptured() / 1000;
+                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId()).getTotalTimeCaptured();
                             if (timeCaptured == 1) {
-                                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
                                 if (playerData != null) {
                                     playerData.incrementParticipationCount(currentEvent.getKoth().getId());
                                 }
