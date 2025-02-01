@@ -28,6 +28,7 @@ import com.arkflame.minekoth.setup.listeners.SetupChatListener;
 import com.arkflame.minekoth.setup.listeners.SetupInteractListener;
 import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
+import com.arkflame.minekoth.utils.ConfigUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.HologramUtility;
@@ -143,7 +144,7 @@ public class MineKoth extends JavaPlugin {
         getLogger().info("ParticleScheduler initialized.");
 
         // Lang
-        langManager = new LangManager(getDataFolder());
+        langManager = new LangManager(getDataFolder(), new ConfigUtil(this));
         getLogger().info("Language Manager initialized.");
 
         // Random Events

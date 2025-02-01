@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 public class ConfigUtil {
@@ -41,6 +43,24 @@ public class ConfigUtil {
     public void createDirectory(File dir) {
         if (!dir.exists() && !dir.mkdirs()) {
             plugin.getLogger().log(Level.SEVERE, "Failed to create directory: {0}", dir.getAbsolutePath());
+        }
+    }
+
+    public void copyResource(String resourcePath, File targetFile) {
+        if (targetFile.exists())
+            return;
+
+        try (InputStream inputStream = plugin.getResource(resourcePath)) {
+            if (inputStream == null) {
+                plugin.getLogger().warning("Resource not found: " + resourcePath);
+                return;
+            }
+
+            createDirectory(targetFile.getParentFile());
+            Files.copy(inputStream, targetFile.toPath());
+            plugin.getLogger().info("Copied default resource: " + resourcePath);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to copy resource: " + resourcePath, e);
         }
     }
 }

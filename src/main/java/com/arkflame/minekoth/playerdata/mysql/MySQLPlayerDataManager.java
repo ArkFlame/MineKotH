@@ -14,6 +14,8 @@ import com.arkflame.minekoth.playerdata.PlayerDataManager;
  */
 public class MySQLPlayerDataManager extends PlayerDataManager {
 
+    static String PLAYER_DATA_TABLE_NAME = "minekoth_player_data";
+
     private final Connection connection;
     private final Logger logger;
 
@@ -37,7 +39,7 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
      */
     public static void initializeTables(Connection connection, Logger logger) {
         // Example SQL DDL to create the player_data table.
-        String sql = "CREATE TABLE IF NOT EXISTS player_data ("
+        String sql = "CREATE TABLE IF NOT EXISTS " + PLAYER_DATA_TABLE_NAME + " ("
                 + "player_id VARCHAR(36) NOT NULL, "
                 + "stat_key VARCHAR(255) NOT NULL, "
                 + "is_total BOOLEAN NOT NULL, "
