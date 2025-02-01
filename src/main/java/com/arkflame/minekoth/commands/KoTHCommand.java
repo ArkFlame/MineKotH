@@ -1,7 +1,6 @@
 package com.arkflame.minekoth.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,7 +27,8 @@ public class KothCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+            sender.sendMessage(
+                    MineKoth.getInstance().getLangManager().getLang(null).getMessage("messages.players-only"));
             return true;
         }
 
@@ -42,41 +42,50 @@ public class KothCommand implements CommandExecutor {
         }
 
         switch (args[0].toLowerCase()) {
-
             case "setup":
                 SetupCommand.run(player, args);
                 break;
 
             case "list":
                 if (kothManager.getAllkoths().isEmpty()) {
-                    player.sendMessage(ChatColor.RED + "There are no koths to list.");
+                    player.sendMessage(
+                            MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-koths"));
                     break;
                 }
-                player.sendMessage(ChatColor.GOLD + "koth List:");
-                kothManager.getAllkoths().values().forEach(koth -> player
-                        .sendMessage(ChatColor.YELLOW + "ID: " + koth.getId() + ", Name: " + koth.getName()));
+                player.sendMessage(
+                        MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-list"));
+                kothManager.getAllkoths().values()
+                        .forEach(koth -> player.sendMessage(
+                                MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-info")
+                                        .replace("<id>", String.valueOf(koth.getId()))
+                                        .replace("<name>", koth.getName())));
                 break;
 
             case "info":
                 if (args.length < 2) {
-                    player.sendMessage(ChatColor.RED + "Usage: /koth info <id>");
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.usage-koth-info"));
                     break;
                 }
                 try {
                     int id = Integer.parseInt(args[1]);
                     Koth koth = kothManager.getKothById(id);
                     if (koth == null) {
-                        player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
+                        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.no-koth-id").replace("<id>", String.valueOf(id)));
                         break;
                     }
-                    sendkothInfo(player, koth);
+                    sendKothInfo(player, koth);
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
+                    player.sendMessage(
+                            MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.invalid-id"));
                 }
                 break;
+
             case "delete":
                 if (args.length < 2) {
-                    player.sendMessage(ChatColor.RED + "Usage: /koth delete <id>");
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.usage-delete"));
                     break;
                 }
                 try {
@@ -85,68 +94,91 @@ public class KothCommand implements CommandExecutor {
                     scheduleManager.removeSchedulesByKoth(id);
                     MineKoth.getInstance().getKothLoader().delete(id);
                     if (removed == null) {
-                        player.sendMessage(ChatColor.RED + "No koth found with ID " + id + ".");
+                        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.no-koth-id").replace("<id>", String.valueOf(id)));
                         return true;
                     }
-                    player.sendMessage(ChatColor.GREEN + "koth with ID " + id + " deleted successfully.");
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.koth-deleted").replace("<id>", String.valueOf(id)));
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Invalid koth ID. It must be a number.");
+                    player.sendMessage(
+                            MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.invalid-id"));
                 }
                 break;
+
             case "schedule":
                 ScheduleCommand.run(player, args);
                 break;
+
             case "start":
                 Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
                 if (schedule == null) {
-                    sender.sendMessage(ChatColor.RED + "No schedules available.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-schedules"));
                     break;
                 }
                 Koth koth = schedule.getKoth();
                 if (koth == null) {
-                    sender.sendMessage(ChatColor.RED + "Invalid koth.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.invalid-koth"));
                     break;
                 }
                 if (MineKoth.getInstance().getKothEventManager().getKothEvent(koth) != null) {
-                    sender.sendMessage(ChatColor.RED + "Koth is already running.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.koth-running"));
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().start(koth);
-                sender.sendMessage(ChatColor.GREEN + "Ran next schedule (" + koth.getName() + ")");
-                sender.sendMessage(ChatColor.GREEN + "Koths running:");
+                sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                        .getMessage("messages.koth-schedule").replace("<name>", koth.getName()));
+                sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                        .getMessage("messages.koth-running-list"));
                 for (KothEvent k : MineKoth.getInstance().getKothEventManager().getRunningKoths()) {
-                    sender.sendMessage(ChatColor.GREEN + " - " + k.getKoth().getName());
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.koth-running-item").replace("<name>", k.getKoth().getName()));
                 }
                 break;
+
             case "stop":
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
-                    sender.sendMessage(ChatColor.RED + "No event is active.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-event-active"));
                     break;
                 }
                 if (MineKoth.getInstance().getKothEventManager().getKothEvent().getState() == KothEventState.CAPTURED) {
-                    sender.sendMessage(ChatColor.RED + "Koth is already captured, wait.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.koth-captured"));
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().end();
-                sender.sendMessage(ChatColor.GREEN + "Event stopped.");
-                Titles.sendTitle("&aStopped", "&eKoth stopped by " + player.getName(),
-                        10, 60, 10);
+                sender.sendMessage(
+                        MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.event-stopped"));
+                Titles.sendTitle(MineKoth.getInstance().getLangManager().getLang(player)
+                        .getMessage("messages.event-stopped-title").replace("<name>", player.getName()),
+                        MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.event-stopped-subtitle").replace("<name>", player.getName()),
+                        20, 40, 20);
                 break;
+
             case "capture":
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
-                    sender.sendMessage(ChatColor.RED + "No event is active.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-event-active"));
                     break;
                 }
                 if (MineKoth.getInstance().getKothEventManager().getKothEvent().getState() == KothEventState.CAPTURED) {
-                    sender.sendMessage(ChatColor.RED + "Koth is already captured, wait.");
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.koth-captured"));
                     break;
                 }
                 MineKoth.getInstance().getKothEventManager().getKothEvent().setCaptured(new CapturingPlayers(player));
                 break;
+
             case "teleport":
             case "tp":
                 if (args.length < 2) {
-                    player.sendMessage(ChatColor.RED + "Usage: /koth tp <id/name>");
+                    player.sendMessage(
+                            MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.usage-tp"));
                     break;
                 }
 
@@ -159,7 +191,8 @@ public class KothCommand implements CommandExecutor {
                 }
 
                 if (tpKoth == null) {
-                    player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrName);
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-koth-id-or-name").replace("<id_or_name>", kothIdOrName));
                     break;
                 }
 
@@ -170,15 +203,14 @@ public class KothCommand implements CommandExecutor {
                     Sounds.play(player, 1, 1, "ENTITY_ENDERMAN_TELEPORT");
                 });
                 break;
+
             case "bet":
-                // participant can be any online player
-                // kothId or name is optional, if not input, kothEventManager.getKothEvent() is
-                // used
                 if (args.length < 3) {
-                    player.sendMessage(ChatColor.RED + "Usage: /koth bet <amount> <participant> [kothId/name]");
+                    player.sendMessage(
+                            MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.usage-bet"));
                     break;
                 }
-                // Join all args from kothId/name to the end to get the kothid or name
+
                 String kothIdOrNameBet = String.join(" ", args)
                         .substring(args[0].length() + args[1].length() + args[2].length() + 2).strip();
                 KothEvent betKothEvent = null;
@@ -199,24 +231,25 @@ public class KothCommand implements CommandExecutor {
 
                 if (betKothEvent == null) {
                     if (MineKoth.getInstance().getKothEventManager().getRunningKoths().length == 0) {
-                        player.sendMessage(ChatColor.RED + "No koths are running.");
+                        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.no-running-koths"));
                     } else {
-                        player.sendMessage(ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrNameBet);
-                        player.sendMessage(ChatColor.RED + "Available Koths:");
+                        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.no-koth-id-or-name").replace("<id_or_name>", kothIdOrNameBet));
+                        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.available-koths"));
                         for (KothEvent running : MineKoth.getInstance().getKothEventManager().getRunningKoths()) {
-                            player.sendMessage(ChatColor.RED + " - " + running.getKoth().getName());
+                            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                    .getMessage("messages.running-koth")
+                                    .replace("<name>", running.getKoth().getName()));
                         }
                     }
                     break;
                 }
 
-                if (args.length < 3) {
-                    player.sendMessage(ChatColor.RED + "Usage: /koth bet <amount> <participant> <kothId/name>");
-                    break;
-                }
-
                 betKothEvent.getKothEventBets().placeBet(player, args[2], Double.parseDouble(args[1]));
                 break;
+
             case "stats":
                 Player statsTarget = null;
                 if (args.length < 2) {
@@ -226,52 +259,44 @@ public class KothCommand implements CommandExecutor {
                 }
 
                 if (statsTarget == null) {
-                    player.sendMessage(ChatColor.RED + "Could not find player with name: " + args[1]);
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-player").replace("<name>", args[1]));
                     break;
                 }
 
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                        .getIfLoaded(player.getUniqueId().toString());
 
                 if (playerData == null) {
-                    player.sendMessage(ChatColor.RED + "Could not find player data for this player or the player is not online.");
+                    player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.no-player-data"));
                     break;
                 }
 
                 new PlayerStatsMenu(player, playerData).open();
                 break;
+
             default:
-                player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
-                break;
+                player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                        .getMessage("messages.unknown-subcommand"));
         }
 
         return true;
     }
 
     private void sendHelpMessage(Player player) {
-        player.sendMessage(ChatColor.GOLD + "Usage of koth commands:");
         player.sendMessage(
-                ChatColor.YELLOW + " /koth setup" + ChatColor.WHITE + " - Finish and save the current koth setup.");
-        player.sendMessage(ChatColor.YELLOW + " /koth schedule" + ChatColor.WHITE + " - Schedule a koth.");
-        player.sendMessage(ChatColor.YELLOW + " /koth list" + ChatColor.WHITE + " - List all existing koths.");
-        player.sendMessage(
-                ChatColor.YELLOW + " /koth info <id>" + ChatColor.WHITE + " - Get details about a specific koth.");
-        player.sendMessage(ChatColor.YELLOW + " /koth delete <id>" + ChatColor.WHITE + " - Delete a specific koth.");
-        player.sendMessage(ChatColor.YELLOW + " /koth start" + ChatColor.WHITE + " - Start the next scheduled koth.");
-        player.sendMessage(ChatColor.YELLOW + " /koth stop" + ChatColor.WHITE + " - Stop the current koth event.");
-        player.sendMessage(ChatColor.YELLOW + " /koth capture" + ChatColor.WHITE + " - Capture the current koth");
-        player.sendMessage(ChatColor.YELLOW + " /koth tp <id/name>" + ChatColor.WHITE + " - Teleport to a koth");
+                MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-commands"));
     }
 
-    private void sendkothInfo(Player player, Koth koth) {
-        player.sendMessage(ChatColor.GOLD + "koth Info:");
-        player.sendMessage(ChatColor.YELLOW + "ID: " + koth.getId());
-        player.sendMessage(ChatColor.YELLOW + "Name: " + koth.getName());
-        player.sendMessage(ChatColor.YELLOW + "World: " + koth.getWorldName());
-        player.sendMessage(ChatColor.YELLOW + "Time Limit: " + koth.getTimeLimit());
-        player.sendMessage(ChatColor.YELLOW + "Time to Capture: " + koth.getTimeToCapture());
-        player.sendMessage(
-                ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + koth.getRewards().getRewardsItems().size());
-        player.sendMessage(
-                ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + koth.getRewards().getRewardsCommands());
+    private void sendKothInfo(Player player, Koth koth) {
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-info")
+                .replace("<id>", String.valueOf(koth.getId()))
+                .replace("<name>", koth.getName())
+                .replace("<world>", koth.getWorldName())
+                .replace("<time_limit>", String.valueOf(koth.getTimeLimit()))
+                .replace("<time_to_capture>", String.valueOf(koth.getTimeToCapture()))
+                .replace("<reward_items>", String.valueOf(koth.getRewards().getRewardsItems().size()))
+                .replace("<reward_commands>", koth.getRewards().getRewardsCommands().toString()));
     }
 }

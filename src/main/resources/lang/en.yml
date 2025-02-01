@@ -1,0 +1,56 @@
+# ====================================================
+# Use '&' + color code for Minecraft colors (e.g., &c = red, &a = green).
+# Use <#HEXCODE> for hex colors (e.g., <#FF0000> = red, <#00FF00> = green).
+# Use <colorname> for named colors (e.g., <red>, <blue>, <gold>).
+# Use <gradient:#STARTCOLOR>text</gradient:#ENDCOLOR> for gradients (e.g., red-to-blue).
+# Use <rainbow>text</rainbow> for rainbow-colored text.
+# ====================================================
+messages:
+  usage-tp: "&cUsage: /koth tp <id/name>"
+  no-koth-id-or-name: "&cCould not find koth with ID or name: <id_or_name>"
+  usage-bet: "&cUsage: /koth bet <amount> <participant> [kothId/name]"
+  no-running-koths: "&cNo koths are running."
+  available-koths: "&cAvailable Koths:"
+  running-koth: "&c - <name>"
+  no-player: "&cCould not find player with name: <name>"
+  no-player-data: "&cCould not find player data for this player or the player is not online."
+  unknown-subcommand: "&cUnknown subcommand. Use /koth help for a list of commands."
+  no-koths: "&cNo koths to list."
+  koth-list: "&cKOTH List:"
+  koth-info: "&8❙ &6ID: &f<id>&8❙ &6Name: &f<name>"
+  usage-koth-info: "&cUsage: /koth info <id>"
+  no-koth-id: "&cNo koth found with ID <id>."
+  invalid-id: "&cInvalid koth ID. It must be a number."
+  usage-delete: "&cUsage: /koth delete <id>"
+  koth-deleted: "&cKOTH with ID <id> deleted successfully."
+  no-schedules: "&cNo schedules available."
+  invalid-koth: "&cInvalid KOTH."
+  koth-running: "&cKOTH is already running."
+  koth-schedule: "&cRan next schedule (<name>)"
+  koth-running-list: "&cKOTHS running:"
+  koth-running-item: "&c - <name>"
+  no-event-active: "&cNo event is active."
+  koth-captured: "&cKOTH is already captured, wait."
+  event-stopped: "&cEvent stopped."
+  event-stopped-title: "&aStopped"
+  event-stopped-subtitle: "&cKoth stopped by <name>"
+  koth-commands: |
+    &c&lKOTH Commands: &8❙ &6/koth setup: &fFinish and save the current koth setup.
+    &8❙ &6/koth schedule: &fSchedule a koth.
+    &8❙ &6/koth list: &fList all existing koths.
+    &8❙ &6/koth info <id>: &fGet details about a specific koth.
+    &8❙ &6/koth delete <id>: &fDelete a specific koth.
+    &8❙ &6/koth start: &fStart the next scheduled koth.
+    &8❙ &6/koth stop: &fStop the current koth event.
+    &8❙ &6/koth capture: &fCapture the current koth.
+    &8❙ &6/koth tp <id/name>: &fTeleport to a koth.
+  koth-info: |
+    &cKOTH Info:
+    &8❙ &6ID: &f<id>
+    &8❙ &6Name: &f<name>
+    &8❙ &6World: &f<world>
+    &8❙ &6Time Limit: &f<time_limit>
+    &8❙ &6Time to Capture: &f<time_to_capture>
+    &8❙ &6Reward Items: &f<reward_items>
+    &8❙ &6Reward Commands: &f<reward_commands>
+  players-only: "&c✖ &7Error: &cOnly players can use this command."

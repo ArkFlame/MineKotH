@@ -71,6 +71,7 @@ public class LangManager {
     }
 
     private String getPlayerLocale(Player player) {
+        if (player == null) return "en";
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object locale = handle.getClass().getField("locale").get(handle);
