@@ -6,6 +6,7 @@ import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.particles.ParticleUtil;
+import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Materials;
@@ -50,6 +51,7 @@ public class KothEventManager {
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
             currentEvent.updatePlayerState(player, player.getLocation(), player.isDead());
+            ChatColors.sendMessage(player, "&aPlace your koth bets to earn money while capturing the hill!");
         }
         Location center = koth.getCenter();
         if (center != null) {
@@ -137,12 +139,8 @@ public class KothEventManager {
                         MineKoth.getInstance().getRandomEventsManager().tick(currentEvent);
 
                         for (Player player : currentEvent.getPlayersInZone()) {
-                            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                                FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
-                                    player.removePotionEffect(PotionEffectType.INVISIBILITY);
-                                    player.sendMessage(ChatColor.RED + "You have been revealed!");
-                                    Titles.sendTitle(player, "", "&cYou have been revealed!", 10, 20, 10);
-                                });
+                            if (PotionEffectUtil.removeEffect(player, PotionEffectType.INVISIBILITY)) {
+                                Titles.sendTitle(player, "", "&cYou have been revealed!", 10, 20, 10);
                             }
 
                             CapturingPlayers topGroup = currentEvent.getTopGroup();

@@ -134,4 +134,14 @@ public final class PotionEffectUtil {
         }, () -> {
         }, 1L);
     }
+
+    public static boolean removeEffect(Player player, PotionEffectType invisibility) {
+        if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
+                player.removePotionEffect(PotionEffectType.INVISIBILITY);
+            });
+            return true;
+        }
+        return false;
+    }
 }
