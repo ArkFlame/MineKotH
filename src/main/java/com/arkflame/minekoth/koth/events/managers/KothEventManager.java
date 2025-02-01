@@ -45,14 +45,17 @@ public class KothEventManager {
      */
     public void start(Koth koth) {
         KothEvent currentEvent = runNewEvent(koth);
-        Titles.sendTitle(
-                "&a" + koth.getName(),
-                "&e" + "Capture the Hill!",
-                10, 20, 10);
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
             currentEvent.updatePlayerState(player, player.getLocation(), player.isDead());
-            ChatColors.sendMessage(player, "&aPlace your koth bets to earn money while capturing the hill!");
+            ChatColors.sendMessage(player,
+                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.place-bets"));
+            Titles.sendTitle(player,
+                    MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.capture-the-hill-title").replace("<kothName>", koth.getName()),
+                    MineKoth.getInstance().getLangManager().getLang(player)
+                            .getMessage("messages.capture-the-hill-subtitle").replace("<kothName>", koth.getName()),
+                    10, 20, 10);
         }
         Location center = koth.getCenter();
         if (center != null) {
@@ -141,7 +144,8 @@ public class KothEventManager {
 
                         for (Player player : currentEvent.getPlayersInZone()) {
                             if (PotionEffectUtil.removeEffect(player, PotionEffectType.INVISIBILITY)) {
-                                Titles.sendTitle(player, "", "&cYou have been revealed!", 10, 20, 10);
+                                Titles.sendTitle(player, "", MineKoth.getInstance().getLangManager().getLang(player)
+                                        .getMessage("messages.revealed"), 10, 20, 10);
                             }
 
                             CapturingPlayers topGroup = currentEvent.getTopGroup();
@@ -158,26 +162,29 @@ public class KothEventManager {
                                         "REGENERATION", "REGEN");
                             }
 
-                            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+                            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                                    .getIfLoaded(player.getUniqueId().toString());
                             if (playerData != null) {
                                 playerData.addCaptureTime(currentEvent.getKoth().getId(), 1);
                             }
                             currentEvent.getStats().updateCapture(player.getUniqueId());
-                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId()).getTotalTimeCaptured();
+                            long timeCaptured = currentEvent.getStats().getPlayerStats(player.getUniqueId())
+                                    .getTotalTimeCaptured();
                             if (timeCaptured == 1) {
                                 if (playerData != null) {
                                     playerData.incrementParticipationCount(currentEvent.getKoth().getId());
                                 }
-                                player.sendMessage(ChatColors.color("&a&lTIP:&a Stay on the koth to earn loot. Bet to earn money."));
+                                player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                        .getMessage("messages.stay-to-earn-loot"));
                             } else if (timeCaptured > 0 && timeCaptured % 30 == 0) {
                                 if (timeCaptured == 30) {
                                     player.getInventory().addItem(new ItemStack(Materials.get("DIAMOND")));
-                                    Titles.sendActionBar(player, ChatColor.GREEN
-                                            + "You have been awarded a diamond for capturing the hill for 30 seconds!");
+                                    Titles.sendActionBar(player, MineKoth.getInstance().getLangManager().getLang(player)
+                                            .getMessage("messages.awarded-diamond"));
                                 } else {
                                     player.getInventory().addItem(new ItemStack(Materials.get("ENDER_PEARL")));
-                                    Titles.sendActionBar(player, ChatColor.GREEN
-                                            + "You have been awarded an ender pearl for capturing the hill for 30 more seconds!");
+                                    Titles.sendActionBar(player, MineKoth.getInstance().getLangManager().getLang(player)
+                                            .getMessage("messages.awarded-ender-pearl"));
                                 }
                             }
                         }
