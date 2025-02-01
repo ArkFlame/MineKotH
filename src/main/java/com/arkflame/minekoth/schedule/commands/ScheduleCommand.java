@@ -2,6 +2,7 @@ package com.arkflame.minekoth.schedule.commands;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.KothTime;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Times;
 
@@ -20,15 +21,15 @@ public class ScheduleCommand {
         }
 
         String subCommand = args[1].toLowerCase();
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(sender);
 
         switch (subCommand) {
             case "list":
-                listSchedules(sender);
+                listSchedules(sender, lang);
                 break;
-            // Add more subcommands here
             case "remove":
                 if (args.length < 3) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /koth schedule remove <id>");
+                    sender.sendMessage(lang.getMessage("messages.usage-remove"));
                     return;
                 }
 
@@ -36,40 +37,40 @@ public class ScheduleCommand {
                     int id = Integer.parseInt(args[2]);
                     MineKoth.getInstance().getScheduleManager().removeSchedule(id);
                     MineKoth.getInstance().getScheduleLoader().delete(id);
-                    sender.sendMessage(ChatColor.GREEN + "Schedule removed.");
+                    sender.sendMessage(lang.getMessage("messages.schedule-removed"));
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ChatColor.RED + "Invalid schedule ID.");
+                    sender.sendMessage(lang.getMessage("messages.invalid-schedule-id"));
                 }
                 break;
             case "add":
                 if (args.length < 4) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]");
+                    sender.sendMessage(lang.getMessage("messages.usage-add"));
                     return;
                 }
 
                 try {
                     int kothId = Integer.parseInt(args[2]);
                     if (MineKoth.getInstance().getKothManager().getKothById(kothId) == null) {
-                        sender.sendMessage(ChatColor.RED + "Invalid koth ID.");
+                        sender.sendMessage(lang.getMessage("messages.invalid-koth-id"));
                         return;
                     }
                     String[] timeEntries = args[3].split(",");
                     for (String timeEntry : timeEntries) {
                         String[] dayNames = args.length > 4 ? args[4].split(",") : new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
                         if (dayNames.length == 0) {
-                            sender.sendMessage(ChatColor.RED + "Invalid day names.");
+                            sender.sendMessage(lang.getMessage("messages.invalid-day-names"));
                             return;
                         }
                         KothTime kothTime = Times.parseTimeEntry(timeEntry);
                         if (kothTime == null) {
-                            sender.sendMessage(ChatColor.RED + "Invalid time format.");
+                            sender.sendMessage(lang.getMessage("messages.invalid-time-format"));
                             return;
                         }
                         Schedule schedule = MineKoth.getInstance().getScheduleManager().scheduleKoth(kothId, kothTime.getHour(), kothTime.getMinute(), dayNames);
-                        sender.sendMessage(ChatColor.GOLD + "Schedule added: " + formatSchedule(schedule, MineKoth.getInstance().getScheduleManager().getNextOccurrence(schedule)));
+                        sender.sendMessage(lang.getMessage("messages.schedule-added").replace("<schedule>", formatSchedule(schedule, MineKoth.getInstance().getScheduleManager().getNextOccurrence(schedule))));
                     }
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ChatColor.RED + "Invalid koth ID, hour, or minute.");
+                    sender.sendMessage(lang.getMessage("messages.invalid-koth-id-hour-minute"));
                 }
                 break;
             default:
@@ -78,11 +79,11 @@ public class ScheduleCommand {
         }
     }
 
-    private static void listSchedules(Player sender) {
+    private static void listSchedules(Player sender, Lang lang) {
         List<Schedule> schedules = MineKoth.getInstance().getScheduleManager().getAllSchedules();
 
         if (schedules.isEmpty()) {
-            sender.sendMessage(ChatColor.RED + "There are no schedules available.");
+            sender.sendMessage(lang.getMessage("messages.no-schedules-available"));
             return;
         }
 
@@ -93,7 +94,7 @@ public class ScheduleCommand {
             return next1.compareTo(next2);
         });
 
-        sender.sendMessage(ChatColor.GOLD + "koth Schedules:");
+        sender.sendMessage(lang.getMessage("messages.koth-schedules"));
 
         LocalDateTime now = LocalDateTime.now();
         boolean first = true;
@@ -121,9 +122,7 @@ public class ScheduleCommand {
     }
 
     private static void sendHelp(Player sender) {
-        sender.sendMessage(ChatColor.GOLD + "Usage of schedule commands:");
-        sender.sendMessage(ChatColor.YELLOW + " /koth schedule list" + ChatColor.WHITE + " - List all schedules.");
-        sender.sendMessage(ChatColor.YELLOW + " /koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]" + ChatColor.WHITE + " - Add a new schedule.");
-        sender.sendMessage(ChatColor.YELLOW + " /koth schedule remove <id>" + ChatColor.WHITE + " - Remove a schedule.");
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(sender);
+        sender.sendMessage(lang.getMessage("messages.schedule-help"));
     }
 }

@@ -6,6 +6,25 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  usage-remove: "&c✖ &7Usage: &c/koth schedule remove <id>"
+  schedule-removed: "&a✔ &7Schedule removed."
+  invalid-schedule-id: "&c✖ &7Invalid schedule ID."
+  usage-add: "&c✖ &7Usage: &c/koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]"
+  invalid-koth-id: "&c✖ &7Invalid koth ID."
+  invalid-day-names: "&c✖ &7Invalid day names."
+  invalid-time-format: "&c✖ &7Invalid time format."
+  schedule-added: "&e&lEditing KOTH: &a✔ &7Setting updated: &f<schedule> &b➡ &7Please enter: &fNext Value"
+  invalid-koth-id-hour-minute: "&c✖ &7Invalid koth ID, hour, or minute."
+  no-schedules-available: "&c✖ &7There are no schedules available."
+  koth-schedules: "&6&lKOTH Schedules:"
+  schedule-help: |
+    &8&m-------------------------------------
+    &c&lKOTH schedule commands:
+    &8❙&6 /koth schedule list:&f List all schedules.
+    &8❙&6 /koth schedule add <kothId> <hh:mm,hh:mmm...> [monday,tuesday...]:&f Add a new schedule.
+    &8❙&6 /koth schedule remove <id>:&f Remove a schedule.
+    &8&m-------------------------------------
+  
   unknown-command: "&c✖ &7Unknown command. Use &c/koth setup help &7for help."
   setup-help: |
     &8&m-------------------------------------
