@@ -163,7 +163,7 @@ messages:
     &8❙&6 /koth setup <id/name>:&f Edit an existing koth.
     &8&m-------------------------------------
   already-in-session: "&c✖ &7You are already in a setup session. &cUse /koth setup cancel to cancel it."
-  start-setup: "&c✖ &7Koth creation started. &aPlease type the name."
+  start-setup: "&a✔ &7Koth creation started. &aPlease type the name."
   no-session: "&c✖ &7You are not in a setup session."
   cancel-setup: "&c✖ &7Koth setup session cancelled."
   specify-id-name: "&c✖ &7Please specify a koth ID/name. &c/koth setup <id/name>"

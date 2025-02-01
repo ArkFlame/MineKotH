@@ -1,0 +1,288 @@
+# ====================================================
+# Usa '&' + código de color para colores de Minecraft (por ejemplo, &c = rojo, &a = verde).
+# Usa <#HEXCODE> para colores hexadecimales (por ejemplo, <#FF0000> = rojo, <#00FF00> = verde).
+# Usa <nombrecolor> para colores con nombre (por ejemplo, <red>, <blue>, <gold>).
+# Usa <gradient:#STARTCOLOR>texto</gradient:#ENDCOLOR> para degradados (por ejemplo, de rojo a azul).
+# Usa <rainbow>texto</rainbow> para texto de colores arcoiris.
+# ====================================================
+messages:
+  lightning-strike-title: "&cImpacto de Rayo"
+  lightning-strike-subtitle: "&7¡Has sido alcanzado por un rayo!"
+  potion-effect-title: "&6Efecto de Poción"
+  potion-effect-subtitle: "&7¡Has recibido efectos de poción aleatorios!"
+  
+  capturing-title: "&aCapturando"
+  capturing-subtitle: "&aEmpezaste a capturar el koth"
+  entering-zone-title: "&aEntrando en Zona"
+  top-player-capturing-prefix: "&a"
+  not-top-player-capturing-prefix: "&c"
+  is-capturing: "está capturando"
+  leaving-koth-title: "&cSaliendo del Koth"
+  no-longer-capturing-subtitle: "&7Ya no estás capturando"
+  left-zone-subtitle: "&7Has dejado la zona del koth"
+  seconds-left: "&e<seconds>"
+  you-are-capturing-subtitle: "&aEstás capturando"
+  top-player-name-capturing-subtitle: "&a<topPlayerName> está capturando"
+  not-top-player-name-capturing-subtitle: "&c<topPlayerName> está capturando"
+  you-won-title: "&aTÚ GANASTE"
+  you-lose-title: "&cTÚ PERDISTE"
+  winner-subtitle: "&eGANADOR: &b<winner>"
+  na: "N/D"
+  
+  skeleton-horde-title: "&cHorda de Esqueletos"
+  skeleton-horde-subtitle: "&7¡Una horda de esqueletos ha aparecido!"
+
+  zombie-horde-title: "&cHorda de Zombis"
+  zombie-horde-subtitle: "&7¡Una horda de zombis ha aparecido!"
+
+  koth-starting-title: "&e<seconds>"
+  koth-starting-subtitle: "&aEl KOTH <koth> está comenzando"
+
+  time-limit-title: "&aLímite de Tiempo"
+  time-limit-subtitle: "&eSin ganadores de koth"
+
+  loot-drop-title: "&6Botín"
+  loot-drop-subtitle: "&7¡Un botín ha aparecido cerca!"
+
+  capture-the-hill-title: "&a<kothName>"
+  capture-the-hill-subtitle: "&e¡Captura la Colina!"
+  place-bets: "&aColoca tus apuestas koth para ganar dinero mientras capturas la colina!"
+
+  revealed: "&c¡Has sido revelado!"
+  stay-to-earn-loot: "&a&l¡CONSEJO!&a Mantente en el koth para ganar botín. Apuesta para ganar dinero."
+  awarded-diamond: "&a&l¡CONSEJO!&a Has recibido un diamante por capturar la colina durante 30 segundos!"
+  awarded-ender-pearl: "&a&l¡CONSEJO!&a Has recibido una perla de ender por capturar la colina durante 30 segundos más!"
+
+  first-kill-reward: "&6&l¡Felicidades! &7¡Recibiste una recompensa por tu primer asesinato!"
+  killstreak-reward: "&6&l¡Felicidades! &7¡Recibiste una recompensa por tu racha de asesinatos de &c<killstreak> &7!"
+
+  koth-edit-title: "&6Menú de Edición de KoTH &8- &7<id>"
+  koth-name: "&e&lNombre del KoTH"
+  current-value: "&7Valor actual: &f<value>"
+  modify-name: "&8• &7Haz clic para modificar el nombre"
+  name-announcement: "&8• &7Esto se mostrará en los anuncios y elementos de la GUI"
+  click-to-edit: "&e&lHaz clic para editar!"
+  region-selection: "&6&lSelección de Región"
+  first-position: "&7Primera Posición: &f<value>"
+  second-position: "&7Segunda Posición: &f<value>"
+  redefine-region: "&8• &7Haz clic para redefinir la región"
+  select-two-corners: "&8• &7Necesitarás seleccionar dos esquinas"
+  use-golden-axe: "&8• &7Usa el hacha dorada proporcionada"
+  time-limit: "&b&lLímite de Tiempo"
+  current-limit: "&7Límite actual: &f<value>"
+  set-max-duration: "&a✔ &7Establece la duración máxima de cada evento KoTH"
+  format-mm-ss: "&8• &7Formato: MM:SS"
+  capture-time: "&d&lTiempo de Captura"
+  current-time: "&7Tiempo actual: &f<value>"
+  time-required-to-capture: "&8• &7Tiempo requerido para capturar el punto de control"
+  rewards-configuration: "&6&lConfiguración de Recompensas"
+  commands: "&7Comandos: &f<value>"
+  items: "&7Ítems: &f<value>"
+  loot-type: "&7Tipo de Botín: &f<value>"
+  loot-amount: "&7Cantidad: &f<value>"
+  configure-rewards: "&8• &7Configura recompensas"
+  set-commands-and-items: "&8• &7Establece comandos e ítems"
+  adjust-loot-settings: "&8• &7Ajusta la configuración del botín"
+  schedule-settings: "&a&lConfiguración de Horarios"
+  event-times: "&7Horas del Evento: &f<value>"
+  active-days: "&7Días Activos: &f<value>"
+  set-event-schedule: "&8• &7Establece el horario del evento"
+  configure-active-days: "&8• &7Configura los días activos"
+  manage-time-slots: "&8• &7Administra las franjas horarias"
+  enter-name: "&b➡ &7Por favor, escribe el nuevo nombre para el KoTH en el chat."
+  enter-world-name: "&b➡ &7Por favor, escribe el nombre del mundo en el chat."
+  click-positions-to-select: "&b➡ &7Haz clic en las posiciones para seleccionar la región del KoTH."
+  enter-time-limit: "&b➡ &7Por favor, escribe el límite de tiempo (MM:SS) en el chat."
+  enter-capture-time: "&b➡ &7Por favor, escribe el tiempo de captura (MM:SS) en el chat."
+  put-rewards-in-chest: "&b➡ &7Pon las recompensas en el cofre."
+  enter-event-times: "&b➡ &7Por favor, escribe las horas del evento en el chat. (1pm, 11am...)"
+
+  koth-stats-title: "&6Tus Estadísticas de KoTH"
+  kills: "&6Asesinatos: &f<value>"
+  total-kills: "&8Asesinatos Totales: &f<value>"
+  kills-message: "&aTienes &f<value> &aasesinatos."
+  
+  deaths: "&6Muertes: &f<value>"
+  total-deaths: "&8Muertes Totales: &f<value>"
+  deaths-message: "&aTienes &f<value> &amuertes."
+  
+  wins: "&6Victorias: &f<value>"
+  total-wins: "&8Victorias Totales: &f<value>"
+  wins-message: "&aTienes &f<value> &avictorias."
+  
+  participations: "&6Participaciones: &f<value>"
+  total-participations: "&8Participaciones Totales: &f<value>"
+  participations-message: "&aHas participado &f<value> &aveces."
+  
+  capture-time: "&6Tiempo de Captura: &f<value>s"
+  total-capture-time: "&8Tiempo Total de Captura: &f<value> segundos"
+  capture-time-message: "&aTu tiempo total de captura es &f<value> &asegundos."
+  
+  kdr: "&6KDR: &f<value>"
+  total-kdr: "&8Tu Ratio de Asesinatos/Muertes"
+  kdr-message: "&aTu KDR total es &f<value>."
+  
+  damage-dealt: "&6Daño Infligido: &f<value>"
+  total-damage-dealt: "&8Daño Total Infligido: &f<value>"
+  damage-dealt-message:"&aHas infligido &f<value> &adaño."
+
+  damage-received: "&6Daño Recibido: &f<value>"
+  total-damage-received: "&8Total Daño Recibido: &f<value>"
+  damage-received-message: "&aHas recibido &f<value> &adaño."
+    
+  rewards-received: "&6Recompensas Recibidas: &f<value>"
+  total-rewards-received: "&8Total de Recompensas Recibidas: &f<value>"
+  rewards-received-message: "&aHas recibido &f<value> &arecompensas."
+
+  usage-remove: "&c✖ &7Uso: &c/koth schedule remove <id>"
+  schedule-removed: "&a✔ &7Horario eliminado."
+  invalid-schedule-id: "&c✖ &7ID de horario inválido."
+  usage-add: "&c✖ &7Uso: &c/koth schedule add <kothId> <hh:mm,hh:mmm...> [lunes,martes...]"
+  invalid-koth-id: "&c✖ &7ID de KOTH inválido."
+  invalid-day-names: "&c✖ &7Nombres de días inválidos."
+  invalid-time-format: "&c✖ &7Formato de tiempo inválido."
+  schedule-added: "&e&lEditando KOTH: &a✔ &7Ajuste actualizado: &f<schedule> &b➡ &7Por favor ingrese: &fNext Value"
+  invalid-koth-id-hour-minute: "&c✖ &7ID de KOTH, hora o minuto inválido."
+  no-schedules-available: "&c✖ &7No hay horarios disponibles."
+  koth-schedules: "&6&lHorarios de KOTH:"
+  schedule-help: |
+    &8&m-------------------------------------
+    &c&lComandos de horario de KOTH:
+    &8❙&6 /koth schedule list:&f Lista todos los horarios.
+    &8❙&6 /koth schedule add <kothId> <hh:mm,hh:mmm...> [lunes,martes...]:&f Añade un nuevo horario.
+    &8❙&6 /koth schedule remove <id>:&f Elimina un horario.
+    &8&m-------------------------------------
+  unknown-command: "&c✖ &7Comando desconocido. Usa &c/koth setup help &7para ayuda."
+  setup-help: |
+    &8&m-------------------------------------
+    &c&lComandos de configuración de MineKOTH:
+    &8❙&6 /koth setup start:&f Inicia una nueva sesión de configuración de KOTH.
+    &8❙&6 /koth setup cancel:&f Cancela la sesión de configuración de KOTH actual.
+    &8❙&6 /koth setup finish:&f Termina la sesión de configuración de KOTH actual.
+    &8❙&6 /koth setup <id/name>:&f Edita un KOTH existente.
+    &8&m-------------------------------------
+  already-in-session: "&c✖ &7Ya estás en una sesión de configuración. &cUsa /koth setup cancel para cancelarla."
+  start-setup: "&a✔ &7Creación de KOTH iniciada. &aPor favor, escribe el nombre."
+  no-session: "&c✖ &7No estás en una sesión de configuración."
+  cancel-setup: "&c✖ &7Sesión de configuración de KOTH cancelada."
+  specify-id-name: "&c✖ &7Por favor especifica un ID/nombre de KOTH. &c/koth setup <id/name>"
+  no-koth-id-or-name: "&c✖ &7No se pudo encontrar KOTH con ID o nombre: &b<id_or_name>"
+  edit-started: "&a✔ &7¡Edición de KOTH iniciada! Ingrese el nombre del KOTH."
+  setup-not-complete: "&c✖ &7La configuración no está completa. Termina todos los pasos antes de usar este comando."
+  set-field: "&c✖ &7Debes establecer el &c<field> &7del KOTH primero."
+  koth-setup-complete: |
+    &8&m-------------------------------------
+    &a✔ &7¡Configuración de KOTH completa! KOTH guardado.
+    &8❙ &6Nombre: &f<name>
+    &8❙ &6Horarios: &f<times>
+    &8❙ &6Límite de Tiempo: &f<time_limit> segundos
+    &8❙ &6Tiempo de Captura: &f<capture_time> segundos
+    &8❙ &6Objetos de Recompensa: &f<reward_items>
+    &8❙ &6Comandos de Recompensa: &f<reward_commands>
+    &8&m-------------------------------------
+
+  position1-set: "&a✔ &7Posición 1 establecida en: &b<value>"
+  invalid-world: "&c✖ &7El mundo debe ser el mismo que la primera posición."
+  position2-set: "&a✔ &7Posición 2 establecida en: &b<value>"
+  area-size: "&a✔ &7Tamaño del área (&b<x_length>x<z_length>&7): &b<area> bloques"
+  enter-name: "&b➡ &7Ingrese el nombre del KOTH."
+  enter-times: "&b➡ &7Ingrese los horarios para ejecutar el KOTH (por ejemplo, &b8pm 9pm 10pm&7)."
+
+  rewards-set: "&a✔ &7Recompensas establecidas. (&b<count> objetos&7)"
+  enter-loot-type: |
+    &8&m-------------------------------------
+    &b➡ &7Ingrese el tipo de botín.
+    &8❙ &6Predeterminado: &fDar todas las recompensas al ganador
+    &8❙ &6Aleatorio: &fDar recompensas aleatorias al ganador
+    &8❙ &6MineClans_Default: &fDar todas las recompensas a los miembros del clan
+    &8❙ &6MineClans_Random: &fDar recompensas aleatorias a los miembros del clan
+    &8&m-------------------------------------
+
+    name-set: "&a✔ &7Nombre establecido a: &b<value>"
+  set-positions: "&a✔ &7Haz clic derecho para establecer &bPosición 1 &7y &bPosición 2&7."
+  set-first-positions: "&c✖ &7Debes establecer primero las posiciones del KOTH."
+  invalid-times: "&c✖ &7Horarios inválidos. Por favor, ingrese uno válido."
+  times-set: "&a✔ &7Horarios establecidos a: &b<value>"
+  enter-days: "&b➡ &7Ingrese los días (por ejemplo, &bLUNES&7, &bMARTES&7, &bTODOS&7...)."
+  invalid-days: "&c✖ &7Días inválidos. Por favor, ingrese uno válido."
+  days-set: "&a✔ &7Días establecidos a: &b<value>"
+  enter-time-limit: "&b➡ &7Ingrese el límite de tiempo (por ejemplo, &b30min&7)."
+  invalid-time-limit: "&c✖ &7Límite de tiempo inválido. Por favor, ingrese uno válido."
+  time-limit-set: "&a✔ &7Límite de tiempo establecido a: &b<value>"
+  enter-capture-time: "&b➡ &7Ingrese el tiempo de captura (por ejemplo, &b5min&7)."
+  invalid-capture-time: "&c✖ &7Tiempo de captura inválido. Por favor, ingrese uno válido."
+  capture-time-set: "&a✔ &7Tiempo de captura establecido a: &b<value>"
+  put-rewards: "&a✔ &7Ponga las recompensas en el cofre."
+  invalid-loot-type: "&c✖ &7Tipo de botín inválido. Por favor, ingrese uno válido."
+  loot-type-set: "&a✔ &7Tipo de botín establecido a: &b<value>"
+  enter-loot-amount: "&b➡ &7Ingrese la cantidad de botín."
+  enter-rewards-commands: "&b➡ &7Ingrese los comandos de recompensas."
+  example-rewards-commands: "&a✔ &7Ejemplo: &bgive %player% diamond 1"
+  finish-setup: "&a✔ &7Escriba &b/koth setup finish &7cuando termine."
+  invalid-loot-amount: "&c✖ &7Cantidad de botín inválida. Por favor, ingrese una válida. (por ejemplo, &b1&7)"
+  loot-amount-set: "&a✔ &7Cantidad de botín establecida a: &b<value>"
+  rewards-command-added: "&a✔ &7Comandos de recompensas añadidos: &b<value>"
+  setup-complete: "&a✔ &7Configuración de KOTH completa. Escriba &b/koth setup finish &7para finalizar."
+
+  no-vault: "&c✖ &7Vault no está presente. La apuesta no se puede realizar."
+  negative-bet: "&c✖ &7El monto de la apuesta debe ser positivo. Apuesta no realizada."
+  no-participant: "&c✖ &7Participante no encontrado. Apuesta no realizada."
+  not-enough-money: "&c✖ &7No tienes suficiente dinero para realizar esta apuesta."
+  bet-failed: "&c✖ &7No se pudo realizar la apuesta. Por favor, inténtalo de nuevo."
+  bet-success: "&a✔ &7Has realizado una apuesta de &6<0> &7en &b<1>&7 con éxito!"
+  reward-success: "&6&l¡Felicidades! &7Ganaste &a<0> &7por apostar en &b<1>&7!"
+  reward-failed: "&c✖ &7No se pudo depositar tu recompensa. Por favor, contacta a un administrador."
+  bet-lost: "&c✖ &7Perdiste &a<0> &7apostando en &b<1>&7."
+
+  usage-tp: "&c✖ &7Uso: &6/koth tp &f<id/nombre>"
+  usage-bet: "&c✖ &7Uso: &6/koth bet &f<monto> <participante> [id/nombreKOTH]"
+  no-running-koths: "&c✖ &7No hay koths en curso."
+  available-koths: "&cKoths disponibles:"
+  running-koth: "&8❙ &6<name>"
+  no-player: "&c✖ &7No se pudo encontrar al jugador con el nombre: &c<name>"
+  no-player-data: "&c✖ &7No se pudo encontrar datos del jugador o el jugador no está en línea."
+  unknown-subcommand: "&c✖ &7Subcomando desconocido. Usa &6/koth help &7para una lista de comandos."
+  no-koths: "&c✖ &7No hay koths para listar."
+  koth-list: "&cLista de KOTH:"
+  koth-info: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name>"
+  usage-koth-info: "&c✖ &7Uso: &6/koth info &f<id>"
+  no-koth-id: "&c✖ &7No se encontró KOTH con ID &c<id>."
+  invalid-id: "&c✖ &7ID de KOTH inválido. Debe ser un número."
+  usage-delete: "&c✖ &7Uso: &6/koth delete &f<id>"
+  koth-deleted: "&a✔ &7KOTH con ID &a<id> &7eliminado con éxito."
+  no-schedules: "&c✖ &7No hay horarios disponibles."
+  invalid-koth: "&c✖ &7KOTH inválido."
+  koth-running: "&c✖ &7KOTH ya está en curso."
+  koth-schedule: "&cSe ejecutó el próximo horario &8(&6<name>&8)"
+  koth-running-list: "&cKOTHS en curso:"
+  koth-running-item: "&c - &6<name>"
+  no-event-active: "&c✖ &7No hay evento activo."
+  koth-captured: "&c✖ &7KOTH ya está capturado, espera."
+  event-stopped: "&a✔ &7Evento detenido."
+  event-stopped-title: "&a&lDetenido"
+  event-stopped-subtitle: "&eKOTH detenido por &f<name>"
+  koth-commands: |
+    &8&m-------------------------------------
+    &c&lComandos de KOTH:
+    &8❙ &6/koth setup: &fFinaliza y guarda la configuración actual de KOTH.
+    &8❙ &6/koth schedule: &fPrograma un KOTH.
+    &8❙ &6/koth list: &fLista todos los koths existentes.
+    &8❙ &6/koth info <id>: &fObtén detalles sobre un koth específico.
+    &8❙ &6/koth delete <id>: &fElimina un koth específico.
+    &8❙ &6/koth start: &fInicia el próximo koth programado.
+    &8❙ &6/koth stop: &fDetiene el evento koth actual.
+    &8❙ &6/koth capture: &fCaptura el koth actual.
+    &8❙ &6/koth tp <id/nombre>: &fTeletransportarse a un koth.
+    &8&m-------------------------------------
+  koth-info: |
+    &8&m-------------------------------------
+    &c&lInformación del KOTH:
+    &8❙ &6ID: &f<id>
+    &8❙ &6Nombre: &f<name>
+    &8❙ &6Mundo: &f<world>
+    &8❙ &6Límite de Tiempo: &f<time_limit>
+    &8❙ &6Tiempo para Capturar: &f<time_to_capture>
+    &8❙ &6Objetos de Recompensa: &f<reward_items>
+    &8❙ &6Comandos de Recompensa: &f<reward_commands>
+    &8&m-------------------------------------
+  players-only: "&c✖ &7Error: &cSolo los jugadores pueden usar este comando."
