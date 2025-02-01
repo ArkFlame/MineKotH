@@ -206,4 +206,15 @@ public class PlayerData {
     public int getTotalRewardsReceived() {
         return getTotal(REWARDS_RECEIVED).intValue();
     }
+
+    /**
+     * Protected getters for persistence implementations.
+     */
+    protected Map<String, StatValue> getTotalStats() {
+        return totalStats;
+    }
+
+    protected Map<String, Map<Integer, StatValue>> getStatsByKoth() {
+        return statsByKoth;
+    }
 }

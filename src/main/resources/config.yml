@@ -1,1 +1,13 @@
 webhook-url: https://discord.com/api/webhooks/1234567890/12345678901234567890
+playerdata:
+  storage: "mysql" # options: mysql, yaml, memory
+
+mysql:
+  host: "localhost"
+  port: 3306
+  database: "mydatabase"
+  username: "myusername"
+  password: "mypassword"
+
+yaml:
+  directory: "playerdata"
