@@ -1,5 +1,6 @@
 package com.arkflame.minekoth.menus;
 
+import com.arkflame.mineclans.modernlib.utils.Materials;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.MenuUtil.Menu;
 import com.arkflame.minekoth.utils.MenuUtil.MenuItem;
@@ -26,7 +27,7 @@ public class PlayerStatsMenu {
         this.player = player;
         this.playerData = playerData;
         // Create a menu with 3 rows (27 slots) and a title.
-        this.menu = new Menu("Your Koth Stats", 3);
+        this.menu = new Menu("Your Koth Stats", 5);
         buildMenu();
     }
 
@@ -71,7 +72,7 @@ public class PlayerStatsMenu {
         menu.setItem(16, participationsItem);
 
         // Capture Time
-        MenuItem captureTimeItem = new MenuItem.Builder(Material.CLOCK)
+        MenuItem captureTimeItem = new MenuItem.Builder(Materials.get("CLOCK", "WATCH"))
                 .name("Capture Time: " + playerData.getTotalCaptureTime() + "s")
                 .lore("Total Capture Time: " + playerData.getTotalCaptureTime() + " seconds")
                 .onClick((InventoryClickEvent event) ->
@@ -98,7 +99,7 @@ public class PlayerStatsMenu {
         menu.setItem(23, damageDealtItem);
 
         // Damage Received
-        MenuItem damageReceivedItem = new MenuItem.Builder(Material.SHIELD)
+        MenuItem damageReceivedItem = new MenuItem.Builder(Materials.get("SHIELD", "IRON_HELMET"))
                 .name("Damage Received: " + playerData.getTotalDamageReceived())
                 .lore("Total Damage Received: " + playerData.getTotalDamageReceived())
                 .onClick((InventoryClickEvent event) ->

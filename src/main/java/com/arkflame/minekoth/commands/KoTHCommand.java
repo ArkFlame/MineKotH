@@ -237,7 +237,7 @@ public class KothCommand implements CommandExecutor {
                     break;
                 }
 
-                new PlayerStatsMenu(player, playerData);
+                new PlayerStatsMenu(player, playerData).open();
                 break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");

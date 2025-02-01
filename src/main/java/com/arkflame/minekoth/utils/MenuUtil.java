@@ -80,6 +80,9 @@ public class MenuUtil {
 
             // Set menu items
             for (Map.Entry<Integer, MenuItem> entry : items.entrySet()) {
+                if (entry.getKey() >= size) {
+                    break;
+                }
                 inventory.setItem(entry.getKey(), entry.getValue().getItemStack());
             }
 
