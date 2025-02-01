@@ -205,7 +205,6 @@ messages:
   bet-lost: "&c✖ &7You lost &a<value> &7bet on &b<value>&7."
   
   usage-tp: "&c✖ &7Usage: &6/koth tp &f<id/name>"
-  no-koth-id-or-name: "&c✖ &7Could not find koth with ID or name: &c<value>"
   usage-bet: "&c✖ &7Usage: &6/koth bet &f<amount> <participant> [kothId/name]"
   no-running-koths: "&c✖ &7No koths are running."
   available-koths: "&cAvailable Koths:"
