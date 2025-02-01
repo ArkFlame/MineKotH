@@ -13,6 +13,9 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  first-kill-reward: "&6&lCongratulations! &7You received a reward for your first kill!"
+  killstreak-reward: "&6&lCongratulations! &7You received a reward for your &c<killstreak> &7killstreak!"
+
   koth-edit-title: "&6KoTH Edit Menu &8- &7<id>"
   koth-name: "&e&lKoTH Name"
   current-value: "&7Current value: &f<value>"

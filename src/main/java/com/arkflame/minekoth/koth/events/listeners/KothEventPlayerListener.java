@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.Materials;
 
@@ -36,20 +37,22 @@ public class KothEventPlayerListener implements Listener {
             if (killer != null && kothEvent.getKoth().isInside(killer.getLocation())) {
                 kothEvent.getStats().addPlayerKill(killer.getUniqueId());
                 int totalKills = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getTotalPlayerKills();
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(killer);
+
                 if (totalKills == 1) {
                     killer.getInventory().addItem(new ItemStack(Materials.get("REDSTONE_BLOCK"), 1));
-                    killer.sendMessage("You received a reward for your first kill!");
+                    killer.sendMessage(lang.getMessage("messages.first-kill-reward"));
                 }
                 int killstreak = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getCurrentKillStreak();
                 if (killstreak == 2) {
                     killer.getInventory().addItem(new ItemStack(Materials.get("DIRT"), 1));
-                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
                 } else if (killstreak == 3) {
                     killer.getInventory().addItem(new ItemStack(Materials.get("STONE"), 1));
-                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
                 } else if (killstreak >= 4) {
                     killer.getInventory().addItem(new ItemStack(Materials.get("GOLD_INGOT"), 1));
-                    killer.sendMessage("You received a reward for your " + killstreak + " killstreak!");
+                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
                 }
                 PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(killer.getUniqueId().toString());
                 if (playerData != null) {
@@ -75,16 +78,18 @@ public class KothEventPlayerListener implements Listener {
         KothEvent kothEvent = kothEventManager.getKothEvent();
         if (kothEvent != null) {
             if (event.getDamager() instanceof Player) {
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(event.getDamager().getUniqueId().toString());
-                kothEvent.getStats().addDamageDone(event.getDamager().getUniqueId(), (int) event.getDamage());
+                Player damager = (Player) event.getDamager();
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(damager.getUniqueId().toString());
+                kothEvent.getStats().addDamageDone(damager.getUniqueId(), (int) event.getDamage());
                 if (playerData != null) {
                     playerData.addDamageDealt(kothEvent.getKoth().getId(), (int) event.getDamage());
                 }
             }
 
             if (event.getEntity() instanceof Player) {
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(event.getEntity().getUniqueId().toString());
-                kothEvent.getStats().addDamageReceived(event.getEntity().getUniqueId(), (int) event.getDamage());
+                Player damaged = (Player) event.getEntity();
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(damaged.getUniqueId().toString());
+                kothEvent.getStats().addDamageReceived(damaged.getUniqueId(), (int) event.getDamage());
                 if (playerData != null) {
                     playerData.addDamageReceived(kothEvent.getKoth().getId(), (int) event.getDamage());
                 }
