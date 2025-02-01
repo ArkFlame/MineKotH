@@ -10,12 +10,12 @@ messages:
   invalid-world: "&c✖ &7The world must be the same as the first position."
   position2-set: "&a✔ &7Position 2 set at: &b<Value>"
   area-size: "&a✔ &7Area size (&b<x_length>x<z_length>&7): &b<area> blocks"
-  enter-name: "&a✔ &7Enter the name of the koth."
-  enter-times: "&a✔ &7Enter the times to run the koth (e.g., &b8pm 9pm 10pm&7)."
+  enter-name: "&b➡ &7Enter the name of the koth."
+  enter-times: "&b➡ &7Enter the times to run the koth (e.g., &b8pm 9pm 10pm&7)."
 
   rewards-set: "&a✔ &7Rewards set. (&b<count> items&7)"
   enter-loot-type: |
-    &a✔ &7Enter the type of loot type.
+    &b➡ &7Enter the type of loot type.
     &8❙ &6Default: &fGive all rewards to the winner
     &8❙ &6Random: &fGive random rewards to the winner
     &8❙ &6MineClans_Default: &fGive all rewards to clan members
@@ -26,20 +26,20 @@ messages:
   set-first-positions: "&c✖ &7You must set the positions of the koth first."
   invalid-times: "&c✖ &7Invalid times. Please enter a valid one."
   times-set: "&a✔ &7Run times set to: &b<Value>"
-  enter-days: "&a✔ &7Enter days (e.g., &bMONDAY&7, &bTUESDAY&7, &bALL&7...)."
+  enter-days: "&b➡ &7Enter days (e.g., &bMONDAY&7, &bTUESDAY&7, &bALL&7...)."
   invalid-days: "&c✖ &7Invalid days. Please enter a valid one."
   days-set: "&a✔ &7Days set to: &b<Value>"
-  enter-time-limit: "&a✔ &7Enter the time limit (e.g., &b30min&7)."
+  enter-time-limit: "&b➡ &7Enter the time limit (e.g., &b30min&7)."
   invalid-time-limit: "&c✖ &7Invalid time limit. Please enter a valid one."
   time-limit-set: "&a✔ &7Time limit set to: &b<Value>"
-  enter-capture-time: "&a✔ &7Enter the capture time (e.g., &b5min&7)."
+  enter-capture-time: "&b➡ &7Enter the capture time (e.g., &b5min&7)."
   invalid-capture-time: "&c✖ &7Invalid capture time. Please enter a valid one."
   capture-time-set: "&a✔ &7Capture time set to: &b<Value>"
   put-rewards: "&a✔ &7Put rewards in the chest."
   invalid-loot-type: "&c✖ &7Invalid loot type. Please enter a valid one."
   loot-type-set: "&a✔ &7Loot type set to: &b<Value>"
-  enter-loot-amount: "&a✔ &7Enter the loot amount."
-  enter-rewards-commands: "&a✔ &7Enter the rewards commands."
+  enter-loot-amount: "&b➡ &7Enter the loot amount."
+  enter-rewards-commands: "&b➡ &7Enter the rewards commands."
   example-rewards-commands: "&a✔ &7Example: &bgive %player% diamond 1"
   finish-setup: "&a✔ &7Type &b/koth setup finish &7when done."
   invalid-loot-amount: "&c✖ &7Invalid loot amount. Please enter a valid one. (e.g., &b1&7)"
