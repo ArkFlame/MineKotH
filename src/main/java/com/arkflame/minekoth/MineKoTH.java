@@ -1,11 +1,5 @@
 package com.arkflame.minekoth;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -22,9 +16,8 @@ import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.particles.ParticleScheduler;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
+import com.arkflame.minekoth.player.PlayerDataInitializer;
 import com.arkflame.minekoth.player.PlayerDataManager;
-import com.arkflame.minekoth.player.mysql.MySQLPlayerDataManager;
-import com.arkflame.minekoth.player.yaml.YamlPlayerDataManager;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.loaders.ScheduleLoader;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
@@ -33,7 +26,6 @@ import com.arkflame.minekoth.setup.listeners.SetupChatListener;
 import com.arkflame.minekoth.setup.listeners.SetupInteractListener;
 import com.arkflame.minekoth.setup.listeners.SetupInventoryCloseListener;
 import com.arkflame.minekoth.setup.session.SetupSessionManager;
-import com.arkflame.minekoth.utils.ConfigUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.HologramUtility;
@@ -122,91 +114,34 @@ public class MineKoth extends JavaPlugin {
         return playerDataManager;
     }
 
-    /**
-     * Creates and returns a JDBC Connection to the MySQL database.
-     * Returns null if connection creation fails.
-     */
-    private Connection createMySQLConnection(String host, int port, String database, String username, String password) {
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false";
-        try {
-            // Load the JDBC driver if necessary.
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException | SQLException e) {
-            getLogger().log(Level.SEVERE, "Error establishing MySQL connection.", e);
-            return null;
-        }
-    }
-
-    public void initializeDatabase(MineKoth plugin) {
-        // Get the storage type from config (mysql, yaml, memory).
-        String storageType = getConfig().getString("playerdata.storage", "memory").toLowerCase();
-
-        switch (storageType) {
-            case "mysql":
-                // MySQL configuration from config.yml.
-                String host = getConfig().getString("mysql.host", "localhost");
-                int port = getConfig().getInt("mysql.port", 3306);
-                String database = getConfig().getString("mysql.database", "mydatabase");
-                String username = getConfig().getString("mysql.username", "myusername");
-                String password = getConfig().getString("mysql.password", "mypassword");
-
-                // Attempt to create a MySQL connection.
-                Connection connection = createMySQLConnection(host, port, database, username, password);
-                if (connection == null) {
-                    getLogger().severe("Failed to create MySQL connection. Disabling plugin.");
-                    getServer().getPluginManager().disablePlugin(this);
-                    return;
-                }
-                playerDataManager = new MySQLPlayerDataManager(connection, getLogger());
-                getLogger().info("Using MySQLPlayerDataManager.");
-                break;
-
-            case "yaml":
-                // Use YAML-based persistence.
-                File dataFolder = new File(getDataFolder(), getConfig().getString("yaml.directory", "playerdata"));
-                // Ensure the data folder exists.
-                if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-                    getLogger().severe("Failed to create YAML data folder: " + dataFolder.getAbsolutePath());
-                    getServer().getPluginManager().disablePlugin(this);
-                    return;
-                }
-                playerDataManager = new YamlPlayerDataManager(dataFolder, new ConfigUtil(this), getLogger());
-                getLogger().info("Using YamlPlayerDataManager.");
-                break;
-
-            case "memory":
-            default:
-                // Use in-memory persistence.
-                playerDataManager = new PlayerDataManager();
-                getLogger().info("Using in-memory PlayerDataManager.");
-                break;
-        }
-    }
-
     @Override
     public void onEnable() {
         setInstance(this);
         saveDefaultConfig();
-        initializeDatabase(this);
 
+        // Initialize database
+        playerDataManager = PlayerDataInitializer.initializeDatabase(this);
+
+        // Initialize hologram utility
         HologramUtility.initialize(this);
+        getLogger().info("Hologram Utility initialized.");
 
         // Initialize Vault economy
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
             if (rsp != null) {
                 this.economy = rsp.getProvider();
+                getLogger().info("Vault economy enabled.");
             }
         }
 
         // Managers
         particleScheduler = new ParticleScheduler(this);
+        getLogger().info("ParticleScheduler initialized.");
 
         // Lang
         langManager = new LangManager(getDataFolder());
-        scheduleRunnerTask = new ScheduleRunnerTask();
-        kothEventTickTask = new KothEventTickTask();
+        getLogger().info("Language Manager initialized.");
 
         // Random Events
         randomEventsManager = new RandomEventsManager();
@@ -229,10 +164,10 @@ public class MineKoth extends JavaPlugin {
         pluginManager.registerEvents(new SetupInventoryCloseListener(), this);
 
         // Tasks - Schedule
-        FoliaAPI.runTaskTimerAsync(task -> scheduleRunnerTask.run(), 1, 20);
+        FoliaAPI.runTaskTimerAsync(task -> (scheduleRunnerTask = new ScheduleRunnerTask()).run(), 1, 20);
 
         // Tasks - Koth Event
-        FoliaAPI.runTaskTimerAsync(task -> kothEventTickTask.run(), 1, 20);
+        FoliaAPI.runTaskTimerAsync(task -> (kothEventTickTask = new KothEventTickTask()).run(), 1, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());
