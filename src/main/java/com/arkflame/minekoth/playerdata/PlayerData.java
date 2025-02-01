@@ -78,7 +78,7 @@ public class PlayerData {
         return 0;
     }
 
-    // Specific methods for incrementing and accessing statistics
+    // Specific methods for incrementing statistics
     public void incrementKillCount(int kothId) {
         addByKoth(KILLS, kothId, 1);
         addTotal(KILLS, 1);
@@ -134,6 +134,7 @@ public class PlayerData {
         setTotal(KDR, totalKdr);
     }
 
+    // Specific methods for accessing statistics
     public double getKdr(int kothId) {
         return getByKoth(KDR, kothId).doubleValue();
     }

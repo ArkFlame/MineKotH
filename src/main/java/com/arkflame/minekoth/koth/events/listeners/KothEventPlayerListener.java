@@ -75,11 +75,19 @@ public class KothEventPlayerListener implements Listener {
         KothEvent kothEvent = kothEventManager.getKothEvent();
         if (kothEvent != null) {
             if (event.getDamager() instanceof Player) {
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(event.getDamager().getUniqueId().toString());
                 kothEvent.getStats().addDamageDone(event.getDamager().getUniqueId(), (int) event.getDamage());
+                if (playerData != null) {
+                    playerData.addDamageDealt(kothEvent.getKoth().getId(), (int) event.getDamage());
+                }
             }
 
             if (event.getEntity() instanceof Player) {
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(event.getEntity().getUniqueId().toString());
                 kothEvent.getStats().addDamageReceived(event.getEntity().getUniqueId(), (int) event.getDamage());
+                if (playerData != null) {
+                    playerData.addDamageReceived(kothEvent.getKoth().getId(), (int) event.getDamage());
+                }
             }
         }
     }

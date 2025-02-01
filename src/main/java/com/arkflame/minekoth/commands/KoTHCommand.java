@@ -1,5 +1,6 @@
 package com.arkflame.minekoth.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -17,6 +18,8 @@ import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.koth.managers.KothManager;
+import com.arkflame.minekoth.menus.PlayerStatsMenu;
+import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.commands.ScheduleCommand;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
@@ -213,6 +216,28 @@ public class KothCommand implements CommandExecutor {
                 }
 
                 betKothEvent.getKothEventBets().placeBet(player, args[2], Double.parseDouble(args[1]));
+                break;
+            case "stats":
+                Player statsTarget = null;
+                if (args.length < 2) {
+                    statsTarget = player;
+                } else {
+                    statsTarget = Bukkit.getPlayer(args[1]);
+                }
+
+                if (statsTarget == null) {
+                    player.sendMessage(ChatColor.RED + "Could not find player with name: " + args[1]);
+                    break;
+                }
+
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+
+                if (playerData == null) {
+                    player.sendMessage(ChatColor.RED + "Could not find player data for this player or the player is not online.");
+                    break;
+                }
+
+                new PlayerStatsMenu(player, playerData);
                 break;
             default:
                 player.sendMessage(ChatColor.RED + "Unknown subcommand. Use /koth help for a list of commands.");
