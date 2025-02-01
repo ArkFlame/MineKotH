@@ -9,6 +9,8 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.koth.events.bets.KothEventBets;
+import com.arkflame.minekoth.lang.Lang;
+import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
@@ -107,10 +109,19 @@ public class KothEvent {
 
                 Player topPlayer = getTopPlayer();
                 if (player == topPlayer) {
-                    Titles.sendTitle(player, "&aCapturing", "&aYou started capturing the koth", 10, 20, 10);
+                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                    Titles.sendTitle(player,
+                            lang.getMessage("messages.capturing-title"),
+                            lang.getMessage("messages.capturing-subtitle"),
+                            10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "&aEntering Zone",
-                            (oldTopGroup.containsPlayer(player) ? "&a" : "&c") + topPlayer.getName() + " is capturing",
+                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                    Titles.sendTitle(player,
+                            lang.getMessage("messages.entering-zone-title"),
+                            (oldTopGroup.containsPlayer(player)
+                                    ? lang.getMessage("messages.top-player-capturing-prefix")
+                                    : lang.getMessage("messages.not-top-player-capturing-prefix")) + topPlayer.getName()
+                                    + " " + lang.getMessage("messages.is-capturing"),
                             10, 20, 10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
@@ -131,9 +142,17 @@ public class KothEvent {
                     updateEffects(topPlayer);
                 }
                 if (player == oldTopPlayer) {
-                    Titles.sendTitle(player, "&cLeaving Koth", "&7You are no longer capturing", 10, 20, 10);
+                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                    Titles.sendTitle(player,
+                            lang.getMessage("messages.leaving-koth-title"),
+                            lang.getMessage("messages.no-longer-capturing-subtitle"),
+                            10, 20, 10);
                 } else {
-                    Titles.sendTitle(player, "&cLeaving Koth", "&7You left the koth zone", 10, 20, 10);
+                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                    Titles.sendTitle(player,
+                            lang.getMessage("messages.leaving-koth-title"),
+                            lang.getMessage("messages.left-zone-subtitle"),
+                            10, 20, 10);
                 }
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS");
             }
@@ -253,13 +272,17 @@ public class KothEvent {
                     }
 
                     if (sendTimeLeftTitle) {
+                        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
                         Titles.sendTitle(player,
-                                "&e" + secondsLeft,
+                                lang.getMessage("messages.seconds-left").replace("<seconds>",
+                                        String.valueOf(secondsLeft)),
                                 isTopPlayer
-                                        ? "&aYou are capturing"
+                                        ? lang.getMessage("messages.you-are-capturing-subtitle")
                                         : isTopGroup
-                                                ? "&a" + topPlayerName + " is capturing"
-                                                : "&c" + topPlayerName + " is capturing",
+                                                ? lang.getMessage("messages.top-player-name-capturing-subtitle")
+                                                        .replace("<topPlayerName>", topPlayerName)
+                                                : lang.getMessage("messages.not-top-player-name-capturing-subtitle")
+                                                        .replace("<topPlayerName>", topPlayerName),
                                 10, 20, 10);
                         Sounds.play(player, 1.0f, 1.0f, "CLICK");
                     }
@@ -274,7 +297,13 @@ public class KothEvent {
                 // Notify Discord
                 DiscordHook.sendKothTimeLimit(koth.getName());
 
-                Titles.sendTitle("&aTime Limit", "&eNo koth winners", 10, 60, 10);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                    Titles.sendTitle(player,
+                            lang.getMessage("messages.time-limit-title"),
+                            lang.getMessage("messages.time-limit-subtitle"),
+                            10, 60, 10);
+                }
             }
         }
     }
@@ -334,8 +363,11 @@ public class KothEvent {
     }
 
     private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {
-        String title = isWinner ? "&aYOU WON" : "&cYOU LOSE";
-        String subtitle = "&eWINNER: &b" + (winner == null ? "N/A" : winner.getName());
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+        String title = isWinner ? lang.getMessage("messages.you-won-title")
+                : lang.getMessage("messages.you-lose-title");
+        String subtitle = lang.getMessage("messages.winner-subtitle").replace("<winner>",
+                (winner == null ? lang.getMessage("messages.na") : winner.getName()));
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {

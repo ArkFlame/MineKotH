@@ -2,10 +2,14 @@ package com.arkflame.minekoth.schedule.tasks;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
+import com.arkflame.minekoth.lang.Lang;
+import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.LocalDateTime;
@@ -48,10 +52,13 @@ public class ScheduleRunnerTask extends BukkitRunnable {
         Koth koth = schedule.getKoth();
 
         if (countdownIntervals.contains((int) secondsLeft)) {
-            Titles.sendTitle(
-                    "&e" + secondsLeft,
-                    "&a" + "koth " + koth.getName() + " starting",
-                    10, 20, 10);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+    Titles.sendTitle(player, 
+        lang.getMessage("messages.koth-starting-title").replace("<seconds>", String.valueOf(secondsLeft)), 
+        lang.getMessage("messages.koth-starting-subtitle").replace("<koth>", koth.getName()), 
+        10, 20, 10);
+}
             Sounds.play(1.0f, 1.0f, "CLICK");
         }
 

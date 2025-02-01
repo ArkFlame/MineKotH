@@ -8,8 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.utils.FoliaAPI;
@@ -45,8 +47,13 @@ public class LootDropEvent extends RandomEvent {
             ParticleUtil.generateCircle(dropLocation, "FIREWORKS_SPARK", 1.0, 10);
             Sounds.play(world, dropLocation, 1.0f, 1.0f, "ENTITY_ITEM_PICKUP");
         });
-        
-        Titles.sendTitle(event.getPlayersInZone(), "§6Loot Drop", "§7A loot drop has appeared nearby!", 5, 20, 5);    
+
+        for (Player player : event.getPlayersInZone()) {
+            Titles.sendTitle(player,
+                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.loot-drop-title"),
+                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.loot-drop-subtitle"),
+                    5, 20, 5);
+        }
     }
 
     private List<ItemStack> initializeCommonLoot() {

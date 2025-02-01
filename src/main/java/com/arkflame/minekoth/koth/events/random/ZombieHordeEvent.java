@@ -5,10 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -49,7 +52,13 @@ public class ZombieHordeEvent extends RandomEvent {
         }
 
         Sounds.play(world, center, 1.0f, 1.0f, "ENTITY_ZOMBIE_AMBIENT");
-        Titles.sendTitle(event.getPlayersInZone(), "§cZombie Horde", "§7A horde of zombies has appeared!", 5, 20, 5);
+        for (Player player : event.getPlayersInZone()) {
+            Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+            Titles.sendTitle(player,
+                    lang.getMessage("messages.zombie-horde-title"),
+                    lang.getMessage("messages.zombie-horde-subtitle"),
+                    5, 20, 5);
+        }
     }
 
     private boolean hasPlayersInside(KothEvent event) {

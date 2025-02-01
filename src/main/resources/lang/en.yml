@@ -13,6 +13,40 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  players-only: "&c✖ &7Error: &cOnly players can use this command."
+  capturing-title: "&aCapturing"
+  capturing-subtitle: "&aYou started capturing the koth"
+  entering-zone-title: "&aEntering Zone"
+  top-player-capturing-prefix: "&a"
+  not-top-player-capturing-prefix: "&c"
+  is-capturing: "is capturing"
+  leaving-koth-title: "&cLeaving Koth"
+  no-longer-capturing-subtitle: "&7You are no longer capturing"
+  left-zone-subtitle: "&7You left the koth zone"
+  seconds-left: "&e<seconds>"
+  you-are-capturing-subtitle: "&aYou are capturing"
+  top-player-name-capturing-subtitle: "&a<topPlayerName> is capturing"
+  not-top-player-name-capturing-subtitle: "&c<topPlayerName> is capturing"
+  you-won-title: "&aYOU WON"
+  you-lose-title: "&cYOU LOSE"
+  winner-subtitle: "&eWINNER: &b<winner>"
+  na: "N/A"
+  
+  skeleton-horde-title: "&cSkeleton Horde"
+  skeleton-horde-subtitle: "&7A horde of skeletons has appeared!"
+
+  zombie-horde-title: "&cZombie Horde"
+  zombie-horde-subtitle: 
+
+  koth-starting-title: "&e<seconds>"
+  koth-starting-subtitle: "&aKOTH <koth> starting"
+
+  time-limit-title: "&aTime Limit"
+  time-limit-subtitle: "&eNo koth winners"
+
+  loot-drop-title: "&6Loot Drop"
+  loot-drop-subtitle: "&7A loot drop has appeared nearby!"
+
   capture-the-hill-title: "&a<kothName>"
   capture-the-hill-subtitle: "&eCapture the Hill!"
   place-bets: "&aPlace your koth bets to earn money while capturing the hill!"

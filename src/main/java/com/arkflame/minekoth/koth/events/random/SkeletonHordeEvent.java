@@ -6,10 +6,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -52,8 +55,13 @@ public class SkeletonHordeEvent extends RandomEvent {
         }
 
         Sounds.play(center, 1.0f, 0.5f, "ENTITY_SKELETON_AMBIENT");
-        Titles.sendTitle(event.getPlayersInZone(), "§cSkeleton Horde", "§7A horde of skeletons has appeared!", 5, 20,
-                5);
+        for (Player player : event.getPlayersInZone()) {
+            Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+            Titles.sendTitle(player,
+                    lang.getMessage("messages.skeleton-horde-title"),
+                    lang.getMessage("messages.skeleton-horde-subtitle"),
+                    5, 20, 5);
+        }
     }
 
     private boolean hasPlayersInside(KothEvent event) {
