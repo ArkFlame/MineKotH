@@ -5,17 +5,15 @@ import org.bukkit.entity.Player;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Rewards;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.session.SetupSession;
-import com.arkflame.minekoth.utils.ChatColors;
 
-import net.md_5.bungee.api.ChatColor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SetupCommand {
-    private static final String PREFIX = ChatColor.GOLD + "[KOTH] ";
     private static final Map<String, CommandHandler> COMMANDS;
 
     // Command handler functional interface
@@ -38,46 +36,38 @@ public class SetupCommand {
     public static void run(Player player, String[] args) {
         String subCommand = args.length <= 1 ? "help" : args[1].toLowerCase();
         CommandHandler handler = COMMANDS.getOrDefault(subCommand, COMMANDS.getOrDefault("setup",
-                (p, a) -> sendMessage(p, ChatColor.RED + "Unknown command. Use /koth setup help for help.")));
+                (p, a) -> player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.unknown-command"))));
         handler.handle(player, args);
     }
 
     private static void handleHelp(Player player, String[] args) {
-        sendMessage(player,
-                ChatColors.color("&7&m-------------------------------------"),
-                ChatColors.color("&cMineKOTH setup commands:"),
-                ChatColors.color("&e➤&7 /koth setup start - Start a new koth setup session."),
-                ChatColors.color("&e➤&7 /koth setup cancel - Cancel the current koth setup session."),
-                ChatColors.color("&e➤&7 /koth setup finish - Finish the current koth setup session."),
-                ChatColors.color("&e➤&7 /koth setup <id/name> - Edit an existing koth."),
-                ChatColors.color("&7&m-------------------------------------"));
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.setup-help"));
     }
 
     private static void handleStart(Player player, String[] args) {
         if (hasActiveSession(player)) {
-            sendMessage(player, ChatColors.color(
-                    "&c✧ [MineKOTH] &e➤ &7You are already in a setup session. &cUse /koth setup cancel to cancel it."));
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.already-in-session"));
             return;
         }
 
         MineKoth.getInstance().getSessionManager().addSession(player, new SetupSession());
-        sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7Koth creation started. &aPlease type the name."));
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.start-setup"));
     }
 
     private static void handleCancel(Player player, String[] args) {
         if (!hasActiveSession(player)) {
-            sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7You are not in a setup session."));
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-session"));
             return;
         }
 
         MineKoth.getInstance().getSessionManager().removeSession(player);
-        sendMessage(player, ChatColors.color("&c✧ [MineKOTH] &e➤ &7Koth setup session cancelled."));
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.cancel-setup"));
     }
 
     public static void handleFinish(Player player, String[] args) {
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
         if (session == null) {
-            sendMessage(player, ChatColor.RED + "You are not in a setup session.");
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-session"));
             return;
         }
 
@@ -94,7 +84,7 @@ public class SetupCommand {
 
     private static void handleSetup(Player player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, ChatColor.RED + "Please specify a koth ID/name. /koth setup <id/name>");
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.specify-id-name"));
             return;
         }
 
@@ -107,12 +97,12 @@ public class SetupCommand {
         }
 
         if (koth == null) {
-            sendMessage(player, ChatColor.RED + "Could not find koth with ID or name: " + kothIdOrName);
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-koth-id-or-name").replace("<id_or_name>", kothIdOrName));
             return;
         }
 
         new KothEditMenu(koth).open(player);
-        sendMessage(player, ChatColor.GREEN + "KOTH edit started! Enter the name of the koth.");
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.edit-started"));
     }
 
     private static boolean validateSession(Player player, SetupSession session) {
@@ -120,7 +110,7 @@ public class SetupCommand {
             return true;
         }
 
-        sendMessage(player, ChatColor.RED + "Setup is not complete. Finish all steps before using this command.");
+        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.setup-not-complete"));
 
         Map<String, Boolean> validations = new HashMap<>();
         validations.put("name", session.isNameSet());
@@ -133,7 +123,7 @@ public class SetupCommand {
 
         validations.forEach((field, isSet) -> {
             if (!isSet) {
-                sendMessage(player, ChatColor.RED + "You must set the " + field + " of the koth first.");
+                player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.set-field").replace("<field>", field));
             }
         });
 
@@ -178,23 +168,18 @@ public class SetupCommand {
     }
 
     private static void sendSuccessMessage(Player player, SetupSession session) {
-        sendMessage(player,
-                ChatColor.GREEN + "KOTH setup complete! KOTH saved.",
-                ChatColor.GREEN + "Name: " + ChatColor.AQUA + session.getName(),
-                ChatColor.GREEN + "Times: " + ChatColor.AQUA + session.getTimes(),
-                ChatColor.GREEN + "Time Limit: " + ChatColor.AQUA + session.getTimeLimit() + " seconds",
-                ChatColor.GREEN + "Capture Time: " + ChatColor.AQUA + session.getCaptureTime() + " seconds",
-                ChatColor.GREEN + "Reward Items: " + ChatColor.AQUA + session.getRewards().length,
-                ChatColor.GREEN + "Reward Commands: " + ChatColor.AQUA + session.getRewardsCommands());
+        Lang
+         lang = MineKoth.getInstance().getLangManager().getLang(player);
+        player.sendMessage(lang.getMessage("messages.koth-setup-complete")
+                .replace("<name>", session.getName())
+                .replace("<times>", session.getTimes())
+                .replace("<time_limit>", String.valueOf(session.getTimeLimit()))
+                .replace("<capture_time>", String.valueOf(session.getCaptureTime()))
+                .replace("<reward_items>", String.valueOf(session.getRewards().length))
+                .replace("<reward_commands>", session.getRewardsCommands().toString()));
     }
 
     private static boolean hasActiveSession(Player player) {
         return MineKoth.getInstance().getSessionManager().hasSession(player);
-    }
-
-    private static void sendMessage(Player player, String... messages) {
-        for (String message : messages) {
-            player.sendMessage(PREFIX + message);
-        }
     }
 }

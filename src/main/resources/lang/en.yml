@@ -6,6 +6,35 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  unknown-command: "&c✖ &7Unknown command. Use &c/koth setup help &7for help."
+  setup-help: |
+    &8&m-------------------------------------
+    &c&lMineKOTH setup commands:
+    &8❙&6 /koth setup start:&f Start a new koth setup session.
+    &8❙&6 /koth setup cancel:&f Cancel the current koth setup session.
+    &8❙&6 /koth setup finish:&f Finish the current koth setup session.
+    &8❙&6 /koth setup <id/name>:&f Edit an existing koth.
+    &8&m-------------------------------------
+  already-in-session: "&c✖ &7You are already in a setup session. &cUse /koth setup cancel to cancel it."
+  start-setup: "&c✖ &7Koth creation started. &aPlease type the name."
+  no-session: "&c✖ &7You are not in a setup session."
+  cancel-setup: "&c✖ &7Koth setup session cancelled."
+  specify-id-name: "&c✖ &7Please specify a koth ID/name. &c/koth setup <id/name>"
+  no-koth-id-or-name: "&c✖ &7Could not find koth with ID or name: &b<id_or_name>"
+  edit-started: "&a✔ &7KOTH edit started! Enter the name of the koth."
+  setup-not-complete: "&c✖ &7Setup is not complete. Finish all steps before using this command."
+  set-field: "&c✖ &7You must set the &c<field> &7of the koth first."
+  koth-setup-complete: |
+    &8&m-------------------------------------
+    &a✔ &7KOTH setup complete! KOTH saved.
+    &8❙ &6Name: &f<name>
+    &8❙ &6Times: &f<times>
+    &8❙ &6Time Limit: &f<time_limit> seconds
+    &8❙ &6Capture Time: &f<capture_time> seconds
+    &8❙ &6Reward Items: &f<reward_items>
+    &8❙ &6Reward Commands: &f<reward_commands>
+    &8&m-------------------------------------
+
   position1-set: "&a✔ &7Position 1 set at: &b<Value>"
   invalid-world: "&c✖ &7The world must be the same as the first position."
   position2-set: "&a✔ &7Position 2 set at: &b<Value>"
@@ -15,11 +44,13 @@ messages:
 
   rewards-set: "&a✔ &7Rewards set. (&b<count> items&7)"
   enter-loot-type: |
+    &8&m-------------------------------------
     &b➡ &7Enter the type of loot type.
     &8❙ &6Default: &fGive all rewards to the winner
     &8❙ &6Random: &fGive random rewards to the winner
     &8❙ &6MineClans_Default: &fGive all rewards to clan members
     &8❙ &6MineClans_Random: &fGive random rewards to clan members
+    &8&m-------------------------------------
   
   name-set: "&a✔ &7Name set to: &b<Value>"
   set-positions: "&a✔ &7Right-click to set &bPosition 1 &7and &bPosition 2&7."
@@ -86,7 +117,9 @@ messages:
   event-stopped-title: "&a&lStopped"
   event-stopped-subtitle: "&eKoth stopped by &f<Value>"
   koth-commands: |
-    &c&lKOTH Commands: &8❙ &6/koth setup: &fFinish and save the current koth setup.
+    &8&m-------------------------------------
+    &c&lKOTH Commands: 
+    &8❙ &6/koth setup: &fFinish and save the current koth setup.
     &8❙ &6/koth schedule: &fSchedule a koth.
     &8❙ &6/koth list: &fList all existing koths.
     &8❙ &6/koth info <id>: &fGet details about a specific koth.
@@ -95,8 +128,10 @@ messages:
     &8❙ &6/koth stop: &fStop the current koth event.
     &8❙ &6/koth capture: &fCapture the current koth.
     &8❙ &6/koth tp <id/name>: &fTeleport to a koth.
+    &8&m-------------------------------------
   koth-info: |
-    &cKOTH Info:
+    &8&m-------------------------------------
+    &c&lKOTH Info:
     &8❙ &6ID: &f<id>
     &8❙ &6Name: &f<name>
     &8❙ &6World: &f<world>
@@ -104,4 +139,5 @@ messages:
     &8❙ &6Time to Capture: &f<time_to_capture>
     &8❙ &6Reward Items: &f<reward_items>
     &8❙ &6Reward Commands: &f<reward_commands>
+    &8&m-------------------------------------
   players-only: "&c✖ &7Error: &cOnly players can use this command."
