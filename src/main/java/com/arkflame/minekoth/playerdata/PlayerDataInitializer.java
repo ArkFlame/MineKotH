@@ -1,4 +1,4 @@
-package com.arkflame.minekoth.player;
+package com.arkflame.minekoth.playerdata;
 
 import java.io.File;
 import java.sql.Connection;
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import com.arkflame.minekoth.MineKoth;
-import com.arkflame.minekoth.player.mysql.MySQLPlayerDataManager;
-import com.arkflame.minekoth.player.yaml.YamlPlayerDataManager;
+import com.arkflame.minekoth.playerdata.mysql.MySQLPlayerDataManager;
+import com.arkflame.minekoth.playerdata.yaml.YamlPlayerDataManager;
 import com.arkflame.minekoth.utils.ConfigUtil;
 
 public class PlayerDataInitializer {

@@ -6,7 +6,7 @@ import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.particles.ParticleUtil;
-import com.arkflame.minekoth.player.PlayerData;
+import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;

@@ -1,4 +1,4 @@
-package com.arkflame.minekoth.player;
+package com.arkflame.minekoth.playerdata;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

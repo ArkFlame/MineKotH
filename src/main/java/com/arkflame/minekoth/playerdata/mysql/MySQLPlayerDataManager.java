@@ -1,10 +1,10 @@
-package com.arkflame.minekoth.player.mysql;
+package com.arkflame.minekoth.playerdata.mysql;
 
 import java.sql.Connection;
 import java.util.logging.Logger;
 
-import com.arkflame.minekoth.player.PlayerData;
-import com.arkflame.minekoth.player.PlayerDataManager;
+import com.arkflame.minekoth.playerdata.PlayerData;
+import com.arkflame.minekoth.playerdata.PlayerDataManager;
 
 /**
  * Manager for MySQLPlayerData instances.

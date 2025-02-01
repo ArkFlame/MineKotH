@@ -1,13 +1,14 @@
 package com.arkflame.minekoth;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.minekoth.commands.KothCommand;
 import com.arkflame.minekoth.koth.Koth;
-import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerMoveListener;
+import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
@@ -16,8 +17,9 @@ import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.particles.ParticleScheduler;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
-import com.arkflame.minekoth.player.PlayerDataInitializer;
-import com.arkflame.minekoth.player.PlayerDataManager;
+import com.arkflame.minekoth.playerdata.PlayerDataInitializer;
+import com.arkflame.minekoth.playerdata.PlayerDataManager;
+import com.arkflame.minekoth.playerdata.listeners.PlayerDataListener;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.schedule.loaders.ScheduleLoader;
 import com.arkflame.minekoth.schedule.managers.ScheduleManager;
@@ -109,7 +111,8 @@ public class MineKoth extends JavaPlugin {
         return scheduleLoader;
     }
 
-    // Optionally, add a getter for playerDataManager for use in other parts of the plugin.
+    // Optionally, add a getter for playerDataManager for use in other parts of the
+    // plugin.
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
     }
@@ -156,12 +159,15 @@ public class MineKoth extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
 
         // Listener - Koth Event
-        pluginManager.registerEvents(new KothEventPlayerMoveListener(kothEventManager), this);
+        pluginManager.registerEvents(new KothEventPlayerListener(kothEventManager), this);
 
         // Listener - Setup
         pluginManager.registerEvents(new SetupChatListener(), this);
         pluginManager.registerEvents(new SetupInteractListener(), this);
         pluginManager.registerEvents(new SetupInventoryCloseListener(), this);
+
+        // Listener - Player Data
+        pluginManager.registerEvents(new PlayerDataListener(), this);
 
         // Tasks - Schedule
         FoliaAPI.runTaskTimerAsync(task -> (scheduleRunnerTask = new ScheduleRunnerTask()).run(), 1, 20);
@@ -193,6 +199,11 @@ public class MineKoth extends JavaPlugin {
         // Load all schedules
         for (Schedule schedule : scheduleLoader.loadAll()) {
             scheduleManager.addSchedule(schedule);
+        }
+
+        // Load online player data
+        for (Player player : getServer().getOnlinePlayers()) {
+            playerDataManager.getAndLoad(player.getUniqueId().toString());
         }
     }
 

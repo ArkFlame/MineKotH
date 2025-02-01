@@ -1,4 +1,4 @@
-package com.arkflame.minekoth.player.mysql;
+package com.arkflame.minekoth.playerdata.mysql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.arkflame.minekoth.player.PlayerData;
-import com.arkflame.minekoth.player.StatValue;
+import com.arkflame.minekoth.playerdata.PlayerData;
+import com.arkflame.minekoth.playerdata.StatValue;
 
 /**
  * Extends PlayerData to load and save player statistics to a MySQL database.

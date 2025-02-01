@@ -1,7 +1,7 @@
-package com.arkflame.minekoth.player.yaml;
+package com.arkflame.minekoth.playerdata.yaml;
 
-import com.arkflame.minekoth.player.PlayerData;
-import com.arkflame.minekoth.player.PlayerDataManager;
+import com.arkflame.minekoth.playerdata.PlayerData;
+import com.arkflame.minekoth.playerdata.PlayerDataManager;
 import com.arkflame.minekoth.utils.ConfigUtil;
 
 import java.io.File;

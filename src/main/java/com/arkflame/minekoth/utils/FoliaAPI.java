@@ -130,12 +130,16 @@ public class FoliaAPI {
         }
     }
 
-    public static void runTaskAsync(Runnable run) {
+    public static void runTaskAsync(Runnable run, long delay) {
         if (!isFolia()) {
-            bS.runTaskAsynchronously(MineKoth.getInstance(), run);
+            bS.runTaskLaterAsynchronously(MineKoth.getInstance(), run, delay);
             return;
         }
         Executors.defaultThreadFactory().newThread(run).start();
+    }
+
+    public static void runTaskAsync(Runnable run) {
+        runTaskAsync(run, 1L);
     }
 
     public static void runTaskTimerAsync(Consumer<Object> run, long delay, long period) {

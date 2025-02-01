@@ -12,13 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
-import com.arkflame.minekoth.player.PlayerData;
+import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.Materials;
 
-public class KothEventPlayerMoveListener implements Listener {
+public class KothEventPlayerListener implements Listener {
     private KothEventManager kothEventManager;
 
-    public KothEventPlayerMoveListener(KothEventManager kothEventManager) {
+    public KothEventPlayerListener(KothEventManager kothEventManager) {
         this.kothEventManager = kothEventManager;
     }
 
