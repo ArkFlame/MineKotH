@@ -120,7 +120,7 @@ public class SetupChatListener implements Listener {
         if (session.isEditing() && !session.isEditingRewards() && session.isComplete()) {
             SetupCommand.handleFinish(player, null);
             FoliaAPI.runTask(() -> {
-                new KothEditMenu(MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
+                new KothEditMenu(player, MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
             });
         }
     }
