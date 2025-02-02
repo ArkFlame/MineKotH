@@ -5,6 +5,7 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
+import com.arkflame.minekoth.koth.events.config.KothEventsConfig;
 import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,6 +30,11 @@ import org.bukkit.potion.PotionEffectType;
 public class KothEventManager {
 
     private List<KothEvent> events = new ArrayList<>();
+    private KothEventsConfig config;
+
+    public KothEventManager() {
+        config = new KothEventsConfig(MineKoth.getInstance().getConfig());
+    }
 
     private KothEvent runNewEvent(Koth koth) {
         KothEvent event = new KothEvent(koth);
@@ -187,6 +192,8 @@ public class KothEventManager {
                                             .getMessage("messages.awarded-ender-pearl"));
                                 }
                             }
+
+                            config.giveRewards(player, timeCaptured);
                         }
 
                         ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstLocation().add(0, 0.5, 0),

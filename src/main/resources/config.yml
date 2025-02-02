@@ -14,3 +14,17 @@ mysql:
 
 yaml:
   directory: "playerdata"
+
+capture-rewards:
+  enabled: true
+  one-time:
+    30:
+      - "item: DIAMOND"
+      - "message-key: awarded-diamond"
+  repeating:
+    30:
+      - "item: IRON_INGOT"
+      - "message-key: awarded-iron"
+    60:
+      - "command: eco give %player% 1"
+      - "message-key: awarded-money"

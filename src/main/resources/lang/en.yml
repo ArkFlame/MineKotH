@@ -6,6 +6,10 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  awarded-diamond: "&a&lTIP:&a You have been awarded a diamond for capturing the hill for 30 seconds!"
+  awarded-iron: "&a&lTIP:&a You have been awarded an iron ingot for capturing the hill for 30 more seconds!"
+  awarded-money: "&a&lTIP:&a You have been awarded money for capturing the hill for 1 minute!"
+
   discord:
     koth-started-title: "🏁 KOTH Started!"
     koth-started-description: "**<koth_name>** has begun! Rally your team and capture the hill!"
@@ -58,8 +62,6 @@ messages:
 
   revealed: "&cYou have been revealed!"
   stay-to-earn-loot: "&a&lTIP:&a Stay on the koth to earn loot. Bet to earn money."
-  awarded-diamond: "&a&lTIP:&a You have been awarded a diamond for capturing the hill for 30 seconds!"
-  awarded-ender-pearl: "&a&lTIP:&a You have been awarded an ender pearl for capturing the hill for 30 more seconds!"
 
   first-kill-reward: "&6&lCongratulations! &7You received a reward for your first kill!"
   killstreak-reward: "&6&lCongratulations! &7You received a reward for your &c<killstreak> &7killstreak!"

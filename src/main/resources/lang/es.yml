@@ -6,13 +6,17 @@
 # Usa <rainbow>texto</rainbow> para texto de colores arcoiris.
 # ====================================================
 messages:
+  awarded-diamond: "&a&lTIP:&a ¡Has sido premiado con un diamante por capturar la colina durante 30 segundos!"
+  awarded-iron: "&a&lTIP:&a ¡Has sido premiado con un lingote de hierro por capturar la colina durante 30 segundos más!"
+  awarded-money: "&a&lTIP:&a ¡Has sido premiado con dinero por capturar la colina durante 1 minuto!"
+
   discord:
-    koth-started-title: "🏁 KOTH Started!"
-    koth-started-description: "**<koth_name>** has begun! Rally your team and capture the hill!"
-    koth-time-limit-title: "⏰ KOTH Ended - Time's Up!"
-    koth-time-limit-description: "Unfortunately, no one captured **<koth_name>** in time."
-    koth-captured-title: "🎉 KOTH Captured!"
-    koth-captured-description: "Congratulations to **<player_name>** for conquering **<koth_name>**!"
+    koth-started-title: "🏁 ¡KOTH Iniciado!"
+    koth-started-description: "¡**<koth_name>** ha comenzado! ¡Reúne a tu equipo y captura la colina!"
+    koth-time-limit-title: "⏰ KOTH Finalizado - ¡Tiempo agotado!"
+    koth-time-limit-description: "Desafortunadamente, nadie capturó **<koth_name>** a tiempo."
+    koth-captured-title: "🎉 ¡KOTH Capturado!"
+    koth-captured-description: "¡Felicidades a **<player_name>** por conquistar **<koth_name>**!"
     
   lightning-strike-title: "&cImpacto de Rayo"
   lightning-strike-subtitle: "&7¡Has sido alcanzado por un rayo!"
