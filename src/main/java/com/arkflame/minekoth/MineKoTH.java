@@ -112,8 +112,6 @@ public class MineKoth extends JavaPlugin {
         return scheduleLoader;
     }
 
-    // Optionally, add a getter for playerDataManager for use in other parts of the
-    // plugin.
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
     }

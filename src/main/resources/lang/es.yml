@@ -6,6 +6,14 @@
 # Usa <rainbow>texto</rainbow> para texto de colores arcoiris.
 # ====================================================
 messages:
+  discord:
+    koth-started-title: "🏁 KOTH Started!"
+    koth-started-description: "**<koth_name>** has begun! Rally your team and capture the hill!"
+    koth-time-limit-title: "⏰ KOTH Ended - Time's Up!"
+    koth-time-limit-description: "Unfortunately, no one captured **<koth_name>** in time."
+    koth-captured-title: "🎉 KOTH Captured!"
+    koth-captured-description: "Congratulations to **<player_name>** for conquering **<koth_name>**!"
+    
   lightning-strike-title: "&cImpacto de Rayo"
   lightning-strike-subtitle: "&7¡Has sido alcanzado por un rayo!"
   potion-effect-title: "&6Efecto de Poción"
