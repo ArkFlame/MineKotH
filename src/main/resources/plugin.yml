@@ -8,6 +8,8 @@ folia-supported: true
 soft-depend: [Vault, MineClans, DecentHolograms, PlaceholderAPI]
 commands:
   koth:
+    aliases:
+      - minekoth
     description: Main koth command
     usage: /koth <start|stop|status|create|delete|edit|finish|list|tp|join|leave|set|reload>
 

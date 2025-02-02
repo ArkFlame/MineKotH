@@ -1,0 +1,12 @@
+minekoth.command.setup: Allows the player to use the setup subcommand to configure Koth events.
+minekoth.command.list: Allows the player to use the list subcommand to view all available Koth events.
+minekoth.command.info: Allows the player to use the info subcommand to get detailed information about a specific Koth event.
+minekoth.command.delete: Allows the player to use the delete subcommand to delete a specific Koth event.
+minekoth.command.schedule: Allows the player to use the schedule subcommand to manage Koth event schedules.
+minekoth.command.start: Allows the player to use the start subcommand to start a Koth event.
+minekoth.command.stop: Allows the player to use the stop subcommand to stop an active Koth event.
+minekoth.command.capture: Allows the player to use the capture subcommand to capture a Koth event.
+minekoth.command.teleport: Allows the player to use the teleport or tp subcommand to teleport to a Koth event's location.
+minekoth.command.bet: Allows the player to use the bet subcommand to place bets on Koth events.
+minekoth.command.stats: Allows the player to use the stats subcommand to view their own Koth statistics.
+minekoth.command.stats.other: Allows the player to view another player's Koth statistics. Requires the parent permission minekoth.command.stats.
