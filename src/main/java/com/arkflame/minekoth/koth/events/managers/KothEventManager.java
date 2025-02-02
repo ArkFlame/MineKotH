@@ -5,13 +5,12 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
-import com.arkflame.minekoth.koth.events.config.KothEventsConfig;
+import com.arkflame.minekoth.koth.events.config.KothEventsCaptureRewardsConfig;
 import com.arkflame.minekoth.particles.ParticleUtil;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
-import com.arkflame.minekoth.utils.Materials;
 import com.arkflame.minekoth.utils.PotionEffectUtil;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -24,16 +23,15 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 public class KothEventManager {
 
     private List<KothEvent> events = new ArrayList<>();
-    private KothEventsConfig config;
+    private KothEventsCaptureRewardsConfig config;
 
     public KothEventManager() {
-        config = new KothEventsConfig(MineKoth.getInstance().getConfig());
+        config = new KothEventsCaptureRewardsConfig(MineKoth.getInstance().getConfig());
     }
 
     private KothEvent runNewEvent(Koth koth) {
@@ -181,16 +179,6 @@ public class KothEventManager {
                                 }
                                 player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                                         .getMessage("messages.stay-to-earn-loot"));
-                            } else if (timeCaptured > 0 && timeCaptured % 30 == 0) {
-                                if (timeCaptured == 30) {
-                                    player.getInventory().addItem(new ItemStack(Materials.get("DIAMOND")));
-                                    Titles.sendActionBar(player, MineKoth.getInstance().getLangManager().getLang(player)
-                                            .getMessage("messages.awarded-diamond"));
-                                } else {
-                                    player.getInventory().addItem(new ItemStack(Materials.get("ENDER_PEARL")));
-                                    Titles.sendActionBar(player, MineKoth.getInstance().getLangManager().getLang(player)
-                                            .getMessage("messages.awarded-ender-pearl"));
-                                }
                             }
 
                             config.giveRewards(player, timeCaptured);

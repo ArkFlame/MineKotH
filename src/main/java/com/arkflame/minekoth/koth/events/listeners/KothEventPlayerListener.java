@@ -7,20 +7,21 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
+import com.arkflame.minekoth.koth.events.config.KillStreaksConfig;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.playerdata.PlayerData;
-import com.arkflame.minekoth.utils.Materials;
 
 public class KothEventPlayerListener implements Listener {
     private KothEventManager kothEventManager;
+    private KillStreaksConfig killStreaksConfig;
 
     public KothEventPlayerListener(KothEventManager kothEventManager) {
         this.kothEventManager = kothEventManager;
+        killStreaksConfig = new KillStreaksConfig(MineKoth.getInstance().getConfig());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -37,30 +38,28 @@ public class KothEventPlayerListener implements Listener {
             if (killer != null && kothEvent.getKoth().isInside(killer.getLocation())) {
                 kothEvent.getStats().addPlayerKill(killer.getUniqueId());
                 int totalKills = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getTotalPlayerKills();
+                int killstreak = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getCurrentKillStreak();
                 Lang lang = MineKoth.getInstance().getLangManager().getLang(killer);
 
-                if (totalKills == 1) {
-                    killer.getInventory().addItem(new ItemStack(Materials.get("REDSTONE_BLOCK"), 1));
-                    killer.sendMessage(lang.getMessage("messages.first-kill-reward"));
+                if (killStreaksConfig.isKillstreaksEnabled()) {
+                    if (totalKills == 1) {
+                        killStreaksConfig.giveRewards(killer, 1);
+                    }
+
+                    if (killstreak > 1) {
+                        killStreaksConfig.giveRewards(killer, killstreak);
+                    }
                 }
-                int killstreak = kothEvent.getStats().getPlayerStats(killer.getUniqueId()).getCurrentKillStreak();
-                if (killstreak == 2) {
-                    killer.getInventory().addItem(new ItemStack(Materials.get("DIRT"), 1));
-                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
-                } else if (killstreak == 3) {
-                    killer.getInventory().addItem(new ItemStack(Materials.get("STONE"), 1));
-                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
-                } else if (killstreak >= 4) {
-                    killer.getInventory().addItem(new ItemStack(Materials.get("GOLD_INGOT"), 1));
-                    killer.sendMessage(lang.getMessage("messages.killstreak-reward").replace("<killstreak>", String.valueOf(killstreak)));
-                }
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(killer.getUniqueId().toString());
+
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                        .getIfLoaded(killer.getUniqueId().toString());
                 if (playerData != null) {
                     playerData.incrementKillCount(kothEvent.getKoth().getId());
                 }
             }
             kothEvent.getStats().addDeath(player.getUniqueId());
-            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+            PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                    .getIfLoaded(player.getUniqueId().toString());
             if (playerData != null) {
                 playerData.incrementDeathCount(kothEvent.getKoth().getId());
             }
@@ -79,7 +78,8 @@ public class KothEventPlayerListener implements Listener {
         if (kothEvent != null) {
             if (event.getDamager() instanceof Player) {
                 Player damager = (Player) event.getDamager();
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(damager.getUniqueId().toString());
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                        .getIfLoaded(damager.getUniqueId().toString());
                 kothEvent.getStats().addDamageDone(damager.getUniqueId(), (int) event.getDamage());
                 if (playerData != null) {
                     playerData.addDamageDealt(kothEvent.getKoth().getId(), (int) event.getDamage());
@@ -88,7 +88,8 @@ public class KothEventPlayerListener implements Listener {
 
             if (event.getEntity() instanceof Player) {
                 Player damaged = (Player) event.getEntity();
-                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(damaged.getUniqueId().toString());
+                PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                        .getIfLoaded(damaged.getUniqueId().toString());
                 kothEvent.getStats().addDamageReceived(damaged.getUniqueId(), (int) event.getDamage());
                 if (playerData != null) {
                     playerData.addDamageReceived(kothEvent.getKoth().getId(), (int) event.getDamage());

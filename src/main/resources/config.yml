@@ -53,3 +53,20 @@ random-events:
     effects:
       - "SPEED: 600: 1"
       - "STRENGTH: 600: 1"
+
+killstreaks:
+  enabled: true
+  first-kill:
+    1:
+      - "item: REDSTONE_BLOCK,1"
+      - "message-key: messages.first-kill-reward"
+  killstreak-rewards:
+    2:
+      - "item: DIRT,1"
+      - "message-key: messages.killstreak-reward"
+    3:
+      - "item: STONE,1"
+      - "message-key: messages.killstreak-reward"
+    4:
+      - "item: GOLD_INGOT,1"
+      - "message-key: messages.killstreak-reward"

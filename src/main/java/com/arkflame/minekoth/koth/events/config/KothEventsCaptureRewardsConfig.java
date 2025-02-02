@@ -9,13 +9,13 @@ import com.arkflame.minekoth.MineKoth;
 
 import java.util.*;
 
-public class KothEventsConfig {
+public class KothEventsCaptureRewardsConfig {
 
     private boolean captureRewardsEnabled;
     private final Map<Integer, List<String>> oneTimeRewards = new HashMap<>();
     private final Map<Integer, List<String>> repeatingRewards = new HashMap<>();
 
-    public KothEventsConfig(FileConfiguration config) {
+    public KothEventsCaptureRewardsConfig(FileConfiguration config) {
         // Load the capture-rewards section
         loadCaptureRewards(config);
     }
