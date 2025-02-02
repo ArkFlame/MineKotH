@@ -20,11 +20,11 @@ import com.arkflame.minekoth.utils.Titles;
 import java.util.Random;
 
 public class SkeletonHordeEvent extends RandomEvent {
-    private final int minSkeletons = 3;
-    private final int maxSkeletons = 7;
+    private final int spawnCount;
 
-    public SkeletonHordeEvent(double chance) {
+    public SkeletonHordeEvent(double chance, int spawnCount) {
         super("SkeletonHorde", chance);
+        this.spawnCount = spawnCount;
     }
 
     @Override
@@ -34,9 +34,8 @@ public class SkeletonHordeEvent extends RandomEvent {
 
         Location center = event.getKoth().getCenter();
         World world = center.getWorld();
-        int skeletonCount = new Random().nextInt(maxSkeletons - minSkeletons + 1) + minSkeletons;
 
-        for (int i = 0; i < skeletonCount; i++) {
+        for (int i = 0; i < spawnCount; i++) {
             double offsetX = (Math.random() - 0.5) * 10;
             double offsetZ = (Math.random() - 0.5) * 10;
             Location spawnLoc = center.clone().add(offsetX, 0, offsetZ);

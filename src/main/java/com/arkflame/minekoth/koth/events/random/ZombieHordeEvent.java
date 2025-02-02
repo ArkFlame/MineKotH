@@ -19,11 +19,11 @@ import com.arkflame.minekoth.utils.Titles;
 import java.util.Random;
 
 public class ZombieHordeEvent extends RandomEvent {
-    private final int minZombies = 3;
-    private final int maxZombies = 8;
+    private final int spawnCount;
 
-    public ZombieHordeEvent(double chance) {
+    public ZombieHordeEvent(double chance, int spawnCount) {
         super("ZombieHorde", chance);
+        this.spawnCount = spawnCount;
     }
 
     @Override
@@ -33,9 +33,8 @@ public class ZombieHordeEvent extends RandomEvent {
 
         Location center = event.getKoth().getCenter();
         World world = center.getWorld();
-        int zombieCount = new Random().nextInt(maxZombies - minZombies + 1) + minZombies;
 
-        for (int i = 0; i < zombieCount; i++) {
+        for (int i = 0; i < spawnCount; i++) {
             double offsetX = (Math.random() - 0.5) * 10;
             double offsetZ = (Math.random() - 0.5) * 10;
             Location spawnLoc = center.clone().add(offsetX, 0, offsetZ);

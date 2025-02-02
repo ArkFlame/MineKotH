@@ -90,8 +90,9 @@ public class KothEventsConfig {
     public void giveRewards(Player player, long timeCaptured) {
         for (String reward : getReward((int) timeCaptured)) {
             if (reward.startsWith("item: ")) {
-                String item = reward.substring("item: ".length());
-                player.getInventory().addItem(new ItemStack(Material.matchMaterial(item)));
+                String item = reward.substring("item: ".length()).split(",")[0];
+                int quantity = Integer.parseInt(reward.substring("item: ".length()).split(",")[1]);
+                player.getInventory().addItem(new ItemStack(Material.matchMaterial(item), quantity));
             } else if (reward.startsWith("command: ")) {
                 String command = reward.substring("command: ".length()).replace("%player%", player.getName());
                 MineKoth.getInstance().getServer().dispatchCommand(MineKoth.getInstance().getServer().getConsoleSender(), command);

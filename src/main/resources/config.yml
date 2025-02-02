@@ -19,12 +19,37 @@ capture-rewards:
   enabled: true
   one-time:
     30:
-      - "item: DIAMOND"
+      - "item: DIAMOND,1"
       - "message-key: awarded-diamond"
   repeating:
     30:
-      - "item: IRON_INGOT"
+      - "item: IRON_INGOT,1"
       - "message-key: awarded-iron"
     60:
       - "command: eco give %player% 1"
       - "message-key: awarded-money"
+
+random-events:
+  loot-drop:
+    chance: 0.001
+    loot:
+      - "DIAMOND: 3"
+      - "EMERALD: 2"
+    drop-count: 5
+  zombie-horde:
+    chance: 0.0008
+    spawn-count: 10
+  lightning-strike:
+    chance: 0.0005
+    damage: 6
+    fire-ticks: 100
+  skeleton-horde:
+    chance: 0.0008
+    spawn-count: 10
+  potion-effect:
+    chance: 0.001
+    min-effects: 1
+    max-effects: 3
+    effects:
+      - "SPEED: 600: 1"
+      - "STRENGTH: 600: 1"

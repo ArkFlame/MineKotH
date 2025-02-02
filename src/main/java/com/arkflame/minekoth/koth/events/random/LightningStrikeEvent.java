@@ -10,8 +10,13 @@ import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.lang.Lang;
 
 public class LightningStrikeEvent extends RandomEvent {
-    public LightningStrikeEvent(double chance) {
+    private final int damage;
+    private final int fireTicks;
+
+    public LightningStrikeEvent(double chance, int damage, int fireTicks) {
         super("LightningStrike", chance);
+        this.damage = damage;
+        this.fireTicks = fireTicks;
     }
 
     @Override
@@ -27,8 +32,8 @@ public class LightningStrikeEvent extends RandomEvent {
         // Damage nearby players
         for (Player player : event.getPlayersInZone()) {
             if (player.getLocation().distance(center) <= 3) {
-                player.damage(1.0); // 3 hearts of damage
-                player.setFireTicks(60); // Set on fire for 3 seconds
+                player.damage(damage);
+                player.setFireTicks(fireTicks);
             }
             Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
 
