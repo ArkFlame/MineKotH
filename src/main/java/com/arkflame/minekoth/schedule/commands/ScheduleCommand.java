@@ -15,11 +15,6 @@ import java.util.stream.Collectors;
 
 public class ScheduleCommand {
     public static void run(Player sender, String[] args) {
-        if (!sender.hasPermission("minekoth.command.schedule")) {
-            sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(sender).getMessage("messages.no-permission"));
-            return;
-        }
-        
         if (args.length < 2) {
             sendHelp(sender);
             return;
@@ -33,6 +28,12 @@ public class ScheduleCommand {
                 listSchedules(sender, lang);
                 break;
             case "remove":
+                if (!sender.hasPermission("minekoth.command.schedule.remove")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(sender).getMessage("messages.no-permission")
+                    .replace("<node>", "minekoth.command.schedule.remove"));
+                    return;
+                }
+
                 if (args.length < 3) {
                     sender.sendMessage(lang.getMessage("messages.usage-remove"));
                     return;
@@ -48,6 +49,12 @@ public class ScheduleCommand {
                 }
                 break;
             case "add":
+                if (!sender.hasPermission("minekoth.command.schedule.add")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(sender).getMessage("messages.no-permission")
+                    .replace("<node>", "minekoth.command.schedule.add"));
+                    return;
+                }
+
                 if (args.length < 4) {
                     sender.sendMessage(lang.getMessage("messages.usage-add"));
                     return;
@@ -85,6 +92,12 @@ public class ScheduleCommand {
     }
 
     private static void listSchedules(Player sender, Lang lang) {
+        if (!sender.hasPermission("minekoth.command.schedule.list")) {
+            sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(sender).getMessage("messages.no-permission")
+            .replace("<node>", "minekoth.command.schedule.list"));
+            return;
+        }
+
         List<Schedule> schedules = MineKoth.getInstance().getScheduleManager().getAllSchedules();
 
         if (schedules.isEmpty()) {

@@ -6,6 +6,8 @@
 # Use <rainbow>text</rainbow> for rainbow-colored text.
 # ====================================================
 messages:
+  no-perrmission: "&c✖ &7No permission to do this. Requires: <node>."
+
   lightning-strike-title: "&cLightning Strike"
   lightning-strike-subtitle: "&7You have been struck by lightning!"
   potion-effect-title: "&6Potion Effect"

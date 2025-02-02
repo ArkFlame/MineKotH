@@ -35,7 +35,8 @@ public class SetupCommand {
 
     public static void run(Player player, String[] args) {
         if (!player.hasPermission("minekoth.command.setup")) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission")
+            .replace("<node>", "minekoth.command.setup"));
             return;
         }
         String subCommand = args.length <= 1 ? "help" : args[1].toLowerCase();
