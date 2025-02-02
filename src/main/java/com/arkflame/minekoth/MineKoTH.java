@@ -184,10 +184,10 @@ public class MineKoth extends JavaPlugin {
             new MineKothPlaceholderExtension().register();
         }
 
-        String webhookUrl = getConfig().getString("webhook-url");
-
-        // Initialize the DiscordHook
-        DiscordHook.init(webhookUrl);
+        if (getConfig().getBoolean("webhook.enabled")) {
+            // Initialize the DiscordHook
+            DiscordHook.init(getConfig().getString("webhook.url"));
+        }
 
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
