@@ -34,6 +34,10 @@ public class SetupCommand {
     }
 
     public static void run(Player player, String[] args) {
+        if (!player.hasPermission("minekoth.command.setup")) {
+            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+            return;
+        }
         String subCommand = args.length <= 1 ? "help" : args[1].toLowerCase();
         CommandHandler handler = COMMANDS.getOrDefault(subCommand, COMMANDS.getOrDefault("setup",
                 (p, a) -> player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.unknown-command"))));

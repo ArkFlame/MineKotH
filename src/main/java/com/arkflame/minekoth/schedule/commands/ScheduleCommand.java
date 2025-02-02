@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 
 public class ScheduleCommand {
     public static void run(Player sender, String[] args) {
+        if (!sender.hasPermission("minekoth.command.schedule")) {
+            sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(sender).getMessage("messages.no-permission"));
+            return;
+        }
+        
         if (args.length < 2) {
             sendHelp(sender);
             return;

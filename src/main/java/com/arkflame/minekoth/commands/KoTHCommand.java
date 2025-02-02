@@ -47,6 +47,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "list":
+                if (!sender.hasPermission("minekoth.command.list")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    break;
+                }
+
                 if (kothManager.getAllkoths().isEmpty()) {
                     player.sendMessage(
                             MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-koths"));
@@ -62,6 +67,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "info":
+                if (!sender.hasPermission("minekoth.command.info")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    break;
+                }
+
                 if (args.length < 2) {
                     player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.usage-koth-info"));
@@ -83,6 +93,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "delete":
+                if (!sender.hasPermission("minekoth.command.delete")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+
                 if (args.length < 2) {
                     player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.usage-delete"));
@@ -111,6 +126,10 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "start":
+                if (!sender.hasPermission("minekoth.command.start")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
                 Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
                 if (schedule == null) {
                     sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
@@ -140,6 +159,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "stop":
+                if (!sender.hasPermission("minekoth.command.stop")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
                     sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.no-event-active"));
@@ -161,6 +185,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "capture":
+                if (!sender.hasPermission("minekoth.command.capture")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+
                 if (!MineKoth.getInstance().getKothEventManager().isEventActive()) {
                     sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.no-event-active"));
@@ -176,6 +205,11 @@ public class KothCommand implements CommandExecutor {
 
             case "teleport":
             case "tp":
+                if (!sender.hasPermission("minekoth.command.teleport")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+
                 if (args.length < 2) {
                     player.sendMessage(
                             MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.usage-tp"));
@@ -205,6 +239,11 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "bet":
+                if (!sender.hasPermission("minekoth.command.bet")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+
                 if (args.length < 3) {
                     player.sendMessage(
                             MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.usage-bet"));
@@ -251,6 +290,14 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "stats":
+                if (!sender.hasPermission("minekoth.command.stats")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
+                if (args.length > 1 && !sender.hasPermission("minekoth.command.stats.other")) {
+                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission"));
+                    return true;
+                }
                 Player statsTarget = null;
                 if (args.length < 2) {
                     statsTarget = player;

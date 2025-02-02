@@ -10,3 +10,41 @@ commands:
   koth:
     description: Main koth command
     usage: /koth <start|stop|status|create|delete|edit|finish|list|tp|join|leave|set|reload>
+
+permissions:
+  minekoth.command.setup:
+    description: Allows the player to use the setup subcommand to configure Koth events.
+    default: op
+  minekoth.command.list:
+    description: Allows the player to use the list subcommand to view all available Koth events.
+    default: true
+  minekoth.command.info:
+    description: Allows the player to use the info subcommand to get detailed information about a specific Koth event.
+    default: true
+  minekoth.command.delete:
+    description: Allows the player to use the delete subcommand to delete a specific Koth event.
+    default: op
+  minekoth.command.schedule:
+    description: Allows the player to use the schedule subcommand to manage Koth event schedules.
+    default: op
+  minekoth.command.start:
+    description: Allows the player to use the start subcommand to start a Koth event.
+    default: op
+  minekoth.command.stop:
+    description: Allows the player to use the stop subcommand to stop an active Koth event.
+    default: op
+  minekoth.command.capture:
+    description: Allows the player to use the capture subcommand to capture a Koth event.
+    default: op
+  minekoth.command.teleport:
+    description: Allows the player to use the teleport or tp subcommand to teleport to a Koth event's location.
+    default: op
+  minekoth.command.bet:
+    description: Allows the player to use the bet subcommand to place bets on Koth events.
+    default: true
+  minekoth.command.stats:
+    description: Allows the player to use the stats subcommand to view their own Koth statistics.
+    default: true
+  minekoth.command.stats.other:
+    description: Allows the player to view another player's Koth statistics. Requires the parent permission minekoth.command.stats.
+    default: op
