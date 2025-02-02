@@ -53,12 +53,13 @@ public class ScheduleRunnerTask extends BukkitRunnable {
 
         if (countdownIntervals.contains((int) secondsLeft)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-    Titles.sendTitle(player, 
-        lang.getMessage("messages.koth-starting-title").replace("<seconds>", String.valueOf(secondsLeft)), 
-        lang.getMessage("messages.koth-starting-subtitle").replace("<koth>", koth.getName()), 
-        10, 20, 10);
-}
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                Titles.sendTitle(player,
+                        lang.getMessage("messages.koth-starting-title").replace("<seconds>",
+                                String.valueOf(secondsLeft)),
+                        lang.getMessage("messages.koth-starting-subtitle").replace("<koth>", koth.getName()),
+                        10, 20, 10);
+            }
             Sounds.play(1.0f, 1.0f, "CLICK");
         }
 
