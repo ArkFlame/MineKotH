@@ -36,7 +36,6 @@ public class ConfigUtil {
         if (file.exists()) {
             return file.delete();
         }
-        plugin.getLogger().warning("Attempted to delete a non-existent config file: " + file.getName());
         return false;
     }
 

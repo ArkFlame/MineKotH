@@ -23,12 +23,14 @@ public class ScheduleManager {
         calculateNextKoth();
     }
 
-    public void removeSchedule(int id) {
+    public boolean removeSchedule(int id) {
         Schedule schedule = schedulesById.remove(id);
         if (schedule != null) {
             removeScheduleMapping(schedule);
             calculateNextKoth();
+            return true;
         }
+        return false;
     }
 
     public void removeSchedulesByKoth(int kothId) {
