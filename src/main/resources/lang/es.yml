@@ -136,7 +136,7 @@ messages:
   
   damage-dealt: "&6Daño Infligido: &f<value>"
   total-damage-dealt: "&8Daño Total Infligido: &f<value>"
-  damage-dealt-message:"&aHas infligido &f<value> &adaño."
+  damage-dealt-message: "&aHas infligido &f<value> &adaño."
 
   damage-received: "&6Daño Recibido: &f<value>"
   total-damage-received: "&8Total Daño Recibido: &f<value>"
