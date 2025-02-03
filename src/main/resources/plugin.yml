@@ -6,6 +6,7 @@ version: ${version}
 url: ${url}
 folia-supported: true
 soft-depend: [Vault, MineClans, DecentHolograms, PlaceholderAPI]
+api-version: 1.13
 commands:
   koth:
     aliases:

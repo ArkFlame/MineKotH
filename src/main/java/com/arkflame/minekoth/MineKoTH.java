@@ -41,7 +41,7 @@ public class MineKoth extends JavaPlugin {
     private SetupSessionManager sessionManager = new SetupSessionManager();
     private KothManager kothManager = new KothManager();
     private ScheduleManager scheduleManager = new ScheduleManager();
-    private KothEventManager kothEventManager = new KothEventManager();
+    private KothEventManager kothEventManager;
     private LangManager langManager;
     private ScheduleRunnerTask scheduleRunnerTask;
     private KothEventTickTask kothEventTickTask;
@@ -123,6 +123,9 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize database
         playerDataManager = PlayerDataInitializer.initializeDatabase(this);
+
+        // Initialize Koth Event Manager
+        kothEventManager = new KothEventManager(this);
 
         // Initialize hologram utility
         HologramUtility.initialize(this);

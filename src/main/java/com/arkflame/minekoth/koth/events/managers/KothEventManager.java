@@ -23,6 +23,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
 public class KothEventManager {
@@ -30,8 +31,8 @@ public class KothEventManager {
     private List<KothEvent> events = new ArrayList<>();
     private KothEventsCaptureRewardsConfig config;
 
-    public KothEventManager() {
-        config = new KothEventsCaptureRewardsConfig(MineKoth.getInstance().getConfig());
+    public KothEventManager(Plugin plugin) {
+        config = new KothEventsCaptureRewardsConfig(plugin.getConfig());
     }
 
     private KothEvent runNewEvent(Koth koth) {
