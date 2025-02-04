@@ -11,11 +11,11 @@ messages:
   awarded-money: "&a&lTIP:&a You have been awarded money for capturing the hill for 1 minute!"
 
   discord:
-    koth-started-title: "🏁 KOTH Started!"
+    koth-started-title: "KOTH Started!"
     koth-started-description: "**<koth_name>** has begun! Rally your team and capture the hill!"
-    koth-time-limit-title: "⏰ KOTH Ended - Time's Up!"
+    koth-time-limit-title: "KOTH Ended - Time's Up!"
     koth-time-limit-description: "Unfortunately, no one captured **<koth_name>** in time."
-    koth-captured-title: "🎉 KOTH Captured!"
+    koth-captured-title: "KOTH Captured!"
     koth-captured-description: "Congratulations to **<player_name>** for conquering **<koth_name>**!"
     
   lightning-strike-title: "&cLightning Strike"
