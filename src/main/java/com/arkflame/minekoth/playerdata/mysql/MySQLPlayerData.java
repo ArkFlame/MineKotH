@@ -1,6 +1,5 @@
 package com.arkflame.minekoth.playerdata.mysql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +9,7 @@ import java.util.logging.Logger;
 
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.playerdata.StatValue;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Extends PlayerData to load and save player statistics to a MySQL database.
@@ -23,12 +23,12 @@ import com.arkflame.minekoth.playerdata.StatValue;
  */
 public class MySQLPlayerData extends PlayerData {
 
-    private final Connection connection;
+    private final HikariDataSource dataSource;
     private final String playerId;
     private final Logger logger;
 
-    public MySQLPlayerData(Connection connection, String playerId, Logger logger) {
-        this.connection = connection;
+    public MySQLPlayerData(HikariDataSource dataSource, String playerId, Logger logger) {
+        this.dataSource = dataSource;
         this.playerId = playerId;
         this.logger = logger;
     }
@@ -39,7 +39,7 @@ public class MySQLPlayerData extends PlayerData {
         clearData();
 
         String query = "SELECT stat_key, is_total, koth_id, value FROM " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(query)) {
             ps.setString(1, playerId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -65,7 +65,7 @@ public class MySQLPlayerData extends PlayerData {
     public void save() {
         // Delete previous entries for this player.
         String deleteQuery = "DELETE FROM " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
-        try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+        try (PreparedStatement deleteStmt = dataSource.getConnection().prepareStatement(deleteQuery)) {
             deleteStmt.setString(1, playerId);
             deleteStmt.executeUpdate();
         } catch (SQLException e) {
@@ -74,7 +74,7 @@ public class MySQLPlayerData extends PlayerData {
 
         // Save total stats.
         String insertQuery = "INSERT INTO " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " (player_id, stat_key, is_total, koth_id, value) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(insertQuery)) {
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(insertQuery)) {
             // Save totals.
             for (Map.Entry<String, StatValue> entry : getTotalStats().entrySet()) {
                 ps.setString(1, playerId);

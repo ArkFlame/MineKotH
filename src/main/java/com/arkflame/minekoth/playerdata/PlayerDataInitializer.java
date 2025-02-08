@@ -1,31 +1,38 @@
 package com.arkflame.minekoth.playerdata;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.logging.Level;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.playerdata.mysql.MySQLPlayerDataManager;
 import com.arkflame.minekoth.playerdata.yaml.YamlPlayerDataManager;
 import com.arkflame.minekoth.utils.ConfigUtil;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class PlayerDataInitializer {
-    
 
     /**
-     * Creates and returns a JDBC Connection to the MySQL database.
-     * Returns null if connection creation fails.
+     * Creates and returns a HikariCP DataSource for the MySQL database.
+     * Returns null if DataSource creation fails.
      */
-    public static Connection createMySQLConnection(String host, int port, String database, String username, String password) {
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false";
+    public static HikariDataSource createHikariDataSource(String host, int port, String database, String username, String password) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false");
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+        // Optional: Configure HikariCP settings (e.g., pool size, timeout, etc.)
+        config.setMaximumPoolSize(10);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+
         try {
-            // Load the JDBC driver if necessary.
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException | SQLException e) {
-            MineKoth.getInstance().getLogger().log(Level.SEVERE, "Error establishing MySQL connection.", e);
+            return new HikariDataSource(config);
+        } catch (Exception e) {
+            MineKoth.getInstance().getLogger().log(Level.SEVERE, "Error establishing HikariCP DataSource.", e);
             return null;
         }
     }
@@ -43,14 +50,9 @@ public class PlayerDataInitializer {
                 String username = plugin.getConfig().getString("mysql.username", "myusername");
                 String password = plugin.getConfig().getString("mysql.password", "mypassword");
 
-                // Attempt to create a MySQL connection.
-                Connection connection = createMySQLConnection(host, port, database, username, password);
-                if (connection == null) {
-                    plugin.getLogger().severe("Failed to create MySQL connection. Falling back to memory.");
-                    return new PlayerDataManager();
-                }
-                plugin.getLogger().info("Using MySQLPlayerDataManager.");
-                return new MySQLPlayerDataManager(connection, plugin.getLogger());
+                // Attempt to create a HikariCP DataSource.
+                plugin.getLogger().info("Using MySQLPlayerDataManager with HikariCP.");
+                return new MySQLPlayerDataManager(createHikariDataSource(host, port, database, username, password), plugin.getLogger());
             case "yaml":
                 // Use YAML-based persistence.
                 File dataFolder = new File(plugin.getDataFolder(), plugin.getConfig().getString("yaml.directory", "playerdata"));
