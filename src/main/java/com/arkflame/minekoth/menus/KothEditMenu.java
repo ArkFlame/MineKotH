@@ -67,7 +67,7 @@ public class KothEditMenu extends Menu {
                     .build();
     
             MenuItem captureTimeItem = new MenuItem.Builder(Materials.get("HOPPER"))
-                    .name(lang.getMessage("messages.capture-time"))
+                    .name(lang.getMessage("messages.capture-time-item"))
                     .lore(
                             lang.getMessage("messages.current-time").replace("<value>", formatTime(koth.getTimeToCapture())),
                             "",

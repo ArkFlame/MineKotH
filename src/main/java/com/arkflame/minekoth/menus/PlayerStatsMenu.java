@@ -1,11 +1,11 @@
 package com.arkflame.minekoth.menus;
 
-import com.arkflame.mineclans.modernlib.utils.Materials;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.MenuUtil.Menu;
 import com.arkflame.minekoth.utils.MenuUtil.MenuItem;
+import com.arkflame.minekoth.utils.Materials;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

@@ -4,10 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.arkflame.mineclans.modernlib.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.lang.Lang;
+import com.arkflame.minekoth.utils.Titles;
 
 public class LightningStrikeEvent extends RandomEvent {
     private final int damage;

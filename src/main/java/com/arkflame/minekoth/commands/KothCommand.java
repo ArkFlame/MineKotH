@@ -62,7 +62,7 @@ public class KothCommand implements CommandExecutor {
                         MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-list"));
                 kothManager.getAllkoths().values()
                         .forEach(koth -> player.sendMessage(
-                                MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-info")
+                                MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-info-list")
                                         .replace("<id>", String.valueOf(koth.getId()))
                                         .replace("<name>", koth.getName())));
                 break;
@@ -259,7 +259,7 @@ public class KothCommand implements CommandExecutor {
                 }
 
                 String kothIdOrNameBet = String.join(" ", args)
-                        .substring(args[0].length() + args[1].length() + args[2].length() + 2).strip();
+                        .substring(args[0].length() + args[1].length() + args[2].length() + 2);
                 KothEvent betKothEvent = null;
                 Koth betKoth = null;
                 try {

@@ -82,7 +82,7 @@ messages:
   current-limit: "&7Current limit: &f<value>"
   set-max-duration: "&a✔ &7Set the maximum duration of each KoTH event"
   format-mm-ss: "&8• &7Format: MM:SS"
-  capture-time: "&d&lCapture Time"
+  capture-time-item: "&d&lCapture Time"
   current-time: "&7Current time: &f<value>"
   time-required-to-capture: "&8• &7Time required to capture the control point"
   rewards-configuration: "&6&lRewards Configuration"
@@ -99,11 +99,9 @@ messages:
   set-event-schedule: "&8• &7Set event schedule"
   configure-active-days: "&8• &7Configure active days"
   manage-time-slots: "&8• &7Manage time slots"
-  enter-name: "&b➡ &7Please type the new name for the KoTH in chat."
+  enter-name: "&b➡ &7Enter the name of the koth."
   enter-world-name: "&b➡ &7Please type the world name in chat."
   click-positions-to-select: "&b➡ &7Click the positions to select the KoTH region."
-  enter-time-limit: "&b➡ &7Please type the time limit (MM:SS) in chat."
-  enter-capture-time: "&b➡ &7Please type the capture time (MM:SS) in chat."
   put-rewards-in-chest: "&b➡ &7Put rewards in the chest."
   enter-event-times: "&b➡ &7Please type the event times in chat. (1pm, 11am...)"
 
@@ -196,10 +194,10 @@ messages:
   invalid-world: "&c✖ &7The world must be the same as the first position."
   position2-set: "&a✔ &7Position 2 set at: &b<value>"
   area-size: "&a✔ &7Area size (&b<x_length>x<z_length>&7): &b<area> blocks"
-  enter-name: "&b➡ &7Enter the name of the koth."
   enter-times: "&b➡ &7Enter the times to run the koth (e.g., &b8pm 9pm 10pm&7)."
 
   rewards-set: "&a✔ &7Rewards set. (&b<count> items&7)"
+  rewards-already-set: "&c✖ &7Rewards are already set."
   enter-loot-type: |
     &8&m-------------------------------------
     &b➡ &7Enter the type of loot type.
@@ -255,7 +253,7 @@ messages:
   unknown-subcommand: "&c✖ &7Unknown subcommand. Use &6/koth help &7for a list of commands."
   no-koths: "&c✖ &7No koths to list."
   koth-list: "&cKOTH List:"
-  koth-info: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name>"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name>"
   usage-koth-info: "&c✖ &7Usage: &6/koth info &f<id>"
   no-koth-id: "&c✖ &7No koth found with ID &c<id>."
   invalid-id: "&c✖ &7Invalid koth ID. It must be a number."

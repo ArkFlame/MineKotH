@@ -62,7 +62,6 @@ messages:
 
   revealed: "&c¡Has sido revelado!"
   stay-to-earn-loot: "&a&l¡CONSEJO!&a Mantente en el koth para ganar botín. Apuesta para ganar dinero."
-  awarded-diamond: "&a&l¡CONSEJO!&a Has recibido un diamante por capturar la colina durante 30 segundos!"
   awarded-ender-pearl: "&a&l¡CONSEJO!&a Has recibido una perla de ender por capturar la colina durante 30 segundos más!"
 
   first-kill-reward: "&6&l¡Felicidades! &7¡Recibiste una recompensa por tu primer asesinato!"
@@ -84,7 +83,7 @@ messages:
   current-limit: "&7Límite actual: &f<value>"
   set-max-duration: "&a✔ &7Establece la duración máxima de cada evento KoTH"
   format-mm-ss: "&8• &7Formato: MM:SS"
-  capture-time: "&d&lTiempo de Captura"
+  capture-time-item: "&d&lTiempo de Captura"
   current-time: "&7Tiempo actual: &f<value>"
   time-required-to-capture: "&8• &7Tiempo requerido para capturar el punto de control"
   rewards-configuration: "&6&lConfiguración de Recompensas"
@@ -101,11 +100,8 @@ messages:
   set-event-schedule: "&8• &7Establece el horario del evento"
   configure-active-days: "&8• &7Configura los días activos"
   manage-time-slots: "&8• &7Administra las franjas horarias"
-  enter-name: "&b➡ &7Por favor, escribe el nuevo nombre para el KoTH en el chat."
   enter-world-name: "&b➡ &7Por favor, escribe el nombre del mundo en el chat."
   click-positions-to-select: "&b➡ &7Haz clic en las posiciones para seleccionar la región del KoTH."
-  enter-time-limit: "&b➡ &7Por favor, escribe el límite de tiempo (MM:SS) en el chat."
-  enter-capture-time: "&b➡ &7Por favor, escribe el tiempo de captura (MM:SS) en el chat."
   put-rewards-in-chest: "&b➡ &7Pon las recompensas en el cofre."
   enter-event-times: "&b➡ &7Por favor, escribe las horas del evento en el chat. (1pm, 11am...)"
 
@@ -201,6 +197,7 @@ messages:
   enter-times: "&b➡ &7Ingrese los horarios para ejecutar el KOTH (por ejemplo, &b8pm 9pm 10pm&7)."
 
   rewards-set: "&a✔ &7Recompensas establecidas. (&b<count> objetos&7)"
+  rewards-already-set: "&c✖ &7Las recompensas ya estan configuradas."
   enter-loot-type: |
     &8&m-------------------------------------
     &b➡ &7Ingrese el tipo de botín.
@@ -256,7 +253,7 @@ messages:
   unknown-subcommand: "&c✖ &7Subcomando desconocido. Usa &6/koth help &7para una lista de comandos."
   no-koths: "&c✖ &7No hay koths para listar."
   koth-list: "&cLista de KOTH:"
-  koth-info: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name>"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name>"
   usage-koth-info: "&c✖ &7Uso: &6/koth info &f<id>"
   no-koth-id: "&c✖ &7No se encontró KOTH con ID &c<id>."
   invalid-id: "&c✖ &7ID de KOTH inválido. Debe ser un número."

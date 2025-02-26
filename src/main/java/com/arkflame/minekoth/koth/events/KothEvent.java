@@ -10,7 +10,6 @@ import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.koth.events.bets.KothEventBets;
 import com.arkflame.minekoth.lang.Lang;
-import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
