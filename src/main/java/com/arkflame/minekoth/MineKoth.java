@@ -207,6 +207,13 @@ public class MineKoth extends JavaPlugin {
         for (Player player : getServer().getOnlinePlayers()) {
             playerDataManager.getAndLoad(player.getUniqueId().toString());
         }
+
+        // Spawn holograms
+        getServer().getScheduler().runTaskLater(this, () -> {
+            for (Koth koth : kothManager.getAllkoths().values()) {
+                koth.spawnHologram();
+            }
+        }, 1L);
     }
 
     public void onDisable() {

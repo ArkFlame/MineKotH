@@ -31,7 +31,6 @@ public class Koth {
         this.rewards = rewards;
         this.times = times;
         this.days = days;
-        spawnHologram();
     }
 
     public World getWorld() {
