@@ -92,10 +92,13 @@ public class KothEventsCaptureRewardsConfig {
             if (reward.startsWith("item: ")) {
                 String item = reward.substring("item: ".length()).split(",")[0];
                 int quantity = Integer.parseInt(reward.substring("item: ".length()).split(",")[1]);
-                player.getInventory().addItem(new ItemStack(Material.matchMaterial(item), quantity));
+                MineKoth.getInstance().getServer().getScheduler().runTask(MineKoth.getInstance(),
+                        () -> player.getInventory().addItem(new ItemStack(Material.matchMaterial(item), quantity)));
             } else if (reward.startsWith("command: ")) {
                 String command = reward.substring("command: ".length()).replace("%player%", player.getName());
-                MineKoth.getInstance().getServer().dispatchCommand(MineKoth.getInstance().getServer().getConsoleSender(), command);
+                MineKoth.getInstance().getServer().getScheduler().runTask(MineKoth.getInstance(),
+                        () -> MineKoth.getInstance().getServer()
+                                .dispatchCommand(MineKoth.getInstance().getServer().getConsoleSender(), command));
             } else if (reward.startsWith("message-key: ")) {
                 String messageKey = reward.substring("message-key: ".length());
                 player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage(messageKey));
