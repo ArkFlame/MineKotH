@@ -76,23 +76,48 @@ public class Schedule {
     public String getTimeLeftFormatted() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(getHour()).withMinute(getMinute()).withSecond(0);
-
-        if (startTime.isBefore(now)) {
-            startTime = startTime.plusDays(1);
+    
+        // Find the next scheduled day
+        DayOfWeek currentDay = now.getDayOfWeek();
+        DayOfWeek nextScheduledDay = null;
+        for (DayOfWeek day : days) {
+            if (day.getValue() >= currentDay.getValue()) {
+                nextScheduledDay = day;
+                break;
+            }
         }
-
+    
+        // If no scheduled day is found in the current week, pick the first one from the next week
+        if (nextScheduledDay == null) {
+            nextScheduledDay = days.iterator().next();
+            startTime = startTime.plusWeeks(1);
+        } else if (nextScheduledDay != currentDay) {
+            startTime = startTime.plusDays(nextScheduledDay.getValue() - currentDay.getValue());
+        }
+    
+        // Calculate the correct day of the month for the next scheduled day
+        int daysToAdd = (nextScheduledDay.getValue() + 7 - now.getDayOfWeek().getValue()) % 7;
+        if (daysToAdd == 0) {
+            daysToAdd = 7;
+        }
+        startTime = startTime.plusDays(daysToAdd);
+    
+        if (startTime.isBefore(now)) {
+            startTime = startTime.plusWeeks(1);
+        }
+    
         // Calculate seconds left until the scheduled start time
         long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
-
+    
         if (secondsLeft < 0) {
             return "0";
         }
-
+    
         long days = secondsLeft / 86400;
         long hours = (secondsLeft % 86400) / 3600;
         long minutes = (secondsLeft % 3600) / 60;
         long seconds = secondsLeft % 60;
-
+    
         if (days > 0) {
             return String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds);
         } else if (hours > 0) {
@@ -102,7 +127,7 @@ public class Schedule {
         } else {
             return String.format("%d", seconds);
         }
-    }
+    }     
 
     public List<String> getDayNames() {
         List<String> dayNames = new ArrayList<>(days.size());
