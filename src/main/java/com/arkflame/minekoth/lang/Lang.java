@@ -16,6 +16,17 @@ public class Lang {
         return messages.getOrDefault(key, "Message not found: " + key);
     }
 
+    public String getMessage(String key, Object... args) {
+        String message = getMessage(key);
+        for (int i = 0; i < args.length; i+=2) {
+            if (i + 1 >= args.length) {
+                break;
+            }
+            message = message.replace(args[i].toString(), args[i + 1].toString());
+        }
+        return message;
+    }
+
     public String getCode() {
         return code;
     }

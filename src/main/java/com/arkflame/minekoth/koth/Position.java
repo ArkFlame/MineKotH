@@ -1,6 +1,5 @@
 package com.arkflame.minekoth.koth;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 public class Position {

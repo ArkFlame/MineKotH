@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.HologramUtility;
 
 import org.bukkit.Bukkit;
@@ -109,7 +110,7 @@ public class Koth {
         Location center = getCenter();
         if (center == null) return;
         center.add(0.5, 2, 0.5);
-        HologramUtility.createHologram("koth_" + id, center, "&e%minekoth_koth_name_" + id + "%", "&a%minekoth_koth_state_" + id + "% by " + "%minekoth_koth_capturer_" + id + "%", "&b%minekoth_koth_time_" + id + "%", "&e&l(Stay to capture)");
+        HologramUtility.createHologram("koth_" + id, center, MineKoth.getInstance().getLangManager().getLang(null).getMessage("koth-hologram-lines", "<id>", String.valueOf(id)).split("\n"));
     }
 
     public void despawnHologram() {

@@ -296,3 +296,9 @@ messages:
     &8&m-------------------------------------
   players-only: "&c✖ &7Error: &cOnly players can use this command."
   no-perrmission: "&c✖ &7No permission to do this. Requires: <node>."
+  koth-hologram-lines: |-
+    &e%minekoth_koth_name_<id>%
+    &a%minekoth_koth_state_<id>%
+    %minekoth_koth_capturer_<id>%
+    &b%minekoth_koth_time_<id>%
+    &e&l(Stay to capture)
