@@ -110,7 +110,7 @@ public class Koth {
         Location center = getCenter();
         if (center == null) return;
         center.add(0.5, 2, 0.5);
-        HologramUtility.createHologram("koth_" + id, center, MineKoth.getInstance().getLangManager().getLang(null).getMessage("koth-hologram-lines", "<id>", String.valueOf(id)).split("\n"));
+        HologramUtility.createHologram("koth_" + id, center, MineKoth.getInstance().getLangManager().getLang(null).getMessage("messages.koth-hologram-lines", "<id>", String.valueOf(id)).split("\n"));
     }
 
     public void despawnHologram() {
