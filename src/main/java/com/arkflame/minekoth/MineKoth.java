@@ -12,6 +12,7 @@ import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
+import com.arkflame.minekoth.koth.listeners.WorldLoadListener;
 import com.arkflame.minekoth.koth.loaders.KothLoader;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
@@ -171,6 +172,9 @@ public class MineKoth extends JavaPlugin {
         // Listener - Player Data
         pluginManager.registerEvents(new PlayerDataListener(), this);
 
+        // Listener - World Load Holograms
+        pluginManager.registerEvents(new WorldLoadListener(kothManager), this);
+
         // Tasks - Schedule
         FoliaAPI.runTaskTimerAsync(task -> (scheduleRunnerTask = new ScheduleRunnerTask()).run(), 1, 20);
 
@@ -207,13 +211,6 @@ public class MineKoth extends JavaPlugin {
         for (Player player : getServer().getOnlinePlayers()) {
             playerDataManager.getAndLoad(player.getUniqueId().toString());
         }
-
-        // Spawn holograms
-        getServer().getScheduler().runTaskLater(this, () -> {
-            for (Koth koth : kothManager.getAllkoths().values()) {
-                koth.spawnHologram();
-            }
-        }, 1L);
     }
 
     public void onDisable() {
