@@ -96,12 +96,6 @@ public class Schedule {
         }
     
         // Calculate the correct day of the month for the next scheduled day
-        int daysToAdd = (nextScheduledDay.getValue() + 7 - now.getDayOfWeek().getValue()) % 7;
-        if (daysToAdd == 0) {
-            daysToAdd = 7;
-        }
-        startTime = startTime.plusDays(daysToAdd);
-    
         if (startTime.isBefore(now)) {
             startTime = startTime.plusWeeks(1);
         }
@@ -127,7 +121,7 @@ public class Schedule {
         } else {
             return String.format("%d", seconds);
         }
-    }     
+    }
 
     public List<String> getDayNames() {
         List<String> dayNames = new ArrayList<>(days.size());
