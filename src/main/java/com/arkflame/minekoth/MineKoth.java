@@ -218,4 +218,8 @@ public class MineKoth extends JavaPlugin {
         MenuUtil.shutdown();
         HologramUtility.clearHolograms();
     }
+
+    public boolean isMineClansEnabled() {
+        return getServer().getPluginManager().isPluginEnabled("MineClans");
+    }
 }

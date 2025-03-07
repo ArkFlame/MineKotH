@@ -20,14 +20,14 @@ capture-rewards:
   one-time:
     30:
       - "item: DIAMOND,1"
-      - "message-key: awarded-diamond"
+      - "message-key: messages.awarded-diamond"
   repeating:
     30:
       - "item: IRON_INGOT,1"
-      - "message-key: awarded-iron"
+      - "message-key: messages.awarded-iron"
     60:
       - "command: eco give %player% 1"
-      - "message-key: awarded-money"
+      - "message-key: messages.awarded-money"
 
 random-events:
   loot-drop:
