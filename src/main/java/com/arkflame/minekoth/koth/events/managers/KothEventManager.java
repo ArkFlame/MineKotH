@@ -164,9 +164,12 @@ public class KothEventManager {
                                     List<PotionEffect> effectsToApply = PotionEffectUtil
                                             .readEffectsFromConfig(effectsSection);
                                     if (effectsToApply != null) {
-                                        for (PotionEffect effect : effectsToApply) {
-                                            player.addPotionEffect(effect);
-                                        }
+                                        MineKoth.getInstance().getServer().getScheduler()
+                                                .runTask(MineKoth.getInstance(), () -> {
+                                                    for (PotionEffect effect : effectsToApply) {
+                                                        player.addPotionEffect(effect);
+                                                    }
+                                                });
                                     }
                                 }
                             }
