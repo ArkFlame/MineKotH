@@ -1,5 +1,6 @@
 package com.arkflame.minekoth.utils;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -143,5 +144,24 @@ public final class PotionEffectUtil {
             return true;
         }
         return false;
+    }
+
+    public static List<PotionEffect> readEffectsFromConfig(ConfigurationSection config) {
+        // Read from the configuration and create effects
+        List<PotionEffect> effects = config.getConfigurationSection("effects").getKeys(false).stream()
+                .map(key -> {
+                    String type = config.getString("effects." + key + ".type");
+                    int amplifier = config.getInt("effects." + key + ".amplifier");
+                    int duration = config.getInt("effects." + key + ".duration");
+                    PotionEffectType effectType = getPotionEffectType(type);
+                    if (effectType != null) {
+                        return new PotionEffect(effectType, duration, amplifier);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return effects;
     }
 }

@@ -200,6 +200,7 @@ public class MineKoth extends JavaPlugin {
         // Load all koths
         for (Koth koth : kothLoader.loadAll()) {
             kothManager.addKoth(koth);
+            koth.spawnHologram();
         }
 
         // Load all schedules

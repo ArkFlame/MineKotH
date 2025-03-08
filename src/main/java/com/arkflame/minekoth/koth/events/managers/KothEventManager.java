@@ -22,8 +22,11 @@ import java.util.List;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class KothEventManager {
@@ -154,16 +157,16 @@ public class KothEventManager {
 
                             CapturingPlayers topGroup = currentEvent.getTopGroup();
                             if (topGroup == null || topGroup.containsPlayer(player)) {
-                                PotionEffectUtil.applyAllValidEffects(
-                                        player,
-                                        0,
-                                        40,
-                                        // Speed is consistently named across versions
-                                        "SPEED",
-                                        // Strength had alternative names in some versions
-                                        "STRENGTH", "INCREASE_DAMAGE",
-                                        // Regeneration was also named differently
-                                        "REGENERATION", "REGEN");
+                                Configuration config = MineKoth.getInstance().getConfig();
+                                if (config.getBoolean("capturing-effects.enabled")) {
+                                    ConfigurationSection effectsSection = config
+                                            .getConfigurationSection("capturing-effects.effects");
+                                    List<PotionEffect> effectsToApply = PotionEffectUtil
+                                            .readEffectsFromConfig(effectsSection);
+                                    for (PotionEffect effect : effectsToApply) {
+                                        player.addPotionEffect(effect);
+                                    }
+                                }
                             }
 
                             PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()

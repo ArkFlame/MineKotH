@@ -113,7 +113,7 @@ public class Schedule {
         long seconds = secondsLeft % 60;
     
         if (days > 0) {
-            return String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds);
+            return String.format("%d " + MineKoth.getInstance().getLangManager().getLang(null).getMessage("messages.days") + " %02d:%02d:%02d", days, hours, minutes, seconds);
         } else if (hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else if (minutes > 0) {

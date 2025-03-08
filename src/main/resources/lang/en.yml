@@ -299,6 +299,7 @@ messages:
   koth-hologram-lines: |-
     &e%minekoth_koth_name_<id>%
     &a%minekoth_koth_state_<id>%
-    %minekoth_koth_capturer_<id>%
+    &c%minekoth_koth_capturer_<id>%
     &b%minekoth_koth_time_<id>%
     &e&l(Stay to capture)
+  days: "Days"

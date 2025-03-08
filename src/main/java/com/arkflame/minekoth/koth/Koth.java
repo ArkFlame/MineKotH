@@ -5,9 +5,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.HologramUtility;
 
+import java.util.Arrays;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public class Koth {
     private int id;
@@ -110,7 +114,16 @@ public class Koth {
         Location center = getCenter();
         if (center == null) return;
         center.add(0.5, 2, 0.5);
-        HologramUtility.createHologram("koth_" + id, center, MineKoth.getInstance().getLangManager().getLang(null).getMessage("messages.koth-hologram-lines", "<id>", String.valueOf(id)).split("\n"));
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(null);
+        String[] lines = lang.getMessage("messages.koth-hologram-lines", "<id>", id).split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            // Remove the lines that are empty resize the array
+            if (ChatColor.stripColor(lines[i]).trim().isEmpty()) {
+                lines[i] = null;
+            }
+        }
+        lines = Arrays.stream(lines).filter(line -> line != null).toArray(String[]::new);
+        HologramUtility.createHologram("koth_" + id, center, lines);
     }
 
     public void despawnHologram() {

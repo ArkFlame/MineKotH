@@ -1,3 +1,30 @@
+effects:
+  regeneration:
+    type: REGENERATION
+    amplifier: 0
+    duration: 40
+  regen:
+    type: regen
+    amplifier: 0
+    duration: 40
+  increase_damage:
+    type: INCREASE_DAMAGE
+    amplifier: 0
+    duration: 40
+  speed:
+    type: SPEED
+    amplifier: 0
+    duration: 40
+  strength:
+    type: STRENGTH
+    amplifier: 0
+    duration: 40
+
+# Customize the language days used
+messages:
+  schedules:
+    days: "Days"
+
 webhook:
   enabled: true
   url: "https://discord.com/api/webhooks/1234567890/12345678901234567890"
