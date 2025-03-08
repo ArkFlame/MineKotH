@@ -11,7 +11,7 @@
     <!-- Plugin Information -->
     <name>MineKotH</name>
     <description>This plugin was made using the Spigot Boilerplate by ArkFlame Development</description>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <url>https://github.com/arkflame/Spigot-Boilerplate</url>
 
     <properties>
