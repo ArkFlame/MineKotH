@@ -2,6 +2,7 @@ package com.arkflame.minekoth.koth;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
@@ -114,12 +115,14 @@ public class Koth {
         Location center = getCenter();
         if (center == null) return;
         center.add(0.5, 2, 0.5);
-        Lang lang = MineKoth.getInstance().getLangManager().getLang(null);
-        String[] lines = lang.getMessage("messages.koth-hologram-lines", "<id>", id).split("\n");
+        Configuration config = MineKoth.getInstance().getConfig();
+        String[] lines = config.getString("messages.koth-hologram-lines").split("\n");
         for (int i = 0; i < lines.length; i++) {
             // Remove the lines that are empty resize the array
             if (ChatColor.stripColor(lines[i]).trim().isEmpty()) {
                 lines[i] = null;
+            } else {
+                lines[i] = lines[i].replace("<id>", String.valueOf(id)).replace("<name>", name);
             }
         }
         lines = Arrays.stream(lines).filter(line -> line != null).toArray(String[]::new);

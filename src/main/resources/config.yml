@@ -21,10 +21,16 @@ effects:
     amplifier: 0
     duration: 40
 
-# Customize the language days used
+# Messages used for all languages
 messages:
   schedules:
     days: "Days"
+  koth-hologram-lines: |-
+    &e%minekoth_koth_name_<id>%
+    &a%minekoth_koth_state_<id>%
+    &c%minekoth_koth_capturer_<id>%
+    &b%minekoth_koth_time_<id>%
+    &e&l(Stay to capture)
 
 webhook:
   enabled: true
