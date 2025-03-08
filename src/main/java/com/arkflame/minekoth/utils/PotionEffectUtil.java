@@ -146,20 +146,13 @@ public final class PotionEffectUtil {
         return false;
     }
 
-    public static List<PotionEffect> readEffectsFromConfig(ConfigurationSection config) {
-        if (config == null) {
-            return null;
-        }   
-        ConfigurationSection effectsSection = config.getConfigurationSection("effects");
-        if (effectsSection == null) {
-            return null;
-        }
+    public static List<PotionEffect> readEffectsFromConfig(ConfigurationSection section) {
         // Read from the configuration and create effects
-        List<PotionEffect> effects = effectsSection.getKeys(false).stream()
+        List<PotionEffect> effects = section.getKeys(false).stream()
                 .map(key -> {
-                    String type = config.getString("effects." + key + ".type");
-                    int amplifier = config.getInt("effects." + key + ".amplifier");
-                    int duration = config.getInt("effects." + key + ".duration");
+                    String type = section.getString( key + ".type");
+                    int amplifier = section.getInt(key + ".amplifier");
+                    int duration = section.getInt(key + ".duration");
                     PotionEffectType effectType = getPotionEffectType(type);
                     if (effectType != null) {
                         return new PotionEffect(effectType, duration, amplifier);
