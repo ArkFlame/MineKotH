@@ -1,4 +1,5 @@
 effects:
+  enabled: true
   regeneration:
     type: REGENERATION
     amplifier: 0
