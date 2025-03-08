@@ -147,8 +147,15 @@ public final class PotionEffectUtil {
     }
 
     public static List<PotionEffect> readEffectsFromConfig(ConfigurationSection config) {
+        if (config == null) {
+            return null;
+        }   
+        ConfigurationSection effectsSection = config.getConfigurationSection("effects");
+        if (effectsSection == null) {
+            return null;
+        }
         // Read from the configuration and create effects
-        List<PotionEffect> effects = config.getConfigurationSection("effects").getKeys(false).stream()
+        List<PotionEffect> effects = effectsSection.getKeys(false).stream()
                 .map(key -> {
                     String type = config.getString("effects." + key + ".type");
                     int amplifier = config.getInt("effects." + key + ".amplifier");

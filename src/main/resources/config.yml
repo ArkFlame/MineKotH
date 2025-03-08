@@ -1,25 +1,26 @@
 effects:
   enabled: true
-  regeneration:
-    type: REGENERATION
-    amplifier: 0
-    duration: 40
-  regen:
-    type: regen
-    amplifier: 0
-    duration: 40
-  increase_damage:
-    type: INCREASE_DAMAGE
-    amplifier: 0
-    duration: 40
-  speed:
-    type: SPEED
-    amplifier: 0
-    duration: 40
-  strength:
-    type: STRENGTH
-    amplifier: 0
-    duration: 40
+  effects:
+    regeneration:
+      type: REGENERATION
+      amplifier: 0
+      duration: 40
+    regen:
+      type: regen
+      amplifier: 0
+      duration: 40
+    increase_damage:
+      type: INCREASE_DAMAGE
+      amplifier: 0
+      duration: 40
+    speed:
+      type: SPEED
+      amplifier: 0
+      duration: 40
+    strength:
+      type: STRENGTH
+      amplifier: 0
+      duration: 40
 
 # Messages used for all languages
 messages:

@@ -163,8 +163,10 @@ public class KothEventManager {
                                             .getConfigurationSection("capturing-effects.effects");
                                     List<PotionEffect> effectsToApply = PotionEffectUtil
                                             .readEffectsFromConfig(effectsSection);
-                                    for (PotionEffect effect : effectsToApply) {
-                                        player.addPotionEffect(effect);
+                                    if (effectsToApply != null) {
+                                        for (PotionEffect effect : effectsToApply) {
+                                            player.addPotionEffect(effect);
+                                        }
                                     }
                                 }
                             }
