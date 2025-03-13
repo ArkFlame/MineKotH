@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.arkflame.minekoth.MineKoth;
@@ -96,5 +97,10 @@ public class KothEventPlayerListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        kothEventManager.updatePlayerState(event.getPlayer(), event.getPlayer().getLocation(), true);
     }
 }

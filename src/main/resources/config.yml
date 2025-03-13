@@ -1,3 +1,6 @@
+capturing-particles:
+  enabled: true
+
 capturing-effects:
   enabled: true
   effects:
@@ -22,7 +25,7 @@ capturing-effects:
       amplifier: 0
       duration: 40
 
-# Messages used for all languages
+# Common messages used on all languages
 messages:
   schedules:
     days: "Days"

@@ -78,14 +78,14 @@ public class KothEvent {
         this.stalemateEnabled = stalemateEnabled;
     }
 
-    public void updateEffects(Player player) {
+    public void updateCapturingParticles(Player player) {
         if (player == null)
             return;
 
         if (isTopPlayer(player)) {
-            applyCapturingEffect(player);
+            applyCapturingParticles(player);
         } else {
-            clearEffects(player);
+            clearParticles(player);
         }
     }
 
@@ -100,8 +100,10 @@ public class KothEvent {
                 evaluateState(oldTopGroup);
 
                 // Update effects
-                updateEffects(player);
-                updateEffects(oldTopPlayer);
+                if (MineKoth.getInstance().getConfig().getBoolean("capturing-particles.enabled")) {
+                    updateCapturingParticles(player);
+                    updateCapturingParticles(oldTopPlayer);
+                }
 
                 Player topPlayer = getTopPlayer();
                 if (player == topPlayer) {
@@ -134,8 +136,10 @@ public class KothEvent {
                 // Update effects
                 Player topPlayer = getTopPlayer();
                 if (oldTopPlayer != topPlayer) {
-                    updateEffects(oldTopPlayer);
-                    updateEffects(topPlayer);
+                    if (MineKoth.getInstance().getConfig().getBoolean("capturing-effects.enabled")) {
+                        updateCapturingParticles(oldTopPlayer);
+                        updateCapturingParticles(topPlayer);
+                    }
                 }
                 if (player == oldTopPlayer) {
                     Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
@@ -357,9 +361,9 @@ public class KothEvent {
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
-            applyWinnerEffect(player);
+            applyWinnerParticles(player);
         } else {
-            clearEffects(player);
+            clearParticles(player);
         }
     }
 
@@ -451,7 +455,7 @@ public class KothEvent {
 
     public void clearAllEffects() {
         for (Player player : playersInZone) {
-            clearEffects(player);
+            clearParticles(player);
         }
     }
 
@@ -461,11 +465,11 @@ public class KothEvent {
             return;
         }
         for (Player player : topGroup.getPlayers()) {
-            clearEffects(player);
+            clearParticles(player);
         }
     }
 
-    private void applyCapturingEffect(Player player) {
+    private void applyCapturingParticles(Player player) {
         if (player != null) {
             MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
                     5);
@@ -473,14 +477,14 @@ public class KothEvent {
         }
     }
 
-    private void applyWinnerEffect(Player player) {
+    private void applyWinnerParticles(Player player) {
         if (player != null) {
             MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
             GlowingUtility.setGlowing(player, ChatColor.GREEN);
         }
     }
 
-    public void clearEffects(Player player) {
+    public void clearParticles(Player player) {
         if (player != null) {
             MineKoth.getInstance().getParticleScheduler().removeTrail(player);
             GlowingUtility.unsetGlowing(player);

@@ -51,7 +51,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                 case "time":
                     return kothId == null ? getKothTime() : getKothTimeById(kothId);
                 case "location":
-                    return getKothLocation();
+                    return kothId == null ? getKothLocation() : getKothLocationById(kothId);
                 case "top_player":
                     return getKothTopPlayer();
                 case "capturing_players":
@@ -162,6 +162,14 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
             }
         }
         return formatLocation(loc);
+    }
+
+    private String getKothLocationById(String kothId) {
+        Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
+        if (koth == null) {
+            return NONE;
+        }
+        return formatLocation(koth.getCenter());
     }
 
     private String formatLocation(Location loc) {

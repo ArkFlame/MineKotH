@@ -8,3 +8,5 @@
 %minekoth_koth_winner%: Winner(s) of the KoTH event.
 %minekoth_koth_time_since_end%: Time elapsed since the KoTH event ended.
 %minekoth_koth_is_stalemate%: Whether the KoTH event is in a stalemate.
+%minekoth_koth_location%: Get the current koth coordinates
+%minekoth_koth_location_<id>%: Get the specific koth coordinates

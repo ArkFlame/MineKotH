@@ -83,7 +83,9 @@ public class Schedule {
         for (DayOfWeek day : days) {
             if (day.getValue() >= currentDay.getValue()) {
                 nextScheduledDay = day;
-                break;
+                if (day.getValue() == currentDay.getValue() && !startTime.isBefore(now)) {
+                    break;
+                }
             }
         }
     
