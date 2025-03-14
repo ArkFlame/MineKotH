@@ -35,6 +35,11 @@ messages:
     &c%minekoth_koth_capturer_<id>%
     &b%minekoth_koth_time_<id>%
     &e&l(Stay to capture)
+  koth-states:
+    UNCAPTURED: "Uncaptured"
+    CAPTURING: "Capturing"
+    STALEMATE: "Stalemate"
+    CAPTURED: "Captured"
 
 webhook:
   enabled: true

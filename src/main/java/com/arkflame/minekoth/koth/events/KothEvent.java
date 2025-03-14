@@ -34,7 +34,7 @@ public class KothEvent {
         CAPTURED;
 
         public String getFancyName() {
-            return name().substring(0, 1) + name().substring(1).toLowerCase();
+            return MineKoth.getInstance().getConfig().getString("messages.koth-states." + this.name());
         }
     }
 
