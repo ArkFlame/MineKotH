@@ -14,6 +14,7 @@ import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
 import com.arkflame.minekoth.koth.loaders.KothLoader;
 import com.arkflame.minekoth.koth.managers.KothManager;
+import com.arkflame.minekoth.koth.tasks.KothTickTask;
 import com.arkflame.minekoth.lang.LangManager;
 import com.arkflame.minekoth.particles.ParticleScheduler;
 import com.arkflame.minekoth.placeholders.MineKothPlaceholderExtension;
@@ -45,6 +46,7 @@ public class MineKoth extends JavaPlugin {
     private LangManager langManager;
     private ScheduleRunnerTask scheduleRunnerTask;
     private KothEventTickTask kothEventTickTask;
+    private KothTickTask kothTickTask;
     private ParticleScheduler particleScheduler;
     private RandomEventsManager randomEventsManager;
     private Economy economy;
@@ -92,6 +94,10 @@ public class MineKoth extends JavaPlugin {
         return kothEventTickTask;
     }
 
+    public KothTickTask getKothTickTask() {
+        return kothTickTask;
+    }
+
     public RandomEventsManager getRandomEventsManager() {
         return randomEventsManager;
     }
@@ -126,10 +132,6 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize Koth Event Manager
         kothEventManager = new KothEventManager(this);
-
-        // Initialize hologram utility
-        HologramUtility.initialize(this);
-        getLogger().info("Hologram Utility initialized.");
 
         // Initialize Vault economy
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
@@ -178,7 +180,7 @@ public class MineKoth extends JavaPlugin {
         FoliaAPI.runTaskTimerAsync(task -> (kothEventTickTask = new KothEventTickTask()).run(), 20, 20);
 
         // Tasks - Koths
-        FoliaAPI.runTaskTimer(task -> kothManager.tick(), 20, 20);
+        FoliaAPI.runTaskTimer(task -> (kothTickTask = new KothTickTask()).run(), 20, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());
@@ -196,20 +198,26 @@ public class MineKoth extends JavaPlugin {
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
 
-        // Load all koths
-        for (Koth koth : kothLoader.loadAll()) {
-            kothManager.addKoth(koth);
-        }
+        // Delay load
+        FoliaAPI.runTask(() -> {
+            // Initialize hologram utility
+            HologramUtility.initialize(this);
 
-        // Load all schedules
-        for (Schedule schedule : scheduleLoader.loadAll()) {
-            scheduleManager.addSchedule(schedule);
-        }
+            // Load all koths
+            for (Koth koth : kothLoader.loadAll()) {
+                kothManager.addKoth(koth);
+            }
 
-        // Load online player data
-        for (Player player : getServer().getOnlinePlayers()) {
-            playerDataManager.getAndLoad(player.getUniqueId().toString());
-        }
+            // Load all schedules
+            for (Schedule schedule : scheduleLoader.loadAll()) {
+                scheduleManager.addSchedule(schedule);
+            }
+
+            // Load online player data
+            for (Player player : getServer().getOnlinePlayers()) {
+                playerDataManager.getAndLoad(player.getUniqueId().toString());
+            }
+        }, 20L);
     }
 
     public void onDisable() {

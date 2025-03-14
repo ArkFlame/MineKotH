@@ -96,7 +96,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         if (event != null) {
             return event.getState().getFancyName();
         }
-        return getNextSchedule() != null ? "Starting" : NONE;
+        return MineKoth.getInstance().getConfig().getString("messages.koth-states.NOT_STARTED");
     }
 
     private String getKothStateById(String kothId) {
@@ -106,7 +106,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                 return event.getState().getFancyName();
             }
         }
-        return getNextSchedule() != null ? "Starting" : NONE;
+        return MineKoth.getInstance().getConfig().getString("messages.koth-states.NOT_STARTED");
     }
 
     private String getKothTime() {

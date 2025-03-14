@@ -31,15 +31,15 @@ messages:
     days: "Days"
   koth-hologram-lines: |-
     &e%minekoth_koth_name_<id>%
+    &b%minekoth_koth_time_<id>%
     &a%minekoth_koth_state_<id>%
     &c%minekoth_koth_capturer_<id>%
-    &b%minekoth_koth_time_<id>%
-    &e&l(Stay to capture)
   koth-states:
     UNCAPTURED: "Uncaptured"
     CAPTURING: "Capturing"
     STALEMATE: "Stalemate"
     CAPTURED: "Captured"
+    NOT_STARTED: "Not Started"
 
 webhook:
   enabled: true

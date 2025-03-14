@@ -1,18 +1,16 @@
 package com.arkflame.minekoth.koth;
 
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
-import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.HologramUtility;
-
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 public class Koth {
     private int id;
@@ -27,7 +25,8 @@ public class Koth {
     private String days;
     private boolean hologramSpawned = false;
 
-    public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times, String days) {
+    public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit,
+            int timeToCapture, Rewards rewards, String times, String days) {
         this.id = id;
         this.name = name;
         this.worldName = worldName;
@@ -43,7 +42,7 @@ public class Koth {
     public World getWorld() {
         return Bukkit.getWorld(worldName);
     }
-    
+
     public Location getFirstLocation() {
         return new Location(getWorld(), firstPosition.getX(), firstPosition.getY(), firstPosition.getZ());
     }
@@ -69,9 +68,9 @@ public class Koth {
         double zMax = Math.max(firstPosition.getZ(), secondPosition.getZ());
 
         return location.getWorld().getName().equals(worldName) &&
-               location.getX() >= xMin && location.getX() <= xMax + 1 &&
-               location.getY() >= yMin && location.getY() <= yMax + 1.5 &&
-               location.getZ() >= zMin && location.getZ() <= zMax + 1;
+                location.getX() >= xMin && location.getX() <= xMax + 1 &&
+                location.getY() >= yMin && location.getY() <= yMax + 1.5 &&
+                location.getZ() >= zMin && location.getZ() <= zMax + 1;
     }
 
     public boolean isInside(Player player) {
@@ -79,32 +78,73 @@ public class Koth {
     }
 
     // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getWorldName() { return worldName; }
-    public void setWorldName(String worldName) { this.worldName = worldName; }
+    public String getName() {
+        return name;
+    }
 
-    public int getTimeLimit() { return timeLimit; }
-    public void setTimeLimit(int timeLimit) { this.timeLimit = timeLimit; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public int getTimeToCapture() { return timeToCapture; }
-    public void setTimeToCapture(int timeToCapture) { this.timeToCapture = timeToCapture; }
+    public String getWorldName() {
+        return worldName;
+    }
 
-    public Rewards getRewards() { return rewards; }
-    public void setRewards(Rewards rewards) { this.rewards = rewards; }
+    public void setWorldName(String worldName) {
+        this.worldName = worldName;
+    }
 
-    public String getTimes() { return times; }
-    public void setTimes(String times) { this.times = times; }
+    public int getTimeLimit() {
+        return timeLimit;
+    }
 
-    public String getDays() { return days; }
-    public void setDays(String days) { this.days = days; }
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
+    }
+
+    public int getTimeToCapture() {
+        return timeToCapture;
+    }
+
+    public void setTimeToCapture(int timeToCapture) {
+        this.timeToCapture = timeToCapture;
+    }
+
+    public Rewards getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(Rewards rewards) {
+        this.rewards = rewards;
+    }
+
+    public String getTimes() {
+        return times;
+    }
+
+    public void setTimes(String times) {
+        this.times = times;
+    }
+
+    public String getDays() {
+        return days;
+    }
+
+    public void setDays(String days) {
+        this.days = days;
+    }
 
     public Location getCenter() {
-        if (firstPosition == null || secondPosition == null) return null;
+        if (firstPosition == null || secondPosition == null)
+            return null;
         double x = (firstPosition.getX() + secondPosition.getX()) / 2;
         double y = (firstPosition.getY() + secondPosition.getY()) / 2;
         double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
@@ -114,21 +154,20 @@ public class Koth {
 
     public void spawnHologram() {
         Location center = getCenter();
-        if (center == null) return;
+        if (center == null) {
+            return;
+        }
         center.add(0.5, 2, 0.5);
         Configuration config = MineKoth.getInstance().getConfig();
         String[] lines = config.getString("messages.koth-hologram-lines").split("\n");
         for (int i = 0; i < lines.length; i++) {
-            // Remove the lines that are empty resize the array
-            if (ChatColor.stripColor(lines[i]).trim().isEmpty()) {
-                lines[i] = null;
-            } else {
+            if (lines[i] != null) {
                 lines[i] = lines[i].replace("<id>", String.valueOf(id)).replace("<name>", name);
             }
         }
-        lines = Arrays.stream(lines).filter(line -> line != null).toArray(String[]::new);
-        HologramUtility.createHologram("koth_" + id, center, lines);
-        hologramSpawned = true;
+        if (HologramUtility.createHologram("koth_" + id, center, lines)) {
+            hologramSpawned = true;
+        }
     }
 
     public void despawnHologram() {

@@ -23,6 +23,7 @@ public class HologramUtility {
      * Checks if DecentHolograms is enabled and sets the flag accordingly.
      *
      * @param plugin The plugin instance.
+     * @return 
      */
     public static void initialize(JavaPlugin plugin) {
         isDecentHologramsEnabled = plugin.getServer().getPluginManager().isPluginEnabled("DecentHolograms");
@@ -41,19 +42,40 @@ public class HologramUtility {
      * @param location The location to spawn the hologram.
      * @param text     The text to display on the hologram.
      */
-    public static void createHologram(String id, Location location, String ...text) {
+    public static boolean createHologram(String id, Location location, String ...text) {
         if (!isDecentHologramsEnabled) {
-            return;
+            return false;
         }
+
+        if (location.getWorld() == null) {
+            return false;
+        }
+
+        if (!location.getChunk().isLoaded()) {
+            return false;
+        }
+
+        String name = null;
 
         if (hologramCache.containsKey(id)) {
-            hologramCache.remove(id).delete();
+            Hologram oldHologram = hologramCache.remove(id);
+            if (oldHologram != null) {
+                name = oldHologram.getName();
+                oldHologram.delete();
+            }
         }
 
-        Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), location, false, Arrays.asList(text));
+        if (name == null) {
+            name = UUID.randomUUID().toString();
+        }
+        Hologram hologram = DHAPI.createHologram(name, location, false, Arrays.asList(text));
         if (hologram != null) {
             hologramCache.put(id, hologram);
+            return true;
+        } else {
+            DHAPI.removeHologram(name);
         }
+        return false;
     }
 
     /**

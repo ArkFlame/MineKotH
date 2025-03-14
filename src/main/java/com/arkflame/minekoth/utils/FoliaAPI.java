@@ -169,6 +169,15 @@ public class FoliaAPI {
         invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
     }
 
+    public static void runTask(Runnable run, long delay) {
+        if (!isFolia()) {
+            bS.runTaskLater(MineKoth.getInstance(), run, delay);
+            return;
+        }
+        Method method = cachedMethods.get("globalRegionScheduler.run");
+        invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
+    }
+
     public static void runTask(Consumer<Object> run) {
         if (!isFolia()) {
             bS.runTask(MineKoth.getInstance(), () -> run.accept(null));

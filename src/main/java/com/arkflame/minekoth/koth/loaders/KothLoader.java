@@ -61,7 +61,6 @@ public class KothLoader {
             Position firstPosition = Position.deserialize(config.getString("firstPosition"));
             Position secondPosition = Position.deserialize(config.getString("secondPosition"));
             Rewards rewards = Rewards.deserialize(config.getString("rewards"));
-
             return new Koth(id, name, worldName, firstPosition, secondPosition, timeLimit, timeToCapture, rewards, times, days);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to load KOTH " + kothId, e);

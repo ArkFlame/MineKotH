@@ -72,7 +72,7 @@ public class KothManager {
 
     public void tick() {
         for (Koth koth : koths.values()) {
-            if (koth.isHologramSpawned()) {
+            if (!koth.isHologramSpawned()) {
                 koth.spawnHologram();
             }
         }
