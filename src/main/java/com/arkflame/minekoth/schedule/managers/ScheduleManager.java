@@ -49,7 +49,7 @@ public class ScheduleManager {
     }
 
     public Schedule scheduleKoth(int kothId, int hour, int minute, String ...dayNames) {
-        Set<DayOfWeek> days = dayNames.length > 0 ? Times.parseDayNames(dayNames) : EnumSet.allOf(DayOfWeek.class);
+        List<DayOfWeek> days = dayNames.length > 0 ? Times.parseDayNames(dayNames) : Times.getAllDays();
         if (days.isEmpty()) return null;
 
         // Generate a unique ID for the new schedule

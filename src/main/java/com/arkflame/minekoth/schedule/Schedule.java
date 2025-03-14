@@ -10,11 +10,11 @@ import java.util.*;
 public class Schedule {
     private final int id;
     private final int kothId;
-    private Set<DayOfWeek> days;
+    private List<DayOfWeek> days;
     private int hour;
     private int minute;
 
-    public Schedule(int id, int kothId, Set<DayOfWeek> days, int hour, int minute) {
+    public Schedule(int id, int kothId, List<DayOfWeek> days, int hour, int minute) {
         this.id = id;
         this.kothId = kothId;
         this.days = days;
@@ -30,11 +30,11 @@ public class Schedule {
         return kothId;
     }
 
-    public Set<DayOfWeek> getDays() {
+    public List<DayOfWeek> getDays() {
         return days;
     }
 
-    public void setDays(Set<DayOfWeek> days) {
+    public void setDays(List<DayOfWeek> days) {
         this.days = days;
     }
 
@@ -73,49 +73,131 @@ public class Schedule {
                 '}';
     }
 
+    /**
+     * Returns a formatted string representing the time left until the next
+     * scheduled event.
+     * 
+     * @return Formatted time string
+     */
     public String getTimeLeftFormatted() {
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextStartTime = calculateNextStartTime(now);
+
+        // Calculate seconds left until the scheduled start time
+        long secondsLeft = calculateSecondsLeft(now, nextStartTime);
+
+        return formatTimeLeft(secondsLeft);
+    }
+
+    /**
+     * Calculates the next start time based on the current time and scheduled days.
+     * 
+     * @param now Current time
+     * @return The next scheduled start time
+     */
+    private LocalDateTime calculateNextStartTime(LocalDateTime now) {
+        // Initialize start time with the scheduled hour and minute
         LocalDateTime startTime = now.withHour(getHour()).withMinute(getMinute()).withSecond(0);
-    
+
         // Find the next scheduled day
         DayOfWeek currentDay = now.getDayOfWeek();
-        DayOfWeek nextScheduledDay = null;
-        for (DayOfWeek day : days) {
-            if (day.getValue() >= currentDay.getValue()) {
-                nextScheduledDay = day;
-                if (day.getValue() == currentDay.getValue() && !startTime.isBefore(now)) {
-                    break;
-                }
-            }
-        }
-    
-        // If no scheduled day is found in the current week, pick the first one from the next week
-        if (nextScheduledDay == null) {
-            nextScheduledDay = days.iterator().next();
-            startTime = startTime.plusWeeks(1);
-        } else if (nextScheduledDay != currentDay) {
-            startTime = startTime.plusDays(nextScheduledDay.getValue() - currentDay.getValue());
-        }
-    
-        // Calculate the correct day of the month for the next scheduled day
+        DayOfWeek nextScheduledDay = findNextScheduledDay(currentDay);
+
+        // Adjust the start time based on the next scheduled day
+        startTime = adjustStartTimeForDay(startTime, currentDay, nextScheduledDay);
+
+        // If the calculated time is in the past, move to the next occurrence
         if (startTime.isBefore(now)) {
             startTime = startTime.plusWeeks(1);
         }
-    
-        // Calculate seconds left until the scheduled start time
-        long secondsLeft = now.until(startTime, ChronoUnit.SECONDS);
-    
-        if (secondsLeft < 0) {
+
+        return startTime;
+    }
+
+    /**
+     * Finds the next scheduled day from the current day.
+     * 
+     * @param currentDay The current day of the week
+     * @return The next scheduled day of the week
+     */
+    private DayOfWeek findNextScheduledDay(DayOfWeek currentDay) {
+        return days.stream()
+                .filter(day -> day.getValue() >= currentDay.getValue())
+                .min(Comparator.comparingInt(DayOfWeek::getValue))
+                .orElse(days.stream()
+                        .min(Comparator.comparingInt(DayOfWeek::getValue))
+                        .orElse(null));
+    }
+
+    /**
+     * Adjusts the start time based on the current and next scheduled day.
+     * 
+     * @param startTime        Base start time with hour and minute set
+     * @param currentDay       Current day of the week
+     * @param nextScheduledDay Next scheduled day of the week
+     * @return Adjusted start time
+     */
+    private LocalDateTime adjustStartTimeForDay(LocalDateTime startTime, DayOfWeek currentDay,
+            DayOfWeek nextScheduledDay) {
+        if (nextScheduledDay == null) {
+            // If no day is scheduled, return a time far in the future
+            return startTime.plusYears(1000);
+        }
+
+        // If next scheduled day is in the next week
+        if (nextScheduledDay.getValue() < currentDay.getValue()) {
+            return startTime.plusDays(7 - (currentDay.getValue() - nextScheduledDay.getValue()));
+        }
+
+        // If next scheduled day is later this week
+        return startTime.plusDays(nextScheduledDay.getValue() - currentDay.getValue());
+    }
+
+    /**
+     * Calculates seconds left between two LocalDateTime objects.
+     * 
+     * @param now        Current time
+     * @param targetTime Target time
+     * @return Seconds left (non-negative)
+     */
+    private long calculateSecondsLeft(LocalDateTime now, LocalDateTime targetTime) {
+        long secondsLeft = now.until(targetTime, ChronoUnit.SECONDS);
+        return Math.max(0, secondsLeft);
+    }
+
+    /**
+     * Formats the seconds left into a human-readable string.
+     * 
+     * @param secondsLeft Seconds left until the event
+     * @return Formatted time string
+     */
+    private String formatTimeLeft(long secondsLeft) {
+        if (secondsLeft <= 0) {
             return "0";
         }
-    
+
         long days = secondsLeft / 86400;
         long hours = (secondsLeft % 86400) / 3600;
         long minutes = (secondsLeft % 3600) / 60;
         long seconds = secondsLeft % 60;
-    
+
+        return formatTimeComponents(days, hours, minutes, seconds);
+    }
+
+    /**
+     * Formats time components into a human-readable string.
+     * 
+     * @param days    Days component
+     * @param hours   Hours component
+     * @param minutes Minutes component
+     * @param seconds Seconds component
+     * @return Formatted time string
+     */
+    private String formatTimeComponents(long days, long hours, long minutes, long seconds) {
+        String daysText = MineKoth.getInstance().getConfig().getString("messages.schedules.days", "days");
+
         if (days > 0) {
-            return String.format("%d " + MineKoth.getInstance().getConfig().getString("messages.schedules.days") + " %02d:%02d:%02d", days, hours, minutes, seconds);
+            return String.format("%d %s %02d:%02d:%02d", days, daysText, hours, minutes, seconds);
         } else if (hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else if (minutes > 0) {

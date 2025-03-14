@@ -51,7 +51,7 @@ public class ScheduleLoader {
             int id = config.getInt("id");
             int kothId = config.getInt("kothId");
             List<String> dayNames = config.getStringList("days");
-            Set<DayOfWeek> days = Times.parseDayNames(dayNames.toArray(new String[0]));
+            List<DayOfWeek> days = Times.parseDayNames(dayNames.toArray(new String[0]));
             int hour = config.getInt("hour");
             int minute = config.getInt("minute");
             return new Schedule(id, kothId, days, hour, minute);
