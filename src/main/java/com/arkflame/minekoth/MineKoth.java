@@ -12,7 +12,6 @@ import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
 import com.arkflame.minekoth.koth.events.random.RandomEventsManager;
 import com.arkflame.minekoth.koth.events.tasks.KothEventTickTask;
-import com.arkflame.minekoth.koth.listeners.WorldLoadListener;
 import com.arkflame.minekoth.koth.loaders.KothLoader;
 import com.arkflame.minekoth.koth.managers.KothManager;
 import com.arkflame.minekoth.lang.LangManager;
