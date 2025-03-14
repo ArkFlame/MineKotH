@@ -172,14 +172,14 @@ public class MineKoth extends JavaPlugin {
         // Listener - Player Data
         pluginManager.registerEvents(new PlayerDataListener(), this);
 
-        // Listener - World Load Holograms
-        pluginManager.registerEvents(new WorldLoadListener(kothManager), this);
-
         // Tasks - Schedule
-        FoliaAPI.runTaskTimerAsync(task -> (scheduleRunnerTask = new ScheduleRunnerTask()).run(), 1, 20);
+        FoliaAPI.runTaskTimerAsync(task -> (scheduleRunnerTask = new ScheduleRunnerTask()).run(), 20, 20);
 
         // Tasks - Koth Event
-        FoliaAPI.runTaskTimerAsync(task -> (kothEventTickTask = new KothEventTickTask()).run(), 1, 20);
+        FoliaAPI.runTaskTimerAsync(task -> (kothEventTickTask = new KothEventTickTask()).run(), 20, 20);
+
+        // Tasks - Koths
+        FoliaAPI.runTaskTimer(task -> kothManager.tick(), 20, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());
@@ -200,7 +200,6 @@ public class MineKoth extends JavaPlugin {
         // Load all koths
         for (Koth koth : kothLoader.loadAll()) {
             kothManager.addKoth(koth);
-            koth.spawnHologram();
         }
 
         // Load all schedules

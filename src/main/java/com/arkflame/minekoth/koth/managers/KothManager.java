@@ -69,4 +69,12 @@ public class KothManager {
         }
         return null;
     }
+
+    public void tick() {
+        for (Koth koth : koths.values()) {
+            if (koth.isHologramSpawned()) {
+                koth.spawnHologram();
+            }
+        }
+    }
 }

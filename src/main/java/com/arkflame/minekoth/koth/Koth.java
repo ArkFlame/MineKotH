@@ -25,6 +25,7 @@ public class Koth {
     private Rewards rewards;
     private String times;
     private String days;
+    private boolean hologramSpawned = false;
 
     public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit, int timeToCapture, Rewards rewards, String times, String days) {
         this.id = id;
@@ -127,9 +128,15 @@ public class Koth {
         }
         lines = Arrays.stream(lines).filter(line -> line != null).toArray(String[]::new);
         HologramUtility.createHologram("koth_" + id, center, lines);
+        hologramSpawned = true;
     }
 
     public void despawnHologram() {
         HologramUtility.deleteHologram("koth_" + id);
+        hologramSpawned = false;
+    }
+
+    public boolean isHologramSpawned() {
+        return hologramSpawned;
     }
 }
