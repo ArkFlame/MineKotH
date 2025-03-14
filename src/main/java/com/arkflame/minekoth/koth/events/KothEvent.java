@@ -250,15 +250,13 @@ public class KothEvent {
                                 player,
                                 ChatColors.color("&aYou are capturing! &e" + getTimeLeftToCaptureFormatted()));
                     } else if (isTopGroup) {
-                        Titles.sendActionBar(
-                                player,
-                                ChatColors.color("&a" + topPlayerName + " is capturing! &e"
-                                        + getTimeLeftToCaptureFormatted()));
+                        MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-team", 
+                        "<player>", topPlayerName, 
+                        "<time-left>", getTimeLeftToCaptureFormatted());
                     } else {
-                        Titles.sendActionBar(
-                                player,
-                                ChatColors.color("&c" + topPlayerName + " is capturing! &e"
-                                        + getTimeLeftToCaptureFormatted()));
+                        MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-enemy", 
+                        "<player>", topPlayerName, 
+                        "<time-left>", getTimeLeftToCaptureFormatted());
                     }
 
                     if (sendTimeLeftTitle) {

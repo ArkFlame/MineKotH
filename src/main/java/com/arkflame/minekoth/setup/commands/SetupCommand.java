@@ -35,44 +35,44 @@ public class SetupCommand {
 
     public static void run(Player player, String[] args) {
         if (!player.hasPermission("minekoth.command.setup")) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission")
-            .replace("<node>", "minekoth.command.setup"));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.no-permission", "<node>",
+                    "minekoth.command.setup");
             return;
         }
         String subCommand = args.length <= 1 ? "help" : args[1].toLowerCase();
         CommandHandler handler = COMMANDS.getOrDefault(subCommand, COMMANDS.getOrDefault("setup",
-                (p, a) -> player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.unknown-command"))));
+                (p, a) -> MineKoth.getInstance().getLangManager().sendMessage(player, "messages.unknown-command")));
         handler.handle(player, args);
     }
 
     private static void handleHelp(Player player, String[] args) {
-        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.setup-help"));
+        MineKoth.getInstance().getLangManager().sendMessage(player, "messages.setup-help");
     }
 
     private static void handleStart(Player player, String[] args) {
         if (hasActiveSession(player)) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.already-in-session"));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.already-in-session");
             return;
         }
 
         MineKoth.getInstance().getSessionManager().addSession(player, new SetupSession());
-        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.start-setup"));
+        MineKoth.getInstance().getLangManager().sendMessage(player, "messages.start-setup");
     }
 
     private static void handleCancel(Player player, String[] args) {
         if (!hasActiveSession(player)) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-session"));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.no-session");
             return;
         }
 
         MineKoth.getInstance().getSessionManager().removeSession(player);
-        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.cancel-setup"));
+        MineKoth.getInstance().getLangManager().sendMessage(player, "messages.cancel-setup");
     }
 
     public static void handleFinish(Player player, String[] args) {
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
         if (session == null) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-session"));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.no-session");
             return;
         }
 
@@ -89,7 +89,7 @@ public class SetupCommand {
 
     private static void handleSetup(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.specify-id-name"));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.specify-id-name");
             return;
         }
 
@@ -102,12 +102,13 @@ public class SetupCommand {
         }
 
         if (koth == null) {
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-koth-id-or-name").replace("<id_or_name>", kothIdOrName));
+            MineKoth.getInstance().getLangManager().sendMessage(player, "messages.no-koth-id-or-name", "<id_or_name>",
+                    kothIdOrName);
             return;
         }
 
         new KothEditMenu(player, koth).open(player);
-        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.edit-started"));
+        MineKoth.getInstance().getLangManager().sendMessage(player, "messages.edit-started");
     }
 
     private static boolean validateSession(Player player, SetupSession session) {
@@ -115,7 +116,7 @@ public class SetupCommand {
             return true;
         }
 
-        player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.setup-not-complete"));
+        MineKoth.getInstance().getLangManager().sendMessage(player, "messages.setup-not-complete");
 
         Map<String, Boolean> validations = new HashMap<>();
         validations.put("name", session.isNameSet());
@@ -128,7 +129,7 @@ public class SetupCommand {
 
         validations.forEach((field, isSet) -> {
             if (!isSet) {
-                player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.set-field").replace("<field>", field));
+                MineKoth.getInstance().getLangManager().sendMessage(player, "messages.set-field", "<field>", field);
             }
         });
 
@@ -174,8 +175,7 @@ public class SetupCommand {
     }
 
     private static void sendSuccessMessage(Player player, SetupSession session) {
-        Lang
-         lang = MineKoth.getInstance().getLangManager().getLang(player);
+        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
         player.sendMessage(lang.getMessage("messages.koth-setup-complete")
                 .replace("<name>", session.getName())
                 .replace("<times>", session.getTimes())

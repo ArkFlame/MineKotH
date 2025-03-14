@@ -4,7 +4,9 @@
 # Usa <nombrecolor> para colores con nombre (por ejemplo, <red>, <blue>, <gold>).
 # Usa <gradient:#STARTCOLOR>texto</gradient:#ENDCOLOR> para degradados (por ejemplo, de rojo a azul).
 # Usa <rainbow>texto</rainbow> para texto de colores arcoiris.
-# ====================================================
+# ==================================================== 
+# Podes usar PlaceholderAPI en todos los mensajes
+# ==================================================== 
 messages:
   awarded-diamond: "&a&lTIP:&a ¡Has sido premiado con un diamante por capturar la colina durante 30 segundos!"
   awarded-iron: "&a&lTIP:&a ¡Has sido premiado con un lingote de hierro por capturar la colina durante 30 segundos más!"
@@ -246,6 +248,8 @@ messages:
   usage-tp: "&c✖ &7Uso: &6/koth tp &f<id/nombre>"
   usage-bet: "&c✖ &7Uso: &6/koth bet &f<monto> <participante> [id/nombreKOTH]"
   no-running-koths: "&c✖ &7No hay koths en curso."
+  no-schedules: "&c✖ &7No hay horarios disponibles."
+  invalid-koth: "&c✖ &7KOTH inválido."
   available-koths: "&cKoths disponibles:"
   running-koth: "&8❙ &6<name>"
   no-player: "&c✖ &7No se pudo encontrar al jugador con el nombre: &c<name>"
@@ -253,14 +257,12 @@ messages:
   unknown-subcommand: "&c✖ &7Subcomando desconocido. Usa &6/koth help &7para una lista de comandos."
   no-koths: "&c✖ &7No hay koths para listar."
   koth-list: "&cLista de KOTH:"
-  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name>"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name> &8❙ %minekoth_koth_location_<id>%"
   usage-koth-info: "&c✖ &7Uso: &6/koth info &f<id>"
   no-koth-id: "&c✖ &7No se encontró KOTH con ID &c<id>."
   invalid-id: "&c✖ &7ID de KOTH inválido. Debe ser un número."
   usage-delete: "&c✖ &7Uso: &6/koth delete &f<id>"
   koth-deleted: "&a✔ &7KOTH con ID &a<id> &7eliminado con éxito."
-  no-schedules: "&c✖ &7No hay horarios disponibles."
-  invalid-koth: "&c✖ &7KOTH inválido."
   koth-running: "&c✖ &7KOTH ya está en curso."
   koth-schedule: "&cSe ejecutó el próximo horario &8(&6<name>&8)"
   koth-running-list: "&cKOTHS en curso:"
@@ -296,3 +298,5 @@ messages:
     &8&m-------------------------------------
   players-only: "&c✖ &7Error: &cSolo los jugadores pueden usar este comando."
   no-perrmission: "&c✖ &7No tienes permisos. Requiere: <node>."
+  capturing-action-enemy: "&c<player> esta capturando! <time-left>"
+  capturing-action-team: "&a<player> esta capturando! <time-left>"

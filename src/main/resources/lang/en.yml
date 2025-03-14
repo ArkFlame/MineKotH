@@ -4,7 +4,9 @@
 # Use <colorname> for named colors (e.g., <red>, <blue>, <gold>).
 # Use <gradient:#STARTCOLOR>text</gradient:#ENDCOLOR> for gradients (e.g., red-to-blue).
 # Use <rainbow>text</rainbow> for rainbow-colored text.
-# ====================================================
+# ==================================================== 
+# You can use PlaceholderAPI on all lang messages
+# ==================================================== 
 messages:
   awarded-diamond: "&a&lTIP:&a You have been awarded a diamond for capturing the hill for 30 seconds!"
   awarded-iron: "&a&lTIP:&a You have been awarded an iron ingot for capturing the hill for 30 more seconds!"
@@ -246,21 +248,21 @@ messages:
   usage-tp: "&c✖ &7Usage: &6/koth tp &f<id/name>"
   usage-bet: "&c✖ &7Usage: &6/koth bet &f<amount> <participant> [kothId/name]"
   no-running-koths: "&c✖ &7No koths are running."
-  available-koths: "&cAvailable Koths:"
-  running-koth: "&8❙ &6<name>"
-  no-player: "&c✖ &7Could not find player with name: &c<name>"
-  no-player-data: "&c✖ &7Could not find player data for this player or the player is not online."
-  unknown-subcommand: "&c✖ &7Unknown subcommand. Use &6/koth help &7for a list of commands."
-  no-koths: "&c✖ &7No koths to list."
-  koth-list: "&cKOTH List:"
-  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name>"
-  usage-koth-info: "&c✖ &7Usage: &6/koth info &f<id>"
-  no-koth-id: "&c✖ &7No koth found with ID &c<id>."
-  invalid-id: "&c✖ &7Invalid koth ID. It must be a number."
-  usage-delete: "&c✖ &7Usage: &6/koth delete &f<id>"
-  koth-deleted: "&a✔ &7KOTH with ID &a<id> &7deleted successfully."
   no-schedules: "&c✖ &7No schedules available."
   invalid-koth: "&c✖ &7Invalid KOTH."
+  available-koths: "&cAvailable koths:"
+  running-koth: "&8❙ &6<name>"
+  no-player: "&c✖ &7Couldn't find the player with name: &c<name>"
+  no-player-data: "&c✖ &7No data found of the player or he is not online."
+  unknown-subcommand: "&c✖ &7Unknown subcommand. Use &6/koth help &7for a full list."
+  no-koth-id: "&c✖ &7Koth with id was not found: &c<id>."
+  invalid-id: "&c✖ &7The ID must be a number."
+  usage-delete: "&c✖ &7Usage: &6/koth delete &f<id>"
+  koth-deleted: "&a✔ &7KOTH con ID &a<id> &7was deleted."
+  no-koths: "&c✖ &7No koths to list."
+  koth-list: "&cLists of KOTH:"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name> &8❙ %minekoth_koth_location_<id>%"
+  usage-koth-info: "&c✖ &7Usage: &6/koth info &f<id>"
   koth-running: "&c✖ &7KOTH is already running."
   koth-schedule: "&cRan next schedule &8(&6<name>&8)"
   koth-running-list: "&cKOTHS running:"
@@ -296,3 +298,5 @@ messages:
     &8&m-------------------------------------
   players-only: "&c✖ &7Error: &cOnly players can use this command."
   no-perrmission: "&c✖ &7No permission to do this. Requires: <node>."
+  capturing-action-enemy: "&c<player> is capturing! <time-left>"
+  capturing-action-team: "&a<player> is capturing! <time-left>"

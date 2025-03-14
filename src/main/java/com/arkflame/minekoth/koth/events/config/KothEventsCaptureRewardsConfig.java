@@ -101,7 +101,7 @@ public class KothEventsCaptureRewardsConfig {
                                 .dispatchCommand(MineKoth.getInstance().getServer().getConsoleSender(), command));
             } else if (reward.startsWith("message-key: ")) {
                 String messageKey = reward.substring("message-key: ".length());
-                player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage(messageKey));
+                MineKoth.getInstance().getLangManager().sendMessage(player, messageKey);
             }
         }
     }
