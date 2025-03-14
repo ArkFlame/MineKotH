@@ -58,14 +58,12 @@ public class KothCommand implements CommandExecutor {
                     MineKoth.getInstance().getLangManager().sendMessage(player, "messages.no-koths");
                     break;
                 }
-                player.sendMessage(
-                        MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.koth-list"));
+                MineKoth.getInstance().getLangManager().sendMessage(player, "messages.koth-list");
                 kothManager.getAllkoths().values()
-                        .forEach(koth -> player.sendMessage(
-                                MineKoth.getInstance().getLangManager().getLang(player)
-                                        .getMessage("messages.koth-info-list")
-                                        .replace("<id>", String.valueOf(koth.getId()))
-                                        .replace("<name>", koth.getName())));
+                        .forEach(koth -> MineKoth.getInstance().getLangManager().sendMessage(
+                                player, "messages.koth-info-list",
+                                "<id>", koth.getId(),
+                                "<name>", koth.getName()));
                 break;
 
             case "info":

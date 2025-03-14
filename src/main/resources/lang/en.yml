@@ -261,7 +261,7 @@ messages:
   koth-deleted: "&a✔ &7KOTH con ID &a<id> &7was deleted."
   no-koths: "&c✖ &7No koths to list."
   koth-list: "&cLists of KOTH:"
-  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name> &8❙ %minekoth_koth_location_<id>%"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Name: &f<name> &8❙ &f%minekoth_koth_location_<id>%"
   usage-koth-info: "&c✖ &7Usage: &6/koth info &f<id>"
   koth-running: "&c✖ &7KOTH is already running."
   koth-schedule: "&cRan next schedule &8(&6<name>&8)"

@@ -133,7 +133,7 @@ public class LangManager {
                     throw new IllegalArgumentException("Placeholder name at index " + i + " cannot be null");
                 }
 
-                String placeholder = "<" + placeholders[i] + ">";
+                String placeholder = String.valueOf(placeholders[i]);
                 String replacement = placeholders[i + 1] == null ? "" : String.valueOf(placeholders[i + 1]);
 
                 // Replace all occurrences
@@ -155,7 +155,8 @@ public class LangManager {
             player.sendMessage(message);
         } catch (Exception e) {
             // Log the error instead of letting it crash the plugin
-            MineKoth.getInstance().getLogger().warning("Error sending message to player: " + e.getMessage());
+            MineKoth.getInstance().getLogger().warning("Error sending message to player: " + message);
+            e.printStackTrace();
         }
     }
 

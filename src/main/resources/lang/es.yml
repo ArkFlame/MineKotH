@@ -257,7 +257,7 @@ messages:
   unknown-subcommand: "&c✖ &7Subcomando desconocido. Usa &6/koth help &7para una lista de comandos."
   no-koths: "&c✖ &7No hay koths para listar."
   koth-list: "&cLista de KOTH:"
-  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name> &8❙ %minekoth_koth_location_<id>%"
+  koth-info-list: "&8❙ &6ID: &f<id> &8❙ &6Nombre: &f<name> &8❙ &f%minekoth_koth_location_<id>%"
   usage-koth-info: "&c✖ &7Uso: &6/koth info &f<id>"
   no-koth-id: "&c✖ &7No se encontró KOTH con ID &c<id>."
   invalid-id: "&c✖ &7ID de KOTH inválido. Debe ser un número."
