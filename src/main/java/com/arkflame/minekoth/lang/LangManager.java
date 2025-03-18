@@ -4,10 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.arkflame.mineclans.modernlib.utils.Titles;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.ConfigUtil;
+import com.arkflame.minekoth.utils.Titles;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
