@@ -36,6 +36,7 @@ messages:
   left-zone-subtitle: "&7You left the koth zone"
   seconds-left: "&e<seconds>"
   you-are-capturing-subtitle: "&aYou are capturing"
+  you-are-capturing-action: "&aYou are capturing! <time-left>"
   top-player-name-capturing-subtitle: "&a<topPlayerName> is capturing"
   not-top-player-name-capturing-subtitle: "&c<topPlayerName> is capturing"
   you-won-title: "&aYOU WON"
