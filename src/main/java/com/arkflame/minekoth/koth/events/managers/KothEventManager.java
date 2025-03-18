@@ -82,6 +82,7 @@ public class KothEventManager {
         if (events.contains(currentEvent)) {
             events.remove(currentEvent);
         }
+        MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
 
     /**
@@ -99,7 +100,6 @@ public class KothEventManager {
             iterator.remove();
             end(currentEvent);
         }
-        MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
 
     /**
