@@ -4,30 +4,68 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import com.arkflame.minekoth.koth.KothTime;
 
 public class Times {
-    public static int parseToSeconds(String time) {
-        String lowerTime = time.toLowerCase().trim();
-        int number = getNumber(lowerTime);
-        if (lowerTime.startsWith("s")) {
-            return number;
-        } else if (lowerTime.startsWith("m")) {
-            return number * 60;
-        } else if (lowerTime.startsWith("h")) {
-            return number * 3600;
-        }
-        return 0;
-    }
-
-    public static int getNumber(String time) {
-        try {
-            return Integer.parseInt(time.replaceAll("[^0-9]", ""));
-        } catch (NumberFormatException e) {
+    /**
+     * Parses a time string into seconds.
+     * 
+     * Supported formats:
+     * - Pure number (e.g. "60"): directly interpreted as seconds
+     * - Number with s/sec/second/seconds suffix (e.g. "60s"): interpreted as
+     * seconds
+     * - Number with m/min/minute/minutes suffix (e.g. "5m"): interpreted as minutes
+     * (converted to seconds)
+     * - Number with h/hr/hour/hours suffix (e.g. "1h"): interpreted as hours
+     * (converted to seconds)
+     * 
+     * @param input The time string to parse
+     * @return The time in seconds, or 0 if parsing fails
+     */
+    public static int parseToSeconds(String input) {
+        if (input == null || input.isEmpty()) {
             return 0;
         }
+
+        String time = input.toLowerCase().trim();
+
+        // Try to parse as pure number (seconds)
+        if (time.matches("^\\d+$")) {
+            try {
+                return Integer.parseInt(time);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+
+        // Extract number and unit
+        if (time.matches("^\\d+\\s*[smh].*$")) {
+            // Extract the number part
+            int number;
+            try {
+                number = Integer.parseInt(time.replaceAll("\\D.*$", ""));
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+
+            // Get first character of the unit part (after removing digits and spaces)
+            char unit = time.replaceAll("^\\d+\\s*", "").charAt(0);
+
+            // Convert to seconds based on unit
+            switch (unit) {
+                case 's':
+                    return number;
+                case 'm':
+                    return number * 60;
+                case 'h':
+                    return number * 3600;
+                default:
+                    return 0;
+            }
+        }
+
+        return 0;
     }
 
     public static KothTime parseTimeEntry(String timeEntry) {
