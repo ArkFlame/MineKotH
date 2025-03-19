@@ -71,7 +71,7 @@ public class SetupChatListener implements Listener {
                 return;
             }
             session.setTimeLimit(time);
-            player.sendMessage(lang.getMessage("messages.time-limit-set").replace("<value>", message));
+            player.sendMessage(lang.getMessage("messages.time-limit-set").replace("<value>", Times.formatSeconds(time)));
             if (!session.isCaptureTimeSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-capture-time"));
             }
@@ -82,7 +82,7 @@ public class SetupChatListener implements Listener {
                 return;
             }
             session.setCaptureTime(time);
-            player.sendMessage(lang.getMessage("messages.capture-time-set").replace("<value>", message));
+            player.sendMessage(lang.getMessage("messages.capture-time-set").replace("<value>", Times.formatSeconds(time)));
             
             if (!session.isRewardsSet()) {
                 player.sendMessage(lang.getMessage("messages.put-rewards"));

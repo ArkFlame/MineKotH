@@ -68,6 +68,52 @@ public class Times {
         return 0;
     }
 
+    /**
+     * Converts seconds to a formatted time string.
+     * 
+     * Examples:
+     * - 30 seconds → "30 Seconds"
+     * - 60 seconds → "1 Minute"
+     * - 90 seconds → "1 Minute 30 Seconds"
+     * - 3600 seconds → "1 Hour"
+     * - 3630 seconds → "1 Hour 30 Seconds"
+     * - 3690 seconds → "1 Hour 1 Minute 30 Seconds"
+     * 
+     * @param seconds Total time in seconds
+     * @return Formatted time string
+     */
+    public static String formatSeconds(int seconds) {
+        if (seconds <= 0) {
+            return "0 Seconds";
+        }
+
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        int remainingSeconds = seconds % 60;
+
+        StringBuilder result = new StringBuilder();
+
+        if (hours > 0) {
+            result.append(hours).append(hours == 1 ? " Hour" : " Hours");
+        }
+
+        if (minutes > 0) {
+            if (result.length() > 0) {
+                result.append(" ");
+            }
+            result.append(minutes).append(minutes == 1 ? " Minute" : " Minutes");
+        }
+
+        if (remainingSeconds > 0) {
+            if (result.length() > 0) {
+                result.append(" ");
+            }
+            result.append(remainingSeconds).append(remainingSeconds == 1 ? " Second" : " Seconds");
+        }
+
+        return result.toString();
+    }
+
     public static KothTime parseTimeEntry(String timeEntry) {
         int hour, minute = 0;
         boolean isPm = timeEntry.toLowerCase().contains("pm");
