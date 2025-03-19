@@ -195,7 +195,7 @@ public class SetupSession {
 
         // Regular expression to match valid time limits: number followed by s, m, h, or
         // their variations
-        String timeLimitPattern = "^\\d+\\s?(s|sec|m|min|h|hour|hours|minute)$";
+        String timeLimitPattern = "^\\d+\\s?(s|m|h).*$";
         return message.toLowerCase().matches(timeLimitPattern);
     }
 

@@ -65,21 +65,23 @@ public class SetupChatListener implements Listener {
                 player.sendMessage(lang.getMessage("messages.enter-time-limit"));
             }
         } else if (!session.isTimeLimitSet()) {
-            if (!session.isValidTimeLimit(message)) {
+            int time = Times.parseToSeconds(message);
+            if (!session.isValidTimeLimit(message) || time == 0) {
                 player.sendMessage(lang.getMessage("messages.invalid-time-limit"));
                 return;
             }
-            session.setTimeLimit(Times.parseToSeconds(message));
+            session.setTimeLimit(time);
             player.sendMessage(lang.getMessage("messages.time-limit-set").replace("<value>", message));
             if (!session.isCaptureTimeSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-capture-time"));
             }
         } else if (!session.isCaptureTimeSet()) {
-            if (!session.isValidCaptureTime(message)) {
+            int time = Times.parseToSeconds(message);
+            if (!session.isValidCaptureTime(message) || time == 0) {
                 player.sendMessage(lang.getMessage("messages.invalid-capture-time"));
                 return;
             }
-            session.setCaptureTime(Times.parseToSeconds(message));
+            session.setCaptureTime(time);
             player.sendMessage(lang.getMessage("messages.capture-time-set").replace("<value>", message));
             
             if (!session.isRewardsSet()) {
