@@ -11,7 +11,7 @@
     <!-- Plugin Information -->
     <name>MineKotH</name>
     <description>This plugin was made using the Spigot Boilerplate by ArkFlame Development</description>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <url>https://github.com/arkflame/Spigot-Boilerplate</url>
 
     <properties>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
