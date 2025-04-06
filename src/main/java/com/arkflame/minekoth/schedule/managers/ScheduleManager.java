@@ -6,7 +6,9 @@ import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.KothTime;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -134,21 +136,23 @@ public class ScheduleManager {
         LocalDateTime now = LocalDateTime.now();
         Schedule nearest = null;
         long nearestDelta = Long.MAX_VALUE;
-
+    
         for (Schedule schedule : schedulesById.values()) {
             for (DayOfWeek day : schedule.getDays()) {
-                LocalDateTime scheduleTime = now.with(day)
-                        .withHour(schedule.getHour())
-                        .withMinute(schedule.getMinute())
-                        .withSecond(0)
-                        .withNano(0);
-
+                // Get next occurrence of this day (including today)
+                LocalDateTime scheduleTime = now.with(TemporalAdjusters.nextOrSame(day))
+                    .withHour(schedule.getHour())
+                    .withMinute(schedule.getMinute())
+                    .withSecond(0)
+                    .withNano(0);
+    
+                // If the calculated time is still in the past, move to next week
                 if (scheduleTime.isBefore(now)) {
-                    scheduleTime = scheduleTime.plusWeeks(1);
+                    scheduleTime = scheduleTime.plusWeeks(1).with(TemporalAdjusters.next(day));
                 }
-
-                long delta = scheduleTime.toEpochSecond(java.time.ZoneOffset.UTC) - now.toEpochSecond(java.time.ZoneOffset.UTC);
-
+    
+                long delta = Duration.between(now, scheduleTime).getSeconds();
+    
                 if (delta < nearestDelta) {
                     nearest = schedule;
                     nearestDelta = delta;

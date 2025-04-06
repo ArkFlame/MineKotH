@@ -78,7 +78,7 @@ public class KothEventManager {
 
     private void end(KothEvent currentEvent) {
         currentEvent.clearPlayers();
-        currentEvent.end();
+        currentEvent.setCaptured();
         if (events.contains(currentEvent)) {
             events.remove(currentEvent);
         }

@@ -4,6 +4,7 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Position;
 import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.utils.ConfigUtil;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 

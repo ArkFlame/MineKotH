@@ -228,7 +228,7 @@ public class KothEvent {
             displayWinLoseEffects(player, isWinner(player), topPlayer);
         }
 
-        end();
+        MineKoth.getInstance().getKothEventManager().end();
     }
 
     public void tick() {
@@ -280,7 +280,7 @@ public class KothEvent {
             long timeLimit = koth.getTimeLimit() * 1000L;
 
             if (System.currentTimeMillis() - startTime >= timeLimit) {
-                end();
+                MineKoth.getInstance().getKothEventManager().end();
 
                 // Notify Discord
                 DiscordHook.sendKothTimeLimit(koth.getName());
@@ -365,7 +365,7 @@ public class KothEvent {
         }
     }
 
-    public void end() {
+    public void setCaptured() {
         state = KothEventState.CAPTURED;
         endTime = System.currentTimeMillis();
     }
