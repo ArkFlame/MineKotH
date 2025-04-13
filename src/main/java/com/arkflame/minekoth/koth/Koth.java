@@ -1,9 +1,6 @@
 package com.arkflame.minekoth.koth;
 
-import java.util.Arrays;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
@@ -25,6 +22,9 @@ public class Koth {
     private String days;
     private boolean hologramSpawned = false;
 
+    private Location center;
+    private Location hologramCenter;
+
     public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit,
             int timeToCapture, Rewards rewards, String times, String days) {
         this.id = id;
@@ -37,6 +37,9 @@ public class Koth {
         this.rewards = rewards;
         this.times = times;
         this.days = days;
+
+        this.center = getCenter();
+        this.hologramCenter = getHologamCenter();
     }
 
     public World getWorld() {
@@ -143,6 +146,7 @@ public class Koth {
     }
 
     public Location getCenter() {
+        if (center != null) return center;
         if (firstPosition == null || secondPosition == null)
             return null;
         double x = (firstPosition.getX() + secondPosition.getX()) / 2;
@@ -152,12 +156,22 @@ public class Koth {
         return new Location(getWorld(), x, y, z);
     }
 
-    public void spawnHologram() {
-        Location center = getCenter();
-        if (center == null) {
-            return;
+    public Location getHologamCenter() {
+        if (hologramCenter != null) return hologramCenter;
+        if (this.center == null) return null;
+        Location center = this.center.clone();
+        int attempts = 0;
+        while (center.getBlock().getType().isSolid() && ++attempts < 5) {
+            center.add(0, 1, 0);
         }
         center.add(0.5, 2, 0.5);
+        return center;
+    }
+
+    public void spawnHologram() {
+        if (hologramCenter == null) {
+            return;
+        }
         Configuration config = MineKoth.getInstance().getConfig();
         String[] lines = config.getString("messages.koth-hologram-lines").split("\n");
         for (int i = 0; i < lines.length; i++) {
@@ -165,7 +179,7 @@ public class Koth {
                 lines[i] = lines[i].replace("<id>", String.valueOf(id)).replace("<name>", name);
             }
         }
-        if (HologramUtility.createHologram("koth_" + id, center, lines)) {
+        if (HologramUtility.createHologram("koth_" + id, hologramCenter, lines)) {
             hologramSpawned = true;
         }
     }
