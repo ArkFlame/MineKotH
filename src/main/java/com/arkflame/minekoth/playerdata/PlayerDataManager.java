@@ -95,4 +95,8 @@ public class PlayerDataManager {
         // Replace with custom implementation if needed.
         return new PlayerData();
     }
+
+    public void close() {
+        // Default implementation (empty)
+    }
 }

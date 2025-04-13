@@ -128,7 +128,7 @@ public class MineKoth extends JavaPlugin {
         saveDefaultConfig();
 
         // Initialize database
-        runAsync(() -> {
+        FoliaAPI.runTaskAsync(() -> {
             playerDataManager = PlayerDataInitializer.initializeDatabase(this);
         });
 
@@ -216,7 +216,7 @@ public class MineKoth extends JavaPlugin {
             }
 
             // Load online player data
-            runAsync(() -> {
+            FoliaAPI.runTaskAsync(() -> {
                 for (Player player : getServer().getOnlinePlayers()) {
                     playerDataManager.getAndLoad(player.getUniqueId().toString());
                 }
@@ -228,13 +228,10 @@ public class MineKoth extends JavaPlugin {
         DiscordHook.shutdown();
         MenuUtil.shutdown();
         HologramUtility.clearHolograms();
+        playerDataManager.close();
     }
 
     public boolean isMineClansEnabled() {
         return getServer().getPluginManager().isPluginEnabled("MineClans");
-    }
-
-    public void runAsync(Runnable runnable) {
-        getServer().getScheduler().runTaskAsynchronously(this, runnable);
     }
 }

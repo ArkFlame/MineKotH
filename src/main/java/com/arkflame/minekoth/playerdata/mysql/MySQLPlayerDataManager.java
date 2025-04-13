@@ -73,6 +73,7 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
     /**
      * Closes the database connection pool.
      */
+    @Override
     public void close() {
         if (dataSource != null) {
             dataSource.close();
