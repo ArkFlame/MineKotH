@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+
 /**
  * Manager for MySQLPlayerData instances using HikariCP.
  */
@@ -18,6 +20,10 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
 
     private final HikariDataSource dataSource;
     private final Logger logger;
+
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
 
     /**
      * Constructs a new MySQLPlayerDataManager.
@@ -44,8 +50,7 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
                 + "koth_id INT NOT NULL, "
                 + "value VARCHAR(255) NOT NULL, "
                 + "PRIMARY KEY (player_id, stat_key, koth_id))";
-
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.execute();
             logger.info("Initialized table '" + PLAYER_DATA_TABLE_NAME + "'.");

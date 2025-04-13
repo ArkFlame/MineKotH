@@ -128,7 +128,9 @@ public class MineKoth extends JavaPlugin {
         saveDefaultConfig();
 
         // Initialize database
-        playerDataManager = PlayerDataInitializer.initializeDatabase(this);
+        runAsync(() -> {
+            playerDataManager = PlayerDataInitializer.initializeDatabase(this);
+        });
 
         // Initialize Koth Event Manager
         kothEventManager = new KothEventManager(this);
@@ -214,9 +216,11 @@ public class MineKoth extends JavaPlugin {
             }
 
             // Load online player data
-            for (Player player : getServer().getOnlinePlayers()) {
-                playerDataManager.getAndLoad(player.getUniqueId().toString());
-            }
+            runAsync(() -> {
+                for (Player player : getServer().getOnlinePlayers()) {
+                    playerDataManager.getAndLoad(player.getUniqueId().toString());
+                }
+            });
         }, 20L);
     }
 
@@ -228,5 +232,9 @@ public class MineKoth extends JavaPlugin {
 
     public boolean isMineClansEnabled() {
         return getServer().getPluginManager().isPluginEnabled("MineClans");
+    }
+
+    public void runAsync(Runnable runnable) {
+        getServer().getScheduler().runTaskAsynchronously(this, runnable);
     }
 }
