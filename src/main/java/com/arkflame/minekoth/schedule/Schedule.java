@@ -96,61 +96,7 @@ public class Schedule {
      * @return The next scheduled start time
      */
     private LocalDateTime calculateNextStartTime(LocalDateTime now) {
-        // Initialize start time with the scheduled hour and minute
-        LocalDateTime startTime = now.withHour(getHour()).withMinute(getMinute()).withSecond(0);
-
-        // Find the next scheduled day
-        DayOfWeek currentDay = now.getDayOfWeek();
-        DayOfWeek nextScheduledDay = findNextScheduledDay(currentDay);
-
-        // Adjust the start time based on the next scheduled day
-        startTime = adjustStartTimeForDay(startTime, currentDay, nextScheduledDay);
-
-        // If the calculated time is in the past, move to the next occurrence
-        if (startTime.isBefore(now)) {
-            startTime = startTime.plusWeeks(1);
-        }
-
-        return startTime;
-    }
-
-    /**
-     * Finds the next scheduled day from the current day.
-     * 
-     * @param currentDay The current day of the week
-     * @return The next scheduled day of the week
-     */
-    private DayOfWeek findNextScheduledDay(DayOfWeek currentDay) {
-        return days.stream()
-                .filter(day -> day.getValue() >= currentDay.getValue())
-                .min(Comparator.comparingInt(DayOfWeek::getValue))
-                .orElse(days.stream()
-                        .min(Comparator.comparingInt(DayOfWeek::getValue))
-                        .orElse(null));
-    }
-
-    /**
-     * Adjusts the start time based on the current and next scheduled day.
-     * 
-     * @param startTime        Base start time with hour and minute set
-     * @param currentDay       Current day of the week
-     * @param nextScheduledDay Next scheduled day of the week
-     * @return Adjusted start time
-     */
-    private LocalDateTime adjustStartTimeForDay(LocalDateTime startTime, DayOfWeek currentDay,
-            DayOfWeek nextScheduledDay) {
-        if (nextScheduledDay == null) {
-            // If no day is scheduled, return a time far in the future
-            return startTime.plusYears(1000);
-        }
-
-        // If next scheduled day is in the next week
-        if (nextScheduledDay.getValue() < currentDay.getValue()) {
-            return startTime.plusDays(7 - (currentDay.getValue() - nextScheduledDay.getValue()));
-        }
-
-        // If next scheduled day is later this week
-        return startTime.plusDays(nextScheduledDay.getValue() - currentDay.getValue());
+        return MineKoth.getInstance().getScheduleManager().getNextOccurrence(this);
     }
 
     /**
