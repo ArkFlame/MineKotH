@@ -135,15 +135,6 @@ public class KothEditMenu extends Menu {
                 MineKoth.getInstance().getLangManager().sendMessage(player, "messages.enter-name");
         }
 
-        private void startWorldSession(InventoryClickEvent e) {
-                Player player = (Player) e.getWhoClicked();
-                SetupSession session = new SetupSession(koth);
-                session.setWorldName(null);
-                MineKoth.getInstance().getSessionManager().addSession(player, session);
-                player.closeInventory();
-                MineKoth.getInstance().getLangManager().sendMessage(player, "messages.enter-world-name");
-        }
-
         private void startRegionSession(InventoryClickEvent e) {
                 Player player = (Player) e.getWhoClicked();
                 SetupSession session = new SetupSession(koth);

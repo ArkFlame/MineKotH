@@ -1,7 +1,7 @@
 package com.arkflame.minekoth.setup.session;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -22,7 +22,7 @@ public class SetupSession {
     private int timeLimit;
     private int captureTime;
     private ItemStack[] rewards;
-    private List<String> rewardsCommands = new ArrayList<>();
+    private Collection<String> rewardsCommands = new HashSet<>();
     private LootType lootType;
     private int lootAmount = -1;
     private String worldName;
@@ -42,6 +42,7 @@ public class SetupSession {
         this.timeLimit = koth.getTimeLimit();
         this.captureTime = koth.getTimeToCapture();
         this.rewards = koth.getRewards().getRewardsItems().toArray(new ItemStack[0]);
+        this.rewardsCommands = koth.getRewards().getRewardsCommands();
         this.times = koth.getTimes();
         this.days = koth.getDays();
         this.lootType = koth.getRewards().getLootType();
@@ -83,7 +84,7 @@ public class SetupSession {
         return rewards;
     }
 
-    public List<String> getRewardsCommands() {
+    public Collection<String> getRewardsCommands() {
         return rewardsCommands;
     }
 
