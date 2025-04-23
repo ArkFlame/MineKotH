@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.playerdata.StatValue;
 import com.zaxxer.hikari.HikariDataSource;
