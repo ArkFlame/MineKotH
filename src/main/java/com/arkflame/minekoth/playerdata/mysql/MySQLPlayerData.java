@@ -45,8 +45,10 @@ public class MySQLPlayerData extends PlayerData {
         // Clear any in-memory maps before loading new data.
         clearData();
 
-        String query = "SELECT stat_key, is_total, koth_id, value FROM " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+        String query = "SELECT stat_key, is_total, koth_id, value FROM " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME
+                + " WHERE player_id = ?";
+        try (Connection connection = getConnection();
+                PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, playerId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -55,7 +57,7 @@ public class MySQLPlayerData extends PlayerData {
                     int kothId = rs.getInt("koth_id");
                     String valueStr = rs.getString("value");
                     Number value = parseNumber(valueStr);
-                    
+
                     if (isTotal) {
                         super.setTotal(key, value);
                     } else {
@@ -72,7 +74,8 @@ public class MySQLPlayerData extends PlayerData {
     public void save() {
         // Delete previous entries for this player.
         String deleteQuery = "DELETE FROM " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " WHERE player_id = ?";
-        try (PreparedStatement deleteStmt = getConnection().prepareStatement(deleteQuery)) {
+        try (Connection connection = getConnection();
+                PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
             deleteStmt.setString(1, playerId);
             deleteStmt.executeUpdate();
         } catch (SQLException e) {
@@ -80,8 +83,10 @@ public class MySQLPlayerData extends PlayerData {
         }
 
         // Save total stats.
-        String insertQuery = "INSERT INTO " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME + " (player_id, stat_key, is_total, koth_id, value) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = getConnection().prepareStatement(insertQuery)) {
+        String insertQuery = "INSERT INTO " + MySQLPlayerDataManager.PLAYER_DATA_TABLE_NAME
+                + " (player_id, stat_key, is_total, koth_id, value) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = getConnection();
+                PreparedStatement ps = connection.prepareStatement(insertQuery)) {
             // Save totals.
             for (Map.Entry<String, StatValue> entry : getTotalStats().entrySet()) {
                 ps.setString(1, playerId);

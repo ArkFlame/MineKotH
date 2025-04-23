@@ -2,6 +2,7 @@ package com.arkflame.minekoth.playerdata.mysql;
 
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.playerdata.PlayerDataManager;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
@@ -10,15 +11,14 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-
 /**
  * Manager for MySQLPlayerData instances using HikariCP.
  */
 public class MySQLPlayerDataManager extends PlayerDataManager {
     public static final String PLAYER_DATA_TABLE_NAME = "minekoth_player_data";
 
-    private final HikariDataSource dataSource;
+    private HikariDataSource dataSource;
+    private HikariConfig config;
     private final Logger logger;
 
     public Connection getConnection() throws SQLException {
@@ -26,16 +26,37 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
     }
 
     /**
-     * Constructs a new MySQLPlayerDataManager.
-     *
-     * @param databaseUrl The JDBC URL of the MySQL database.
-     * @param user        The database username.
-     * @param password    The database password.
-     * @param logger      Logger for error messages.
+     * Creates and returns a HikariCP DataSource for the MySQL database.
+     * Returns null if DataSource creation fails.
      */
-    public MySQLPlayerDataManager(HikariDataSource dataSource, Logger logger) {
+    public void generateHikariConfig(String url, String username, String password) {
+        config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(5);
+        config.setConnectionTestQuery("SELECT 1");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    }
+
+    /**
+     * Creates a new MySQLPlayerDataManager instance.
+     *
+     * @param host     The MySQL database host.
+     * @param port     The MySQL database port.
+     * @param database The MySQL database name.
+     * @param username The MySQL database username.
+     * @param password The MySQL database password.
+     * @param logger   The logger for logging messages.
+     */
+    public MySQLPlayerDataManager(String url, String username, String password,
+            Logger logger) {
         this.logger = logger;
-        this.dataSource = dataSource;
+        generateHikariConfig(url, username, password);
+        dataSource = new HikariDataSource(config);
         initializeTables();
     }
 

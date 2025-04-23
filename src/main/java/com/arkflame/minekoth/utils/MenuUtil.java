@@ -85,9 +85,10 @@ public class MenuUtil {
                 }
                 inventory.setItem(entry.getKey(), entry.getValue().getItemStack());
             }
-
-            player.openInventory(inventory);
             openMenus.put(player.getUniqueId(), this);
+            FoliaAPI.runTask(() -> {
+                player.openInventory(inventory);
+            });
         }
 
         public void handleClick(InventoryClickEvent event) {
@@ -174,10 +175,10 @@ public class MenuUtil {
 
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent event) {
-           Menu menu = openMenus.get(event.getPlayer().getUniqueId());
-           if (menu != null) {
-               openMenus.remove(event.getPlayer().getUniqueId());
-           }
+            Menu menu = openMenus.get(event.getPlayer().getUniqueId());
+            if (menu != null) {
+                openMenus.remove(event.getPlayer().getUniqueId());
+            }
         }
     }
 
