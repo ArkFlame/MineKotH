@@ -7,6 +7,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.HologramUtility;
 
 public class Koth {
@@ -146,7 +147,8 @@ public class Koth {
     }
 
     public Location getCenter() {
-        if (center != null) return center;
+        if (center != null)
+            return center;
         if (firstPosition == null || secondPosition == null)
             return null;
         double x = (firstPosition.getX() + secondPosition.getX()) / 2;
@@ -157,8 +159,10 @@ public class Koth {
     }
 
     public Location getHologamCenter() {
-        if (hologramCenter != null) return hologramCenter;
-        if (this.center == null) return null;
+        if (hologramCenter != null)
+            return hologramCenter;
+        if (this.center == null)
+            return null;
         Location center = this.center.clone();
         int attempts = 0;
         while (center.getBlock().getType().isSolid() && ++attempts < 5) {
@@ -179,9 +183,11 @@ public class Koth {
                 lines[i] = lines[i].replace("<id>", String.valueOf(id)).replace("<name>", name);
             }
         }
-        if (HologramUtility.createHologram("koth_" + id, hologramCenter, lines)) {
-            hologramSpawned = true;
-        }
+        FoliaAPI.runTask(() -> {
+            if (HologramUtility.createHologram("koth_" + id, hologramCenter, lines)) {
+                hologramSpawned = true;
+            }
+        });
     }
 
     public void despawnHologram() {

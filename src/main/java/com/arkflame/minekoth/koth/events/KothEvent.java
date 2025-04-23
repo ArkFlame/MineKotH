@@ -7,10 +7,8 @@ import com.arkflame.minekoth.koth.Rewards.LootType;
 import com.arkflame.minekoth.koth.events.bets.KothEventBets;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.playerdata.PlayerData;
-import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.GlowingUtility;
-import com.arkflame.minekoth.utils.MineClansHook;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
@@ -40,26 +38,21 @@ public class KothEvent {
 
     private final Koth koth;
     private KothEventState state;
-    private Collection<Player> playersInZone;
-    private List<CapturingPlayers> playersCapturing;
-    private int timetoCapture;
     private boolean stalemateEnabled;
     private long startTime;
-    private long timeCaptureStarted;
     private long endTime;
     private KothEventStats stats;
     private KothEventBets bets;
+    private KothEventCaptureState captureState;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
         this.state = KothEventState.UNCAPTURED;
-        this.playersInZone = new HashSet<>();
-        this.playersCapturing = new ArrayList<>();
-        this.timetoCapture = koth.getTimeToCapture();
         this.stalemateEnabled = false;
         this.startTime = System.currentTimeMillis();
         this.stats = new KothEventStats();
         this.bets = new KothEventBets();
+        this.captureState = new KothEventCaptureState(koth.getTimeToCapture());
     }
 
     public KothEventStats getStats() {
@@ -82,7 +75,7 @@ public class KothEvent {
         if (player == null)
             return;
 
-        if (isTopPlayer(player)) {
+        if (captureState.isTopPlayer(player)) {
             applyCapturingParticles(player);
         } else {
             clearParticles(player);
@@ -90,14 +83,14 @@ public class KothEvent {
     }
 
     public void updatePlayerState(Player player, boolean entering) {
-        CapturingPlayers oldTopGroup = getTopGroup();
+        CapturingPlayers oldTopGroup = captureState.getTopGroup();
         if (entering) {
-            if (!playersInZone.contains(player)) {
-                Player oldTopPlayer = getTopPlayer();
+            if (!captureState.isInZone(player)) {
+                Player oldTopPlayer = captureState.getTopPlayer();
 
                 // Update capturing players
-                addToCapturingPlayers(player);
-                evaluateState(oldTopGroup);
+                captureState.addToCapturingPlayers(player);
+                updateCapturingGroup(oldTopGroup);
 
                 // Update effects
                 if (MineKoth.getInstance().getConfig().getBoolean("capturing-particles.enabled")) {
@@ -105,7 +98,7 @@ public class KothEvent {
                     updateCapturingParticles(oldTopPlayer);
                 }
 
-                Player topPlayer = getTopPlayer();
+                Player topPlayer = captureState.getTopPlayer();
                 if (player == topPlayer) {
                     Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
                     Titles.sendTitle(player,
@@ -125,16 +118,15 @@ public class KothEvent {
                 Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
         } else {
-            if (playersInZone.contains(player)) {
-                Player oldTopPlayer = getTopPlayer();
+            if (captureState.isCapturing(player)) {
+                Player oldTopPlayer = captureState.getTopPlayer();
 
                 // Update capturing players
-                playersInZone.remove(player);
-                removeFromCapturingPlayers(player);
-                evaluateState(oldTopGroup);
+                captureState.removeFromCapturingPlayers(player);
+                updateCapturingGroup(oldTopGroup);
 
                 // Update effects
-                Player topPlayer = getTopPlayer();
+                Player topPlayer = captureState.getTopPlayer();
                 if (oldTopPlayer != topPlayer) {
                     if (MineKoth.getInstance().getConfig().getBoolean("capturing-effects.enabled")) {
                         updateCapturingParticles(oldTopPlayer);
@@ -159,62 +151,27 @@ public class KothEvent {
         }
     }
 
-    private boolean isSameTeam(Player p1, Player p2) {
-        // Placeholder logic for determining if two players are on the same team.
-        if (MineKoth.getInstance().isMineClansEnabled()) { // MineClans plugin enabled
-            return MineClansHook.isSameTeam(p1, p2);
-        }
-        return false;
-    }
-
-    private void sortCapturingPlayers() {
-        playersCapturing
-                .sort((group1, group2) -> Integer.compare(group2.getPlayers().size(), group1.getPlayers().size()));
-    }
-
-    private void addToCapturingPlayers(Player player) {
-        playersInZone.add(player);
-        for (CapturingPlayers group : playersCapturing) {
-            Player firstPlayer = group.getPlayers().get(0);
-            if (firstPlayer != player && isSameTeam(group.getPlayers().get(0), player)) {
-                group.addPlayer(player);
-                return;
-            }
-        }
-        playersCapturing.add(new CapturingPlayers(player));
-        sortCapturingPlayers();
-    }
-
-    private void removeFromCapturingPlayers(Player player) {
-        playersInZone.remove(player);
-        playersCapturing.removeIf(group -> {
-            group.removePlayer(player);
-            return group.getPlayers().isEmpty();
-        });
-        sortCapturingPlayers();
-    }
-
-    private void evaluateState(CapturingPlayers oldTopGroup) {
+    private void updateCapturingGroup(CapturingPlayers oldTopGroup) {
         if (state == KothEventState.CAPTURED) {
             return;
         }
+        CapturingPlayers newTopGroup = captureState.getTopGroup();
+        if (oldTopGroup == newTopGroup) {
+            return;
+        }
 
-        CapturingPlayers topGroup = getTopGroup();
-        if (topGroup == null) {
+        if (newTopGroup == null) {
             state = KothEventState.UNCAPTURED;
-        } else if (stalemateEnabled && playersCapturing.size() > 1
-                && getTopGroup() == getGroup(0)) {
+        } else if (stalemateEnabled && !captureState.hasMostPlayers(newTopGroup)) {
             state = KothEventState.STALEMATE;
         } else {
-            if (oldTopGroup != topGroup) {
-                updateTimeCaptured();
-            }
+            captureState.updateCapturingGroup();
             state = KothEventState.CAPTURING;
         }
     }
 
     public void setCaptured(CapturingPlayers winners) {
-        Player topPlayer = getTopPlayer();
+        Player topPlayer = winners.getPlayers().get(0);
         giveRewards(winners);
         if (topPlayer != null) {
             bets.giveRewards(topPlayer.getName());
@@ -223,40 +180,55 @@ public class KothEvent {
         // Notify Discord
         DiscordHook.sendKothCaptured(koth.getName(), topPlayer == null ? "No Winner" : topPlayer.getName());
 
+        clearAllParticles();
+
         // Show win/lose effects titles and subtitles
         for (Player player : Bukkit.getOnlinePlayers()) {
-            displayWinLoseEffects(player, isWinner(player), topPlayer);
+            displayWinLoseEffects(player, player == topPlayer, topPlayer);
         }
 
-        MineKoth.getInstance().getKothEventManager().end();
+
+        stats.clearStats();
+        captureState.clearPlayers();
+
+        state = KothEventState.CAPTURED;
+        endTime = System.currentTimeMillis();
+
+        MineKoth.getInstance().getKothEventManager().end(this);
+    }
+
+    private void clearAllParticles() {
+        for (Player player : captureState.getPlayersInZone()) {
+            clearParticles(player);
+        }
     }
 
     public void tick() {
         if (state == KothEventState.CAPTURING) {
-            CapturingPlayers topGroup = playersCapturing.get(0);
-            long secondsLeft = getTimeLeftToCapture() / 1000;
+            CapturingPlayers topGroup = captureState.getTopGroup();
+            long secondsLeft = captureState.getTimeLeftToCapture() / 1000;
             if (secondsLeft <= 0) {
                 setCaptured(topGroup);
             } else {
-                Player topPlayer = getTopPlayer();
+                Player topPlayer = captureState.getTopPlayer();
                 String topPlayerName = topPlayer == null ? "No Winner" : topPlayer.getName();
                 boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) secondsLeft);
 
-                for (Player player : playersInZone) {
+                for (Player player : captureState.getPlayersInZone()) {
                     boolean isTopPlayer = player == topPlayer;
                     boolean isTopGroup = topGroup != null && topGroup.containsPlayer(player);
                     if (isTopPlayer) {
-                        String timeLeftToCapture = getTimeLeftToCaptureFormatted();
+                        String timeLeftToCapture = captureState.getTimeLeftToCaptureFormatted();
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.you-are-capturing-action",
                                 "<time-left>", timeLeftToCapture);
                     } else if (isTopGroup) {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-team",
                                 "<player>", topPlayerName,
-                                "<time-left>", getTimeLeftToCaptureFormatted());
+                                "<time-left>", captureState.getTimeLeftToCaptureFormatted());
                     } else {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-enemy",
                                 "<player>", topPlayerName,
-                                "<time-left>", getTimeLeftToCaptureFormatted());
+                                "<time-left>", captureState.getTimeLeftToCaptureFormatted());
                     }
 
                     if (sendTimeLeftTitle) {
@@ -275,12 +247,13 @@ public class KothEvent {
                         Sounds.play(player, 1.0f, 1.0f, "CLICK");
                     }
                 }
+                captureState.tick();
             }
         } else if (state == KothEventState.UNCAPTURED) {
             long timeLimit = koth.getTimeLimit() * 1000L;
 
             if (System.currentTimeMillis() - startTime >= timeLimit) {
-                MineKoth.getInstance().getKothEventManager().end();
+                MineKoth.getInstance().getKothEventManager().end(this);
 
                 // Notify Discord
                 DiscordHook.sendKothTimeLimit(koth.getName());
@@ -297,11 +270,14 @@ public class KothEvent {
     }
 
     public boolean isWinner(Player player) {
-        CapturingPlayers winners = getTopGroup();
+        CapturingPlayers winners = captureState.getTopGroup();
         return winners == null ? false : winners.containsPlayer(player);
     }
 
     private void giveRewards(CapturingPlayers winners) {
+        if (winners == null) {
+            return;
+        }
         Rewards rewards = koth.getRewards();
         LootType lootType = rewards.getLootType();
         Player topPlayer = winners.getPlayers().get(0); // Assuming the first player is the winner
@@ -365,11 +341,6 @@ public class KothEvent {
         }
     }
 
-    public void setCaptured() {
-        state = KothEventState.CAPTURED;
-        endTime = System.currentTimeMillis();
-    }
-
     public long getTimeSinceEnd() {
         return System.currentTimeMillis() - endTime;
     }
@@ -384,56 +355,6 @@ public class KothEvent {
         } else {
             updatePlayerState(player, false);
         }
-    }
-
-    public CapturingPlayers getGroup(int index) {
-        return playersCapturing.size() > index ? playersCapturing.get(index) : null;
-    }
-
-    public CapturingPlayers getTopGroup() {
-        return getGroup(0);
-    }
-
-    public Player getTopPlayer() {
-        CapturingPlayers topGroup = getTopGroup();
-        return topGroup != null ? topGroup.getPlayers().get(0) : null;
-    }
-
-    public boolean isTopPlayer(Player player) {
-        return player == getTopPlayer();
-    }
-
-    public boolean isCapturing(Player player) {
-        return playersInZone.contains(player);
-    }
-
-    public long getTimeCapturedStarted() {
-        return timeCaptureStarted;
-    }
-
-    public void updateTimeCaptured() {
-        this.timeCaptureStarted = System.currentTimeMillis();
-    }
-
-    public int getTimeToCapture() {
-        return timetoCapture;
-    }
-
-    public long getTimeLeftToCapture() {
-        return (timeCaptureStarted + timetoCapture * 1000) - System.currentTimeMillis();
-    }
-
-    public String getTimeLeftToCaptureFormatted() {
-        long time = (timeCaptureStarted + timetoCapture * 1000) - System.currentTimeMillis();
-        long minutes = time / 60000;
-        long seconds = (time % 60000) / 1000;
-        if (seconds < 0) {
-            return "0";
-        }
-        if (minutes > 0) {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
-        return String.format("%d", seconds);
     }
 
     // Get koth time limit and check if it was exceded comparing it with start time
@@ -451,33 +372,17 @@ public class KothEvent {
         return String.format("%d", seconds);
     }
 
-    public void clearAllEffects() {
-        for (Player player : playersInZone) {
-            clearParticles(player);
-        }
-    }
-
-    private void clearTopGroupEffects() {
-        CapturingPlayers topGroup = getTopGroup();
-        if (topGroup == null) {
-            return;
-        }
-        for (Player player : topGroup.getPlayers()) {
-            clearParticles(player);
-        }
-    }
-
     private void applyCapturingParticles(Player player) {
         if (player != null) {
             MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "COLOURED_DUST", 0.5, 2, 3, 20,
-                    5);
+                    5, 0);
             GlowingUtility.setGlowing(player, ChatColor.RED);
         }
     }
 
     private void applyWinnerParticles(Player player) {
         if (player != null) {
-            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20);
+            MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20, 3);
             GlowingUtility.setGlowing(player, ChatColor.GREEN);
         }
     }
@@ -489,18 +394,30 @@ public class KothEvent {
         }
     }
 
-    public void clearPlayers() {
-        clearTopGroupEffects();
+    public KothEventBets getKothEventBets() {
+        return bets;
+    }
 
-        playersCapturing.clear();
-        playersInZone.clear();
+    public String getTimeLeftToCaptureFormatted() {
+        return captureState.getTimeLeftToCaptureFormatted();
+    }
+
+    public Player getTopPlayer() {
+        return captureState.getTopPlayer();
     }
 
     public Collection<Player> getPlayersInZone() {
-        return playersInZone;
+        return captureState.getPlayersInZone();
     }
 
-    public KothEventBets getKothEventBets() {
-        return bets;
+    public CapturingPlayers getTopGroup() {
+        return captureState.getTopGroup();
+    }
+
+    public void clear() {
+        clearAllParticles();
+        captureState.clearPlayers();
+        stats.clearStats();
+        bets.clearAllBets();
     }
 }

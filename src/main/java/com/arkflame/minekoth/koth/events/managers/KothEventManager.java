@@ -76,10 +76,9 @@ public class KothEventManager {
         DiscordHook.sendKothStart(koth.getName());
     }
 
-    private void end(KothEvent currentEvent) {
-        currentEvent.clearPlayers();
-        currentEvent.setCaptured();
+    public void end(KothEvent currentEvent) {
         if (events.contains(currentEvent)) {
+            currentEvent.clear();
             events.remove(currentEvent);
         }
         MineKoth.getInstance().getScheduleManager().calculateNextKoth();

@@ -145,7 +145,7 @@ public class MineKoth extends JavaPlugin {
         }
 
         // Managers
-        particleScheduler = new ParticleScheduler(this);
+        particleScheduler = new ParticleScheduler();
         getLogger().info("ParticleScheduler initialized.");
 
         // Lang
@@ -182,7 +182,7 @@ public class MineKoth extends JavaPlugin {
         FoliaAPI.runTaskTimerAsync(task -> (kothEventTickTask = new KothEventTickTask()).run(), 20, 20);
 
         // Tasks - Koths
-        FoliaAPI.runTaskTimer(task -> (kothTickTask = new KothTickTask()).run(), 20, 20);
+        FoliaAPI.runTaskTimerAsync(task -> (kothTickTask = new KothTickTask()).run(), 20, 20);
 
         // Commands
         getCommand("koth").setExecutor(new KothCommand());

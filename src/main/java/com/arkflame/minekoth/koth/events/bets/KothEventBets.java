@@ -167,7 +167,7 @@ public class KothEventBets {
         }
     }
 
-    private void clearAllBets() {
+    public void clearAllBets() {
         synchronized (bets) {
             bets.clear();
         }

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 public class CapturingPlayers {
     private final List<Player> players;
+    private int score = 0;
 
     public CapturingPlayers(Player player) {
         this.players = new ArrayList<>();
@@ -29,5 +30,17 @@ public class CapturingPlayers {
 
     public boolean containsPlayer(Player player) {
         return players.contains(player);
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+    
+    public void addScore(int score) {
+        this.score += score;
     }
 }

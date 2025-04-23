@@ -49,4 +49,8 @@ public class KothEventStats {
         KothEventPlayerStats stats = getPlayerStats(uniqueId);
         stats.addDeath();
     }
+
+    public void clearStats() {
+        playerStatsMap.clear();
+    }
 }

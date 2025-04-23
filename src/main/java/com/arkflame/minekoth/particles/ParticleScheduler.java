@@ -4,19 +4,15 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 public class ParticleScheduler {
-
-    private final JavaPlugin plugin;
     private long currentTick = 0;
     private final Map<Long, List<ScheduledParticle>> scheduledParticles = new HashMap<>();
     private final Map<Player, PlayerParticleTrail> playerTrails = new HashMap<>();
 
-    public ParticleScheduler(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public ParticleScheduler() {
         startScheduler();
     }
 
@@ -58,11 +54,11 @@ public class ParticleScheduler {
     }
 
     public void trail(Player player, String particleName) {
-        playerTrails.put(player, new PlayerParticleTrail(player, particleName, 1));
+        playerTrails.put(player, new PlayerParticleTrail(this, player, particleName, 1, 0));
     }
 
     public void trail(Player player, String particleName, int delay) {
-        playerTrails.put(player, new PlayerParticleTrail(player, particleName, delay));
+        playerTrails.put(player, new PlayerParticleTrail(this, player, particleName, delay, 0));
     }
 
     public void removeTrail(Player player) {
@@ -98,36 +94,58 @@ public class ParticleScheduler {
 
     // PlayerParticleTrail Class
     private static class PlayerParticleTrail {
+        private final ParticleScheduler particleScheduler;
         private final Player player;
         private final String particleName;
         private final int delay;
+        private final int times;
+        private int timesRan = 0;
 
-        public PlayerParticleTrail(Player player, String particleName, int delay) {
+        public PlayerParticleTrail(ParticleScheduler particleScheduler, Player player, String particleName, int delay, int times) {
+            this.particleScheduler = particleScheduler;
             this.player = player;
             this.particleName = particleName;
             this.delay = delay;
+            this.times = times;
         }
 
         public int getDelay() {
             return delay;
         }
 
+        public boolean updateTimesRan() {
+            if (timesRan < times || times <= 0) {
+                timesRan++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         public void run() {
-            if (player.isOnline()) {
+            if (player.isOnline() && updateTimesRan()) {
                 ParticleUtil.spawnParticle(player.getLocation(), particleName, 1, 0, 0, 0, 0);
+            } else {
+                particleScheduler.getPlayerTrails().remove(player);
             }
         }
     }
 
-    public void spiralTrail(Player player, String particleName, double radius, double height, int loops, int points, int delay) {
-        PlayerParticleTrail spiralTrail = new PlayerParticleTrail(player, particleName, delay) {
+    public void spiralTrail(Player player, String particleName, double radius, double height, int loops, int points, int delay, int times) {
+        PlayerParticleTrail spiralTrail = new PlayerParticleTrail(this, player, particleName, delay, times) {
             @Override
             public void run() {
-                if (player.isOnline()) {
+                if (player.isOnline() && updateTimesRan()) {
                     ParticleUtil.generateSpiral(player.getLocation(), particleName, radius, height, loops, points);
+                } else {
+                    playerTrails.remove(player);
                 }
             }
         };
         playerTrails.put(player, spiralTrail);
+    }
+
+    public Map<Player, PlayerParticleTrail> getPlayerTrails() {
+        return playerTrails;
     }
 }
