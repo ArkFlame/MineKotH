@@ -52,7 +52,7 @@ public class MineKoth extends JavaPlugin {
     private Economy economy;
     private KothLoader kothLoader;
     private ScheduleLoader scheduleLoader;
-    private PlayerDataManager playerDataManager;
+    private PlayerDataManager playerDataManager = PlayerDataInitializer.initializeDatabase(this, "memory");
 
     public ParticleScheduler getParticleScheduler() {
         return particleScheduler;

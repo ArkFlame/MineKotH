@@ -11,7 +11,10 @@ public class PlayerDataInitializer {
     public static PlayerDataManager initializeDatabase(MineKoth plugin) {
         // Get the storage type from config (mysql, yaml, memory).
         String storageType = plugin.getConfig().getString("player-data.storage", "mysql").toLowerCase();
+        return initializeDatabase(plugin, storageType);
+    }
 
+    public static PlayerDataManager initializeDatabase(MineKoth plugin, String storageType) {
         switch (storageType) {
             case "mysql":
                 // MySQL configuration from config.yml.

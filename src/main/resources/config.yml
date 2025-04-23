@@ -46,7 +46,7 @@ webhook:
   url: "https://discord.com/api/webhooks/1234567890/12345678901234567890"
 
 player-data:
-  storage: "mysql" # options: mysql, yaml, memory
+  storage: "yaml" # options: mysql, yaml, memory
   mysql:
     url: "jdbc:mysql://localhost:3306/db"
     username: "root"
