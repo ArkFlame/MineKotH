@@ -57,13 +57,26 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
         this.logger = logger;
         generateHikariConfig(url, username, password);
         dataSource = new HikariDataSource(config);
-        initializeTables();
+        while (true) {
+            try {
+                initializeTables();
+                break;
+            } catch (SQLException e) {
+                logger.severe("Failed to initialize MySQL tables. Retrying...");
+                try {
+                    Thread.sleep(5000); // Retry after 5 seconds
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
 
     /**
      * Initializes the required tables if they do not exist.
      */
-    private void initializeTables() {
+    private void initializeTables() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS " + PLAYER_DATA_TABLE_NAME + " ("
                 + "player_id VARCHAR(36) NOT NULL, "
                 + "stat_key VARCHAR(255) NOT NULL, "
@@ -75,8 +88,6 @@ public class MySQLPlayerDataManager extends PlayerDataManager {
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.execute();
             logger.info("Initialized table '" + PLAYER_DATA_TABLE_NAME + "'.");
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Failed to initialize table '" + PLAYER_DATA_TABLE_NAME + "'.", e);
         }
     }
 
