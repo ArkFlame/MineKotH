@@ -12,16 +12,16 @@ import com.arkflame.minekoth.utils.MineClansHook;
 
 public class KothEventCaptureState {
     private final int timeToCapture;
-    
+
     private Collection<Player> playersInZone = new HashSet<>();
     private List<CapturingPlayers> playersCapturing = new ArrayList<>();
-    
+
     public KothEventCaptureState(int timeToCapture) {
         this.timeToCapture = timeToCapture;
     }
 
     public long getTimeLeftToCapture() {
-        if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal")) {
+        if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
             return getTopGroup().getScore() * 1000;
         }
         long timeLeftToCapture = ((timeToCapture - (getTopGroup() != null ? getTopGroup().getScore() : 0)) * 1000);
@@ -107,8 +107,8 @@ public class KothEventCaptureState {
     }
 
     public CapturingPlayers getGroup(int index) {
-        return playersCapturing != null && !playersCapturing.isEmpty() && 
-            playersCapturing.size() > index ? playersCapturing.get(index) : null;
+        return playersCapturing != null && !playersCapturing.isEmpty() &&
+                playersCapturing.size() > index ? playersCapturing.get(index) : null;
     }
 
     public CapturingPlayers getTopGroup() {
@@ -132,8 +132,8 @@ public class KothEventCaptureState {
 
     public void updateCapturingGroup() {
         // Reset all scores
-        for (CapturingPlayers group : playersCapturing) {
-            if (MineKoth.getInstance().getConfig().getBoolean("capturing-options.reset-score")) {
+        if (MineKoth.getInstance().getConfig().getBoolean("capturing-options.reset-score", true)) {
+            for (CapturingPlayers group : playersCapturing) {
                 group.setScore(1);
             }
         }
