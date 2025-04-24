@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public class CapturingPlayers {
     private final List<Player> players;
-    private int score = 0;
+    private int score = 1;
 
     public CapturingPlayers(Player player) {
         this.players = new ArrayList<>();

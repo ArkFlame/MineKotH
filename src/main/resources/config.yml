@@ -25,6 +25,13 @@ capturing-effects:
       amplifier: 0
       duration: 40
 
+capturing-options:
+  # Reset score when leaving koths
+  reset-score: true
+  # To win you must reach capture time goal, otherwise
+  # the winner will be the one with the most capture times.
+  capture-time-goal: true
+
 # Common messages used on all languages
 messages:
   schedules:

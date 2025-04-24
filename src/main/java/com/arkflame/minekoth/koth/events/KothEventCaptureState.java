@@ -21,6 +21,9 @@ public class KothEventCaptureState {
     }
 
     public long getTimeLeftToCapture() {
+        if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal")) {
+            return getTopGroup().getScore() * 1000;
+        }
         long timeLeftToCapture = ((timeToCapture - (getTopGroup() != null ? getTopGroup().getScore() : 0)) * 1000);
         return timeLeftToCapture;
     }
@@ -130,7 +133,9 @@ public class KothEventCaptureState {
     public void updateCapturingGroup() {
         // Reset all scores
         for (CapturingPlayers group : playersCapturing) {
-            group.setScore(0);
+            if (MineKoth.getInstance().getConfig().getBoolean("capturing-options.reset-score")) {
+                group.setScore(1);
+            }
         }
     }
 }
