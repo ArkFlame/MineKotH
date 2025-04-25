@@ -7,8 +7,8 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.holograms.HologramsAPIUniversal;
 import com.arkflame.minekoth.utils.FoliaAPI;
-import com.arkflame.minekoth.utils.HologramUtility;
 
 public class Koth {
     private int id;
@@ -184,14 +184,13 @@ public class Koth {
             }
         }
         FoliaAPI.runTask(() -> {
-            if (HologramUtility.createHologram("koth_" + id, hologramCenter, lines)) {
-                hologramSpawned = true;
-            }
+            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, hologramCenter, lines);
+            hologramSpawned = true;
         });
     }
 
     public void despawnHologram() {
-        HologramUtility.deleteHologram("koth_" + id);
+        HologramsAPIUniversal.getHologramsAPI().deleteHologram("koth_" + id);
         hologramSpawned = false;
     }
 

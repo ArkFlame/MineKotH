@@ -43,6 +43,11 @@
             <url>https://repo.codemc.io/repository/maven-public/</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>fancyplugins-releases</id>
+            <name>FancyPlugins Repository</name>
+            <url>https://repo.fancyplugins.de/releases</url>
+        </repository>
     </repositories>
 
     <!-- Dependencies imports -->
@@ -74,6 +79,18 @@
             <groupId>com.github.decentsoftware-eu</groupId>
             <artifactId>decentholograms</artifactId>
             <version>2.8.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.oliver</groupId>
+            <artifactId>FancyHolograms</artifactId>
+            <version>2.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.filoghost.holographicdisplays</groupId>
+            <artifactId>holographicdisplays-api</artifactId>
+            <version>3.0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

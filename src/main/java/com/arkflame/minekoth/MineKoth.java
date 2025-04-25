@@ -7,6 +7,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.minekoth.commands.KothCommand;
+import com.arkflame.minekoth.holograms.HologramsAPIUniversal;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.listeners.KothEventPlayerListener;
 import com.arkflame.minekoth.koth.events.managers.KothEventManager;
@@ -32,7 +33,6 @@ import com.arkflame.minekoth.setup.session.SetupSessionManager;
 import com.arkflame.minekoth.utils.ConfigUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
-import com.arkflame.minekoth.utils.HologramUtility;
 import com.arkflame.minekoth.utils.MenuUtil;
 
 import net.milkbowl.vault.economy.Economy;
@@ -208,12 +208,15 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
+        HologramsAPIUniversal hologramsAPI = HologramsAPIUniversal.getHologramsAPI();
+        if (hologramsAPI.isEnabled()) {
+            getLogger().info("Using " + hologramsAPI.getName() + " for holograms.");
+        } else {
+            getLogger().info("No hologram API found. Using default.");
+        }
 
         // Delay load
         FoliaAPI.runTaskAsync(() -> {
-            // Initialize hologram utility
-            HologramUtility.initialize(this);
-
             // Load all koths
             for (Koth koth : kothLoader.loadAll()) {
                 kothManager.addKoth(koth);
@@ -229,7 +232,7 @@ public class MineKoth extends JavaPlugin {
     public void onDisable() {
         DiscordHook.shutdown();
         MenuUtil.shutdown();
-        HologramUtility.clearHolograms();
+        HologramsAPIUniversal.getHologramsAPI().clearHolograms();
         if (playerDataManager != null) {
             playerDataManager.close();
         }
