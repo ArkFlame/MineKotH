@@ -1,11 +1,12 @@
 package com.arkflame.minekoth.holograms;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public abstract class HologramsAPIUniversal {
-    public static final HologramsAPIUniversal DECENT_HOLOGRAMS = new DecentHolograms();
-    public static final HologramsAPIUniversal HOLOGRAPHIC_DISPLAYS = new HolographicDisplays();
-    public static final HologramsAPIUniversal FANCY_HOLOGRAMS = new FancyHolograms();
+    public static HologramsAPIUniversal DECENT_HOLOGRAMS;
+    public static HologramsAPIUniversal HOLOGRAPHIC_DISPLAYS;
+    public static HologramsAPIUniversal FANCY_HOLOGRAMS;
     public static final HologramsAPIUniversal NONE = new HologramsAPIUniversal("None") {
         @Override
         public void createHologram(String id, Location location, String... text) {
@@ -29,34 +30,24 @@ public abstract class HologramsAPIUniversal {
     };
 
     public static final HologramsAPIUniversal getHologramsAPI() {
-        if (DECENT_HOLOGRAMS.isEnabled()) {
-            return DECENT_HOLOGRAMS;
-        } else if (HOLOGRAPHIC_DISPLAYS.isEnabled()) {
-            return HOLOGRAPHIC_DISPLAYS;
-        } else if (FANCY_HOLOGRAMS.isEnabled()) {
-            return FANCY_HOLOGRAMS;
+        if (Bukkit.getPluginManager().isPluginEnabled("DecentHolograms")) {
+            return DECENT_HOLOGRAMS = DECENT_HOLOGRAMS != null ? DECENT_HOLOGRAMS : new DecentHolograms();
+        } else if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            return HOLOGRAPHIC_DISPLAYS = HOLOGRAPHIC_DISPLAYS != null ? HOLOGRAPHIC_DISPLAYS : new HolographicDisplays();
+        } else if (Bukkit.getPluginManager().isPluginEnabled("FancyHolograms")) {
+            return FANCY_HOLOGRAMS = FANCY_HOLOGRAMS != null ? FANCY_HOLOGRAMS : new FancyHolograms();
         }
         return NONE;
     }
 
     private String name;
-    private boolean enabled;
     
     public HologramsAPIUniversal(String name) {
         this.name = name;
-        this.enabled = false;
     }
 
     public String getName() {
         return name;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public abstract void createHologram(String id, Location location, String... text);

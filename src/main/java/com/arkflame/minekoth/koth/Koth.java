@@ -24,7 +24,7 @@ public class Koth {
     private boolean hologramSpawned = false;
 
     private Location center;
-    private Location hologramCenter;
+    private Location safeCenter;
 
     public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit,
             int timeToCapture, Rewards rewards, String times, String days) {
@@ -40,7 +40,7 @@ public class Koth {
         this.days = days;
 
         this.center = getCenter();
-        this.hologramCenter = getHologamCenter();
+        this.safeCenter = getSafeCenter();
     }
 
     public World getWorld() {
@@ -158,9 +158,9 @@ public class Koth {
         return new Location(getWorld(), x, y, z);
     }
 
-    public Location getHologamCenter() {
-        if (hologramCenter != null)
-            return hologramCenter;
+    public Location getSafeCenter() {
+        if (safeCenter != null)
+            return safeCenter;
         if (this.center == null)
             return null;
         Location center = this.center.clone();
@@ -173,7 +173,7 @@ public class Koth {
     }
 
     public void spawnHologram() {
-        if (hologramCenter == null) {
+        if (safeCenter == null) {
             return;
         }
         Configuration config = MineKoth.getInstance().getConfig();
@@ -184,7 +184,7 @@ public class Koth {
             }
         }
         FoliaAPI.runTask(() -> {
-            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, hologramCenter, lines);
+            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, safeCenter, lines);
             hologramSpawned = true;
         });
     }

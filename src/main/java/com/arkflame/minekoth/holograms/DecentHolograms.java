@@ -1,6 +1,5 @@
 package com.arkflame.minekoth.holograms;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import eu.decentsoftware.holograms.api.DHAPI;
@@ -11,15 +10,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DecentHolograms extends HologramsAPIUniversal {
-    private final Map<String, Hologram> hologramIds = new ConcurrentHashMap<>();
+    private final Map<String, Hologram> holograms = new ConcurrentHashMap<>();
 
     public DecentHolograms() {
         super("DecentHolograms");
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return Bukkit.getPluginManager().isPluginEnabled("DecentHolograms");
     }
 
     @Override
@@ -32,8 +26,8 @@ public class DecentHolograms extends HologramsAPIUniversal {
             return;
         }
 
-        if (hologramIds.containsKey(id)) {
-            Hologram oldHologram = hologramIds.remove(id);
+        if (holograms.containsKey(id)) {
+            Hologram oldHologram = holograms.remove(id);
             if (oldHologram != null) {
                 id = oldHologram.getName();
                 oldHologram.delete();
@@ -42,7 +36,7 @@ public class DecentHolograms extends HologramsAPIUniversal {
 
         Hologram hologram = DHAPI.createHologram(id, location, false, Arrays.asList(text));
         if (hologram != null) {
-            hologramIds.put(id, hologram);
+            holograms.put(id, hologram);
             return;
         } else {
             DHAPI.removeHologram(id);
@@ -51,7 +45,7 @@ public class DecentHolograms extends HologramsAPIUniversal {
 
     @Override
     public void deleteHologram(String id) {
-        Hologram hologram = hologramIds.remove(id);
+        Hologram hologram = holograms.remove(id);
         if (hologram != null) {
             hologram.delete();
         }
@@ -59,7 +53,7 @@ public class DecentHolograms extends HologramsAPIUniversal {
 
     @Override
     public void updateHologram(String id, String... text) {
-        Hologram hologram = hologramIds.get(id);
+        Hologram hologram = holograms.get(id);
         if (hologram != null) {
             DHAPI.setHologramLines(hologram, Arrays.asList(text));
         }
@@ -67,9 +61,9 @@ public class DecentHolograms extends HologramsAPIUniversal {
 
     @Override
     public void clearHolograms() {
-        for (Hologram hologram : hologramIds.values()) {
+        for (Hologram hologram : holograms.values()) {
             hologram.delete();
         }
-        hologramIds.clear();
+        holograms.clear();
     }
 }

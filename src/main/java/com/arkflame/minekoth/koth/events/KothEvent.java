@@ -8,6 +8,7 @@ import com.arkflame.minekoth.koth.events.bets.KothEventBets;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.utils.DiscordHook;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
@@ -75,79 +76,81 @@ public class KothEvent {
         if (player == null)
             return;
 
-        if (captureState.isTopPlayer(player)) {
+        if (captureState.isTopPlayer(player) && captureState.isInZone(player)) {
             applyCapturingParticles(player);
         } else {
             clearParticles(player);
         }
     }
 
-    public void updatePlayerState(Player player, boolean entering) {
+    public void enterKoth(Player player) {
         CapturingPlayers oldTopGroup = captureState.getTopGroup();
-        if (entering) {
-            if (!captureState.isInZone(player)) {
-                Player oldTopPlayer = captureState.getTopPlayer();
+        if (!captureState.isInZone(player)) {
+            Player oldTopPlayer = captureState.getTopPlayer();
 
-                // Update capturing players
-                captureState.addToCapturingPlayers(player);
-                updateCapturingGroup(oldTopGroup);
+            // Update capturing players
+            captureState.addToCapturingPlayers(player);
+            updateCapturingGroup(oldTopGroup);
 
-                // Update effects
-                if (MineKoth.getInstance().getConfig().getBoolean("capturing-particles.enabled")) {
-                    updateCapturingParticles(player);
+            // Update effects
+            if (MineKoth.getInstance().getConfig().getBoolean("capturing-particles.enabled")) {
+                updateCapturingParticles(player);
+                updateCapturingParticles(oldTopPlayer);
+            }
+
+            Player topPlayer = captureState.getTopPlayer();
+            if (player == topPlayer) {
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                Titles.sendTitle(player,
+                        lang.getMessage("messages.capturing-title"),
+                        lang.getMessage("messages.capturing-subtitle"),
+                        10, 20, 10);
+            } else {
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                Titles.sendTitle(player,
+                        lang.getMessage("messages.entering-zone-title"),
+                        (oldTopGroup.containsPlayer(player)
+                                ? lang.getMessage("messages.top-player-capturing-prefix")
+                                : lang.getMessage("messages.not-top-player-capturing-prefix")) + topPlayer.getName()
+                                + " " + lang.getMessage("messages.is-capturing"),
+                        10, 20, 10);
+            }
+            Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING", "BLOCK_NOTE_BLOCK_PLING");
+        }
+    }
+
+    public void leaveKoth(Player player) {
+        CapturingPlayers oldTopGroup = captureState.getTopGroup();
+        if (captureState.isCapturing(player)) {
+            Player oldTopPlayer = captureState.getTopPlayer();
+
+            // Update capturing players
+            captureState.removeFromCapturingPlayers(player);
+            updateCapturingGroup(oldTopGroup);
+
+            // Update effects
+            Player topPlayer = captureState.getTopPlayer();
+            if (oldTopPlayer != topPlayer) {
+                if (MineKoth.getInstance().getConfig().getBoolean("capturing-effects.enabled")) {
                     updateCapturingParticles(oldTopPlayer);
+                    updateCapturingParticles(topPlayer);
                 }
-
-                Player topPlayer = captureState.getTopPlayer();
-                if (player == topPlayer) {
-                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-                    Titles.sendTitle(player,
-                            lang.getMessage("messages.capturing-title"),
-                            lang.getMessage("messages.capturing-subtitle"),
-                            10, 20, 10);
-                } else {
-                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-                    Titles.sendTitle(player,
-                            lang.getMessage("messages.entering-zone-title"),
-                            (oldTopGroup.containsPlayer(player)
-                                    ? lang.getMessage("messages.top-player-capturing-prefix")
-                                    : lang.getMessage("messages.not-top-player-capturing-prefix")) + topPlayer.getName()
-                                    + " " + lang.getMessage("messages.is-capturing"),
-                            10, 20, 10);
-                }
-                Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING");
             }
-        } else {
-            if (captureState.isCapturing(player)) {
-                Player oldTopPlayer = captureState.getTopPlayer();
-
-                // Update capturing players
-                captureState.removeFromCapturingPlayers(player);
-                updateCapturingGroup(oldTopGroup);
-
-                // Update effects
-                Player topPlayer = captureState.getTopPlayer();
-                if (oldTopPlayer != topPlayer) {
-                    if (MineKoth.getInstance().getConfig().getBoolean("capturing-effects.enabled")) {
-                        updateCapturingParticles(oldTopPlayer);
-                        updateCapturingParticles(topPlayer);
-                    }
-                }
-                if (player == oldTopPlayer) {
-                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-                    Titles.sendTitle(player,
-                            lang.getMessage("messages.leaving-koth-title"),
-                            lang.getMessage("messages.no-longer-capturing-subtitle"),
-                            10, 20, 10);
-                } else {
-                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-                    Titles.sendTitle(player,
-                            lang.getMessage("messages.leaving-koth-title"),
-                            lang.getMessage("messages.left-zone-subtitle"),
-                            10, 20, 10);
-                }
-                Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS");
+            if (player == oldTopPlayer) {
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                Titles.sendTitle(player,
+                        lang.getMessage("messages.leaving-koth-title"),
+                        lang.getMessage("messages.no-longer-capturing-subtitle"),
+                        10, 20, 10);
+            } else {
+                Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                Titles.sendTitle(player,
+                        lang.getMessage("messages.leaving-koth-title"),
+                        lang.getMessage("messages.left-zone-subtitle"),
+                        10, 20, 10);
             }
+            Sounds.play(player, 1.0f, 1.0f, "NOTE_BASS", "BLOCK_NOTE_BLOCK_BASS");
+            clearParticles(player);
         }
     }
 
@@ -192,8 +195,6 @@ public class KothEvent {
 
         state = KothEventState.CAPTURED;
         endTime = System.currentTimeMillis();
-
-        MineKoth.getInstance().getKothEventManager().end(this);
     }
 
     private void clearAllParticles() {
@@ -360,9 +361,9 @@ public class KothEvent {
 
     public void updatePlayerState(Player player, Location to, boolean dead) {
         if (koth.isInside(to) && !dead) {
-            updatePlayerState(player, true);
+            enterKoth(player);
         } else {
-            updatePlayerState(player, false);
+            leaveKoth(player);
         }
     }
 
@@ -393,6 +394,9 @@ public class KothEvent {
         if (player != null) {
             MineKoth.getInstance().getParticleScheduler().spiralTrail(player, "HAPPY_VILLAGER", 0.5, 2, 3, 20, 20, 3);
             GlowingUtility.setGlowing(player, ChatColor.GREEN);
+            FoliaAPI.runTask(() -> {
+                GlowingUtility.unsetGlowing(player);
+            }, 60L);
         }
     }
 

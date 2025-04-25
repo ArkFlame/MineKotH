@@ -72,26 +72,17 @@ public class KothEventManager {
     }
 
     public void end(KothEvent currentEvent) {
-        if (events.contains(currentEvent)) {
+        if (events.remove(currentEvent)) {
             currentEvent.clear();
-            events.remove(currentEvent);
         }
         MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
 
-    /**
-     * Ends the currently active kothEvent.
-     * 
-     * @throws IllegalStateException if no event is active.
-     */
     public void end() {
         if (!isEventActive()) {
             return;
         }
-        Iterator<KothEvent> iterator = events.iterator();
-        while (iterator.hasNext()) {
-            KothEvent currentEvent = iterator.next();
-            iterator.remove();
+        for (KothEvent currentEvent : getRunningKoths()) {
             end(currentEvent);
         }
     }
@@ -127,7 +118,7 @@ public class KothEventManager {
                     // The koth was captured
                     if (currentEvent.getState() == KothEvent.KothEventState.CAPTURED) {
                         Koth koth = currentEvent.getKoth();
-                        Location location = koth.getCenter();
+                        Location location = koth.getSafeCenter();
 
                         // Play 3 fireworks in the last 3 seconds
                         FoliaAPI.runTaskForRegion(location, () -> {

@@ -161,6 +161,7 @@ public class KothCommand implements CommandExecutor {
                 break;
 
             case "stop":
+            case "end":
                 if (!sender.hasPermission("minekoth.command.stop")) {
                     sender.sendMessage(
                             MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.no-permission")

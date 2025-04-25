@@ -209,10 +209,10 @@ public class MineKoth extends JavaPlugin {
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
         HologramsAPIUniversal hologramsAPI = HologramsAPIUniversal.getHologramsAPI();
-        if (hologramsAPI.isEnabled()) {
+        if (hologramsAPI != HologramsAPIUniversal.NONE) {
             getLogger().info("Using " + hologramsAPI.getName() + " for holograms.");
         } else {
-            getLogger().info("No hologram API found. Using default.");
+            getLogger().info("No hologram API found. Install any of the following: DecentHolograms, HolographicDisplays, or FancyHolograms.");
         }
 
         // Delay load
