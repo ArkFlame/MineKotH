@@ -85,7 +85,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                     break;
                 case "playername":
                     if (event != null && arg2 != null) {
-                        CapturingPlayers players = event.getGroup(Integer.parseInt(arg2));
+                        CapturingPlayers players = event.getGroup(Integer.parseInt(arg2) - 1);
                         if (players != null) {
                             return players.getPlayers().stream()
                                     .map(Player::getName)

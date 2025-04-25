@@ -439,6 +439,6 @@ public class KothEvent {
     }
 
     public CapturingPlayers getGroup(int position) {
-        return captureState.getGroup(position + 1);
+        return captureState.getGroup(position);
     }
 }
