@@ -64,10 +64,12 @@ public class KothEventCaptureState {
 
     public void removeFromCapturingPlayers(Player player) {
         playersInZone.remove(player);
-        playersCapturing.removeIf(group -> {
-            group.removePlayer(player);
-            return group.getPlayers().isEmpty();
-        });
+        if (MineKoth.getInstance().getConfig().getBoolean("capturing-options.reset-score", true)) {
+            playersCapturing.removeIf(group -> {
+                group.removePlayer(player);
+                return group.getPlayers().isEmpty();
+            });
+        }
         sortCapturingPlayers();
     }
 
@@ -125,17 +127,40 @@ public class KothEventCaptureState {
     }
 
     public void tick() {
-        for (CapturingPlayers group : playersCapturing) {
-            group.addScore(1);
+        if (!isAnyoneCapturing()) {
+            return;
         }
+        for (CapturingPlayers group : playersCapturing) {
+            for (Player player : group.getPlayers()) {
+                if (isCapturing(player)) {
+                    group.addScore(1);
+                    break;
+                }
+            }
+        }
+        sortCapturingPlayers();
     }
 
     public void updateCapturingGroup() {
         // Reset all scores
         if (MineKoth.getInstance().getConfig().getBoolean("capturing-options.reset-score", true)) {
             for (CapturingPlayers group : playersCapturing) {
-                group.setScore(1);
+                group.setScore(0);
             }
         }
+    }
+
+    public CapturingPlayers getGroup(Player player) {
+        for (CapturingPlayers group : playersCapturing) {
+            if (group.getPlayers().contains(player)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    public int getPosition(Player player) {
+        CapturingPlayers group = getGroup(player);
+        return group != null ? playersCapturing.indexOf(group) + 1 : -1;
     }
 }

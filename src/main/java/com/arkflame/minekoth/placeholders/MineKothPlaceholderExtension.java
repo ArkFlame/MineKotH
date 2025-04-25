@@ -33,35 +33,66 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "1.1.1";
+        return MineKoth.getInstance().getDescription().getVersion();
     }
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
         if (identifier.startsWith("koth_")) {
             String[] parts = identifier.split("_");
-            String kothId = parts.length > 2 ? parts[2] : null;
+            String arg2 = parts.length > 2 ? parts[2] : null;
+            KothEvent event = getCurrentKothEvent();
             switch (parts[1]) {
                 case "name":
-                    return kothId == null ? getKothName() : getKothNameById(kothId);
+                    return arg2 == null ? getKothName() : getKothNameById(arg2);
                 case "state":
-                    return kothId == null ? getKothState() : getKothStateById(kothId);
+                    return arg2 == null ? getKothState() : getKothStateById(arg2);
                 case "capturer":
-                    return kothId == null ? getKothCapturer() : getKothCapturerById(kothId);
+                    return arg2 == null ? getKothCapturer() : getKothCapturerById(arg2);
                 case "time":
-                    return kothId == null ? getKothTime() : getKothTimeById(kothId);
+                    return arg2 == null ? getKothTime() : getKothTimeById(arg2);
                 case "location":
-                    return kothId == null ? getKothLocation() : getKothLocationById(kothId);
-                case "top_player":
+                    return arg2 == null ? getKothLocation() : getKothLocationById(arg2);
+                case "topplayer":
                     return getKothTopPlayer();
-                case "capturing_players":
+                case "capturingplayers":
                     return getKothCapturingPlayers();
                 case "winner":
                     return getKothWinner();
-                case "time_since_end":
+                case "timesinceend":
                     return getKothTimeSinceEnd();
-                case "is_stalemate":
+                case "isstalemate":
                     return getKothIsStalemate();
+                case "capturetime":
+                    if (event != null) {
+                        if (arg2 != null) {
+                            CapturingPlayers players = event.getGroup(Integer.parseInt(arg2));
+                            if (players != null) {
+                                return players.getCaptureTimeFormatted();
+                            }
+                        }
+                        CapturingPlayers players = event.getGroup(player);
+                        if (players != null) {
+                            return players.getCaptureTimeFormatted();
+                        }
+                    }
+                    break;
+                case "position":
+                    if (event != null) {
+                        int position = event.getPosition(player);
+                        return position == -1 ? NONE : String.valueOf(position);
+                    }
+                    break;
+                case "playername":
+                    if (event != null && arg2 != null) {
+                        CapturingPlayers players = event.getGroup(Integer.parseInt(arg2));
+                        if (players != null) {
+                            return players.getPlayers().stream()
+                                    .map(Player::getName)
+                                    .collect(Collectors.joining(", "));
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

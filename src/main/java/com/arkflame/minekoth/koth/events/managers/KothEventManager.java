@@ -14,6 +14,7 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.PotionEffectUtil;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
+import com.arkflame.minekoth.utils.Worlds;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +22,6 @@ import java.util.List;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -65,12 +65,7 @@ public class KothEventManager {
                     10, 20, 10);
         }
         Location center = koth.getCenter();
-        if (center != null) {
-            World world = center.getWorld();
-            if (world != null) {
-                world.strikeLightningEffect(center);
-            }
-        }
+        Worlds.strikeLightningEffect(center);
 
         // Notify Discord
         DiscordHook.sendKothStart(koth.getName());

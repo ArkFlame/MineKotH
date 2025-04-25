@@ -1,13 +1,13 @@
 package com.arkflame.minekoth.koth.events.random;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.utils.Titles;
+import com.arkflame.minekoth.utils.Worlds;
 
 public class LightningStrikeEvent extends RandomEvent {
     private final int damage;
@@ -25,10 +25,7 @@ public class LightningStrikeEvent extends RandomEvent {
             return;
 
         Location center = event.getKoth().getCenter();
-        World world = center.getWorld();
-
-        world.strikeLightningEffect(center);
-
+        Worlds.strikeLightning(center);
         // Damage nearby players
         for (Player player : event.getPlayersInZone()) {
             if (player.getLocation().distance(center) <= 3) {

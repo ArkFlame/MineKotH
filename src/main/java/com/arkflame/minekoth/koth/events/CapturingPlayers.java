@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public class CapturingPlayers {
     private final List<Player> players;
-    private int score = 1;
+    private int score = 0;
 
     public CapturingPlayers(Player player) {
         this.players = new ArrayList<>();
@@ -42,5 +42,9 @@ public class CapturingPlayers {
     
     public void addScore(int score) {
         this.score += score;
+    }
+
+    public String getCaptureTimeFormatted() {
+        return String.format("%02d:%02d", score / 60, score % 60);
     }
 }

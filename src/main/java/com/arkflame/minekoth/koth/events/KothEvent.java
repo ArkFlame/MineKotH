@@ -187,7 +187,6 @@ public class KothEvent {
             displayWinLoseEffects(player, player == topPlayer, topPlayer);
         }
 
-
         stats.clearStats();
         captureState.clearPlayers();
 
@@ -203,11 +202,21 @@ public class KothEvent {
         }
     }
 
+    public boolean hasReachedTimeLimit() {
+        long timeLimit = koth.getTimeLimit() * 1000L;
+        return System.currentTimeMillis() - startTime > timeLimit;
+    }
+
     public void tick() {
         if (state == KothEventState.CAPTURING) {
             CapturingPlayers topGroup = captureState.getTopGroup();
             long secondsLeft = captureState.getTimeLeftToCapture() / 1000;
-            if (secondsLeft <= 0) {
+            boolean isCaptureTimeGoal = MineKoth.getInstance().getConfig()
+                    .getBoolean("capturing-options.capture-time-goal", true);
+            if (!isCaptureTimeGoal && hasReachedTimeLimit()) {
+                setCaptured(topGroup);
+            } else if ((secondsLeft <= 0 &&
+                    isCaptureTimeGoal)) {
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = captureState.getTopPlayer();
@@ -230,7 +239,9 @@ public class KothEvent {
                                 "<player>", topPlayerName,
                                 "<time-left>", captureState.getTimeLeftToCaptureFormatted());
                     }
-
+                    if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
+                        sendTimeLeftTitle = false;
+                    }
                     if (sendTimeLeftTitle) {
                         Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
                         Titles.sendTitle(player,
@@ -250,9 +261,7 @@ public class KothEvent {
                 captureState.tick();
             }
         } else if (state == KothEventState.UNCAPTURED) {
-            long timeLimit = koth.getTimeLimit() * 1000L;
-
-            if (System.currentTimeMillis() - startTime >= timeLimit) {
+            if (hasReachedTimeLimit()) {
                 MineKoth.getInstance().getKothEventManager().end(this);
 
                 // Notify Discord
@@ -419,5 +428,17 @@ public class KothEvent {
         captureState.clearPlayers();
         stats.clearStats();
         bets.clearAllBets();
+    }
+
+    public CapturingPlayers getGroup(Player player) {
+        return captureState.getGroup(player);
+    }
+
+    public int getPosition(Player player) {
+        return captureState.getPosition(player);
+    }
+
+    public CapturingPlayers getGroup(int position) {
+        return captureState.getGroup(position + 1);
     }
 }
