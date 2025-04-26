@@ -22,6 +22,34 @@ public class MenuUtil {
         Bukkit.getPluginManager().registerEvents(new MenuListener(), plugin);
     }
 
+    public static void addMenu(Player player, Menu menu) {
+        openMenus.put(player.getUniqueId(), menu);
+    }
+
+    public static boolean removeMenu(Player player) {
+        return openMenus.remove(player.getUniqueId()) != null;
+    }
+
+    public static boolean hasMenu(Player player) {
+        return openMenus.containsKey(player.getUniqueId());
+    }
+
+    public static Menu getMenu(Player player) {
+        return openMenus.get(player.getUniqueId());
+    }
+
+    public static void shutdown() {
+        Iterator<Map.Entry<UUID, Menu>> iterator = openMenus.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Menu> entry = iterator.next();
+            Player player = Bukkit.getPlayer(entry.getKey());
+            if (player != null) {
+                player.closeInventory();
+            }
+            iterator.remove();
+        }
+    }
+
     public static class Menu {
         private final String title;
         private final int size;
@@ -85,8 +113,9 @@ public class MenuUtil {
                 }
                 inventory.setItem(entry.getKey(), entry.getValue().getItemStack());
             }
-            openMenus.put(player.getUniqueId(), this);
             FoliaAPI.runTask(() -> {
+                player.closeInventory();
+                addMenu(player, this);
                 player.openInventory(inventory);
             });
         }
@@ -157,7 +186,7 @@ public class MenuUtil {
         @EventHandler
         public void onInventoryClick(InventoryClickEvent event) {
             Player player = (Player) event.getWhoClicked();
-            Menu menu = openMenus.get(player.getUniqueId());
+            Menu menu = MenuUtil.getMenu(player);
 
             if (menu != null) {
                 event.setCancelled(true);
@@ -168,29 +197,20 @@ public class MenuUtil {
         @EventHandler
         public void onInventoryDrag(InventoryDragEvent event) {
             Player player = (Player) event.getWhoClicked();
-            if (openMenus.containsKey(player.getUniqueId())) {
+            if (hasMenu(player)) {
                 event.setCancelled(true);
             }
         }
 
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent event) {
-            Menu menu = openMenus.get(event.getPlayer().getUniqueId());
-            if (menu != null) {
-                openMenus.remove(event.getPlayer().getUniqueId());
+            if (event.getPlayer() instanceof Player) {
+                Player player = (Player) event.getPlayer();
+                Menu menu = MenuUtil.getMenu(player);
+                if (menu != null) {
+                    MenuUtil.removeMenu(player);
+                }
             }
-        }
-    }
-
-    public static void shutdown() {
-        Iterator<Map.Entry<UUID, Menu>> iterator = openMenus.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<UUID, Menu> entry = iterator.next();
-            Player player = Bukkit.getPlayer(entry.getKey());
-            if (player != null) {
-                player.closeInventory();
-            }
-            iterator.remove();
         }
     }
 }

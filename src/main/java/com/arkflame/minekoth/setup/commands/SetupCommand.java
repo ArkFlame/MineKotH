@@ -8,6 +8,7 @@ import com.arkflame.minekoth.koth.Rewards;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.session.SetupSession;
+import com.arkflame.minekoth.utils.Times;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -149,7 +150,7 @@ public class SetupCommand {
         Koth koth = createKothFromSession(sessionId, session);
         MineKoth.getInstance().getSessionManager().removeSession(player);
         MineKoth.getInstance().getKothManager().addKoth(koth);
-        MineKoth.getInstance().getScheduleManager().scheduleKoth(koth.getId(), session.getTimes(), session.getDays());
+        MineKoth.getInstance().getScheduleManager().scheduleKoth(koth.getId(), session.getTimes(), Times.parseToDays(session.getDays()));
         MineKoth.getInstance().getKothLoader().save(koth);
         koth.spawnHologram();
 

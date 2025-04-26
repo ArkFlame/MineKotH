@@ -167,4 +167,27 @@ public class Times {
 
         return days;
     }
+
+    public static String[] parseToDays(String rawDays) {
+        if (rawDays == null || rawDays.trim().isEmpty()) {
+            return new String[0];
+        }
+
+        // Split the input string by commas and/or whitespace characters
+        String[] tokens = rawDays.trim().split("[,\\s]+");
+        List<String> result = new ArrayList<>();
+
+        for (String token : tokens) {
+            try {
+                // Convert the token to uppercase and validate against DayOfWeek enum
+                DayOfWeek day = DayOfWeek.valueOf(token.toUpperCase());
+                result.add(day.name());
+            } catch (IllegalArgumentException e) {
+                // Skip invalid day names
+                System.err.println("Invalid day: " + token);
+            }
+        }
+
+        return result.toArray(new String[0]);
+    }
 }

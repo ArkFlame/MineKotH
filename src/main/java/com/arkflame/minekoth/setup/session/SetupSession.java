@@ -218,7 +218,7 @@ public class SetupSession {
 
         // Regular expression to match valid days of the week or "ALL", with optional
         // commas and spaces
-        String daysPattern = "^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL)(,\\s?(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL))*$";
+        String daysPattern = "^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL)(,?\\s?(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|ALL))*$";
         return message.toUpperCase().matches(daysPattern);
     }
 

@@ -54,6 +54,7 @@ public class SetupChatListener implements Listener {
                 player.sendMessage(lang.getMessage("messages.enter-days"));
             }
         } else if (!session.isDaysSet()) {
+            message = message.toUpperCase();
             if (!session.isValidDays(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-days"));
                 return;
@@ -121,9 +122,6 @@ public class SetupChatListener implements Listener {
         }
         if (session.isEditing() && !session.isEditingRewards() && session.isComplete()) {
             SetupCommand.handleFinish(player, null);
-            FoliaAPI.runTask(() -> {
-                new KothEditMenu(player, MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
-            });
         }
     }
 

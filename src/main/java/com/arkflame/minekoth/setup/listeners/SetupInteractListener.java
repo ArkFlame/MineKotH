@@ -69,7 +69,6 @@ public class SetupInteractListener implements Listener {
 
         if (session.isEditing() && session.isComplete()) {
             SetupCommand.handleFinish(player, null);
-            new KothEditMenu(player, MineKoth.getInstance().getKothManager().getKothById(session.getId())).open(player);
         }
     }
 }
