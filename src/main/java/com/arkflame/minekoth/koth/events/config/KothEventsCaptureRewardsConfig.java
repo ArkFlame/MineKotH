@@ -31,6 +31,10 @@ public class KothEventsCaptureRewardsConfig {
         // Load the enabled flag
         captureRewardsEnabled = captureRewardsSection.getBoolean("enabled", false);
 
+        if (!captureRewardsEnabled) {
+            return;
+        }
+
         // Load one-time rewards
         ConfigurationSection oneTimeSection = captureRewardsSection.getConfigurationSection("one-time");
         if (oneTimeSection != null) {
@@ -73,6 +77,10 @@ public class KothEventsCaptureRewardsConfig {
     }
 
     public Collection<String> getReward(int time) {
+        if (!captureRewardsEnabled) {
+            return Collections.emptyList();
+        }
+
         Collection<String> rewards = new HashSet<>();
         if (oneTimeRewards.containsKey(time)) {
             rewards.addAll(oneTimeRewards.get(time));
@@ -88,6 +96,10 @@ public class KothEventsCaptureRewardsConfig {
     }
 
     public void giveRewards(Player player, long timeCaptured) {
+        if (!captureRewardsEnabled) {
+            return;
+        }
+
         for (String reward : getReward((int) timeCaptured)) {
             if (reward.startsWith("item: ")) {
                 String item = reward.substring("item: ".length()).split(",")[0];
