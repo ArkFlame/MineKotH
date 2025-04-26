@@ -33,6 +33,7 @@ import com.arkflame.minekoth.setup.session.SetupSessionManager;
 import com.arkflame.minekoth.utils.ConfigUtil;
 import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.MenuUtil;
 
 import net.milkbowl.vault.economy.Economy;
@@ -235,6 +236,9 @@ public class MineKoth extends JavaPlugin {
         HologramsAPIUniversal.getHologramsAPI().clearHolograms();
         if (playerDataManager != null) {
             playerDataManager.close();
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            GlowingUtility.unsetGlowing(player);
         }
     }
 

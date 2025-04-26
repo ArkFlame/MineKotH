@@ -74,8 +74,7 @@ public final class PotionEffectUtil {
         if (!validEffects.isEmpty()) {
             FoliaAPI.runTaskForEntity(player, () -> {
                 validEffects.forEach(effect -> player.removePotionEffect(effect));
-            }, () -> {
-            }, 1L);
+            });
         }
     }
 
@@ -150,7 +149,7 @@ public final class PotionEffectUtil {
         // Read from the configuration and create effects
         List<PotionEffect> effects = section.getKeys(false).stream()
                 .map(key -> {
-                    String type = section.getString( key + ".type");
+                    String type = section.getString(key + ".type");
                     int amplifier = section.getInt(key + ".amplifier");
                     int duration = section.getInt(key + ".duration");
                     PotionEffectType effectType = getPotionEffectType(type);

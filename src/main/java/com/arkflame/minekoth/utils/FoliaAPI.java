@@ -160,27 +160,30 @@ public class FoliaAPI {
         invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), run, delay, period);
     }
 
-    public static void runTask(Runnable run) {
+    public static void runTask(Runnable run, long delay) {
         if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), run);
+            if (delay == 0 && Bukkit.isPrimaryThread()) {
+                run.run();
+            } else {
+                bS.runTaskLater(MineKoth.getInstance(), run, delay);
+            }
             return;
         }
         Method method = cachedMethods.get("globalRegionScheduler.run");
         invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
     }
 
-    public static void runTask(Runnable run, long delay) {
-        if (!isFolia()) {
-            bS.runTaskLater(MineKoth.getInstance(), run, delay);
-            return;
-        }
-        Method method = cachedMethods.get("globalRegionScheduler.run");
-        invokeMethod(method, globalRegionScheduler, MineKoth.getInstance(), (Consumer<Object>) ignored -> run.run());
+    public static void runTask(Runnable run) {
+        runTask(run, 0L);
     }
 
     public static void runTask(Consumer<Object> run) {
         if (!isFolia()) {
-            bS.runTask(MineKoth.getInstance(), () -> run.accept(null));
+            if (Bukkit.isPrimaryThread()) {
+                run.accept(null);
+            } else {
+                bS.runTask(MineKoth.getInstance(), () -> run.accept(null));
+            }
             return;
         }
         Method method = cachedMethods.get("globalRegionScheduler.run");
@@ -189,7 +192,11 @@ public class FoliaAPI {
 
     public static void runTaskForEntity(Entity entity, Runnable run, Runnable retired, long delay) {
         if (!isFolia()) {
-            bS.runTaskLater(MineKoth.getInstance(), run, delay);
+            if (delay == 0 && Bukkit.isPrimaryThread()) {
+                run.run();
+            } else {
+                bS.runTaskLater(MineKoth.getInstance(), run, delay);
+            }
             return;
         }
         if (entity == null) return;
@@ -197,6 +204,10 @@ public class FoliaAPI {
         Object entityScheduler = invokeMethod(getSchedulerMethod, entity);
         Method executeMethod = cachedMethods.get("entityScheduler.execute");
         invokeMethod(executeMethod, entityScheduler, MineKoth.getInstance(), run, retired, delay);
+    }
+
+    public static void runTaskForEntity(Entity entity, Runnable run) {
+        runTaskForEntity(entity, run, () -> {}, 0);
     }
 
     public static void runTaskForEntityRepeating(Entity entity, Consumer<Object> task, Runnable retired,
