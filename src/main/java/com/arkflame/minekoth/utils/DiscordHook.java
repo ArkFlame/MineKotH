@@ -53,7 +53,6 @@ public class DiscordHook {
 
     private static void sendDiscordMessage(String title, String description, int color) {
         if (webhookUrl == null || webhookUrl.isEmpty()) {
-            MineKoth.getInstance().getLogger().warning("Discord webhook URL is not configured.");
             return;
         }
 
