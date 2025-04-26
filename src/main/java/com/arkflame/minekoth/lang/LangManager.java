@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.ChatColors;
 import com.arkflame.minekoth.utils.ConfigUtil;
+import com.arkflame.minekoth.utils.ReflectionUtil;
 import com.arkflame.minekoth.utils.Titles;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -76,16 +77,15 @@ public class LangManager {
         return languages.getOrDefault(locale, defaultLang);
     }
 
-    private String getPlayerLocale(Player player) {
-        if (player == null)
-            return "en";
-        try {
-            Object handle = player.getClass().getMethod("getHandle").invoke(player);
-            Object locale = handle.getClass().getField("locale").get(handle);
-            return locale.toString().split("_")[0]; // e.g., "en_US" -> "en"
-        } catch (Exception e) {
-            return "en"; // Default to English if locale cannot be determined
+    public String getPlayerLocale(Player player) {
+        if (player != null && player.isOnline()) {
+            String locale = ReflectionUtil.getLocale(player);
+            if (locale != null && locale.length() > 1) {
+                locale = locale.substring(0, 2);
+            }
+            return locale;
         }
+        return null;
     }
 
     /**
