@@ -86,6 +86,7 @@ public final class PotionEffectUtil {
      */
     private static PotionEffectType findFirstValidEffect(String... names) {
         return Arrays.stream(names)
+                .filter(Objects::nonNull)
                 .map(PotionEffectUtil::getPotionEffectType)
                 .filter(Objects::nonNull)
                 .findFirst()
@@ -100,6 +101,7 @@ public final class PotionEffectUtil {
      */
     private static List<PotionEffectType> findAllValidEffects(String... names) {
         return Arrays.stream(names)
+                .filter(Objects::nonNull)
                 .map(PotionEffectUtil::getPotionEffectType)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -113,10 +115,13 @@ public final class PotionEffectUtil {
      */
     private static PotionEffectType getPotionEffectType(String name) {
         try {
-            return PotionEffectType.getByName(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
+            if (name != null) {
+                return PotionEffectType.getByName(name.toUpperCase());
+            }
+        } catch (Exception e) {
+            // Skip
         }
+        return null;
     }
 
     /**
@@ -135,10 +140,10 @@ public final class PotionEffectUtil {
         }, 1L);
     }
 
-    public static boolean removeEffect(Player player, PotionEffectType invisibility) {
-        if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+    public static boolean removeEffect(Player player, PotionEffectType effect) {
+        if (player.hasPotionEffect(effect)) {
             FoliaAPI.runTaskForRegion(player.getLocation(), () -> {
-                player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                player.removePotionEffect(effect);
             });
             return true;
         }
