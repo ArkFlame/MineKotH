@@ -16,8 +16,6 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
-import java.util.Random;
-
 public class ZombieHordeEvent extends RandomEvent {
     private final int spawnCount;
 
@@ -50,7 +48,7 @@ public class ZombieHordeEvent extends RandomEvent {
             });
         }
 
-        Sounds.play(world, center, 1.0f, 1.0f, "ENTITY_ZOMBIE_AMBIENT");
+        Sounds.play(center, 1.0f, 1.0f, "ENTITY_ZOMBIE_AMBIENT");
         for (Player player : event.getPlayersInZone()) {
             Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
             Titles.sendTitle(player,

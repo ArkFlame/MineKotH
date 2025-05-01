@@ -1,10 +1,8 @@
 package com.arkflame.minekoth.koth.events.random;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +44,7 @@ public class LootDropEvent extends RandomEvent {
             FoliaAPI.runTaskForRegion(dropLocation, () -> {
                 world.dropItemNaturally(dropLocation, lootItem);
                 ParticleUtil.generateCircle(dropLocation, "FIREWORKS_SPARK", 1.0, 10);
-                Sounds.play(world, dropLocation, 1.0f, 1.0f, "ENTITY_ITEM_PICKUP");
+                Sounds.play(dropLocation, 1.0f, 1.0f, "ENTITY_ITEM_PICKUP");
             });
         }
 

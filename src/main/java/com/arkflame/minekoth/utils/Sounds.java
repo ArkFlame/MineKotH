@@ -40,10 +40,12 @@ public class Sounds {
     public static void play(Player player, float volume, float pitch, String... sounds) {
         Sound sound = get(sounds);
         if (sound != null) {
-            player.playSound(player.getLocation(), sound, volume, pitch);
+            FoliaAPI.runTaskForEntity(player, () -> {
+                player.playSound(player.getLocation(), sound, volume, pitch);
+            });
         }
     }
-    
+
     /**
      * Plays a sound at a specified location, if the sound is not null.
      * You can use multiple sounds to play for 1.8 servers and 1.20 servers
@@ -53,24 +55,19 @@ public class Sounds {
      * @param pitch    The pitch of the sound (0.5 to 2.0).
      * @param sounds   One or more String names of the Sound to play.
      */
-   public static void play(Location location, float volume, float pitch, String... sounds) {
-       Sound sound = get(sounds);
-       if (sound != null) {
-           location.getWorld().playSound(location, sound, volume, pitch);
-       }
-   }
+    public static void play(Location location, float volume, float pitch, String... sounds) {
+        Sound sound = get(sounds);
+        if (sound != null) {
+            FoliaAPI.runTaskForRegion(location, () -> {
+                location.getWorld().playSound(location, sound, volume, pitch);
+            });
+        }
+    }
 
     // You can use multiple sounds to play for 1.8 servers and 1.20 servers
     public static void play(float volume, float pitch, String... sounds) {
         for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
             play(player, volume, pitch, sounds);
-        }
-    }
-
-    public static void play(World world, Location dropLocation, float f, float g, String... sounds) {
-        Sound sound = get(sounds);
-        if (sound != null) {
-            world.playSound(dropLocation, sound, f, g);
         }
     }
 }

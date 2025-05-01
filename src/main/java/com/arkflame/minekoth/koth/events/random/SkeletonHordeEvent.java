@@ -17,8 +17,6 @@ import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.Sounds;
 import com.arkflame.minekoth.utils.Titles;
 
-import java.util.Random;
-
 public class SkeletonHordeEvent extends RandomEvent {
     private final int spawnCount;
 
