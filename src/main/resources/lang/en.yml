@@ -8,6 +8,8 @@
 # You can use PlaceholderAPI on all lang messages
 # ==================================================== 
 messages:
+  reload: "&a&lTIP:&a MineKoth has been reloaded!"
+
   awarded-diamond: "&a&lTIP:&a You have been awarded a diamond for capturing the hill for 30 seconds!"
   awarded-iron: "&a&lTIP:&a You have been awarded an iron ingot for capturing the hill for 30 more seconds!"
   awarded-money: "&a&lTIP:&a You have been awarded money for capturing the hill for 1 minute!"

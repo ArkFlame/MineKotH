@@ -42,6 +42,12 @@ public class KothCommand implements CommandExecutor {
         }
 
         switch (args[0].toLowerCase()) {
+            case "reload":
+                MineKoth.getInstance().onDisable();
+                MineKoth.getInstance().onEnable();
+                MineKoth.getInstance().getLangManager().sendMessage(player, "messages.reload");
+                break;
+
             case "setup":
                 SetupCommand.run(player, args);
                 break;

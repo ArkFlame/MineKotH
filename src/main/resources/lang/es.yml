@@ -8,6 +8,8 @@
 # Podes usar PlaceholderAPI en todos los mensajes
 # ==================================================== 
 messages:
+  reload: "&a&lTIP:&a MineKoth ha sido recargado!"
+
   awarded-diamond: "&a&lTIP:&a ¡Has sido premiado con un diamante por capturar la colina durante 30 segundos!"
   awarded-iron: "&a&lTIP:&a ¡Has sido premiado con un lingote de hierro por capturar la colina durante 30 segundos más!"
   awarded-money: "&a&lTIP:&a ¡Has sido premiado con dinero por capturar la colina durante 1 minuto!"
