@@ -3,6 +3,7 @@ package com.arkflame.minekoth.schedule.managers;
 import com.arkflame.minekoth.schedule.Schedule;
 import com.arkflame.minekoth.utils.Times;
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.KothTime;
 
 import java.time.DayOfWeek;
@@ -174,6 +175,26 @@ public class ScheduleManager {
         }
 
         return nextOccurrence;
+    }
+
+    public Schedule getNextOccurrence(Koth koth) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextOccurrence = null;
+        Schedule nextSchedule = null;
+
+        for (Schedule schedule : schedulesById.values()) {
+            if (schedule.getKothId() == koth.getId()) {
+                LocalDateTime occurrence = getNextOccurrence(schedule);
+                if (occurrence.isBefore(now)) {
+                    occurrence = occurrence.plusWeeks(1);
+                }
+                if (nextOccurrence == null || occurrence.isBefore(nextOccurrence)) {
+                    nextOccurrence = occurrence;
+                    nextSchedule = schedule;
+                }
+            }
+        }
+        return nextSchedule;
     }
 
     public List<Schedule> getAllSchedules() {

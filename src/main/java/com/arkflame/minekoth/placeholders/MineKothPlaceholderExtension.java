@@ -10,6 +10,7 @@ import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.schedule.Schedule;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class MineKothPlaceholderExtension extends PlaceholderExpansion {
@@ -175,7 +176,8 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
             }
         }
 
-        for (Schedule schedule : plugin.getScheduleManager().getSchedulesByKoth(koth.getId())) {
+        Schedule schedule = plugin.getScheduleManager().getNextOccurrence(koth);
+        if (schedule != null) {
             return schedule.getTimeLeftFormatted();
         }
         return NONE;
