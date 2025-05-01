@@ -34,6 +34,7 @@ capturing-options:
 
 # Common messages used on all languages
 messages:
+  lang: "en"
   schedules:
     days: "Days"
   koth-hologram-lines: |-

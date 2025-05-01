@@ -31,7 +31,8 @@ public class LangManager {
 
         copyDefaultLanguages();
         loadLanguages();
-        defaultLang = languages.getOrDefault("en", new Lang("en", new HashMap<>()));
+        String lang = MineKoth.getInstance().getConfig().getString("messages.lang", "en");
+        defaultLang = languages.getOrDefault(lang, new Lang("en", new HashMap<>()));
     }
 
     private void copyDefaultLanguages() {
@@ -74,6 +75,9 @@ public class LangManager {
 
     public Lang getLang(Player player) {
         String locale = getPlayerLocale(player);
+        if (locale == null) {
+            return defaultLang;
+        }
         return languages.getOrDefault(locale, defaultLang);
     }
 
