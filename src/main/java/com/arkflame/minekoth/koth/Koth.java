@@ -39,8 +39,11 @@ public class Koth {
         this.times = times;
         this.days = days;
 
-        this.center = getCenter();
-        this.safeCenter = getSafeCenter();
+        // First time it loads should be synchronous
+        FoliaAPI.runTask(() -> {
+            this.center = getCenter();
+            this.safeCenter = getSafeCenter();
+        });
     }
 
     public World getWorld() {
@@ -155,7 +158,7 @@ public class Koth {
         double y = (firstPosition.getY() + secondPosition.getY()) / 2;
         double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
 
-        return new Location(getWorld(), x, y, z);
+        return center = new Location(getWorld(), x, y, z);
     }
 
     public Location getSafeCenter() {
@@ -169,7 +172,7 @@ public class Koth {
             center.add(0, 1, 0);
         }
         center.add(0.5, 2, 0.5);
-        return center;
+        return safeCenter = center;
     }
 
     public void spawnHologram() {
