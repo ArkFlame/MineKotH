@@ -152,7 +152,6 @@ public class SetupCommand {
         MineKoth.getInstance().getKothManager().addKoth(koth);
         MineKoth.getInstance().getScheduleManager().scheduleKoth(koth.getId(), session.getTimes(), Times.parseToDays(session.getDays()));
         MineKoth.getInstance().getKothLoader().save(koth);
-        koth.spawnHologram();
 
         sendSuccessMessage(player, session);
     }

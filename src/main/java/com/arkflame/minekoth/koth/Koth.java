@@ -38,6 +38,7 @@ public class Koth {
         this.rewards = rewards;
         this.times = times;
         this.days = days;
+        getCenter();
     }
 
     public World getWorld() {
@@ -144,32 +145,32 @@ public class Koth {
     }
 
     public Location getCenter() {
-        if (center != null)
-            return center;
-        if (firstPosition == null || secondPosition == null)
+        if (firstPosition == null || secondPosition == null) {
             return null;
-        // Generate Center
-        double x = (firstPosition.getX() + secondPosition.getX()) / 2;
-        double y = (firstPosition.getY() + secondPosition.getY()) / 2;
-        double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
-        center = new Location(getWorld(), x, y, z);
-        // Generate Safe center
-        safeCenter = center.clone();
-        FoliaAPI.runTaskForRegion(center, () -> {
-            int attempts = 0;
-            while (safeCenter.getBlock().getType().isSolid() && ++attempts < 5) {
-                safeCenter.add(0, 1, 0);
-            }
-            safeCenter.add(0.5, 2, 0.5);
-        });
+        }
+        if (center == null) {
+            // Generate Center
+            double x = (firstPosition.getX() + secondPosition.getX()) / 2;
+            double y = (firstPosition.getY() + secondPosition.getY()) / 2;
+            double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
+            center = new Location(getWorld(), x, y, z);
+            // Generate Safe center
+            safeCenter = center.clone();
+            FoliaAPI.runTaskForRegion(safeCenter, () -> {
+                int attempts = 0;
+                while (safeCenter.getBlock().getType().isSolid() && ++attempts < 5) {
+                    safeCenter.add(0, 1, 0);
+                }
+                safeCenter.add(0.5, 2, 0.5);
+            });
+        }
         return center;
     }
 
     public Location getSafeCenter() {
-        if (safeCenter != null)
-            return safeCenter;
-        else
+        if (safeCenter == null) {
             getCenter();
+        }
         return safeCenter;
     }
 

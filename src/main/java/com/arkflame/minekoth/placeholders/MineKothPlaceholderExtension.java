@@ -10,7 +10,6 @@ import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
 import com.arkflame.minekoth.schedule.Schedule;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class MineKothPlaceholderExtension extends PlaceholderExpansion {
