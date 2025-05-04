@@ -179,7 +179,7 @@ public class Times {
 
         for (String token : tokens) {
             try {
-                if (token.equals("ALLS")) {
+                if (token.equalsIgnoreCase("all")) {
                     return new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
                 }
                 // Convert the token to uppercase and validate against DayOfWeek enum
