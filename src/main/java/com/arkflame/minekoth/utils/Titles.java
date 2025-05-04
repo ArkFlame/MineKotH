@@ -7,7 +7,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,25 +18,125 @@ public class Titles {
     private static final Map<Class<?>, Method> CHAT_COMPONENT_METHOD_CACHE = new HashMap<>();
     private static final Map<Class<?>, Constructor<?>> CHAT_PACKET_CONSTRUCTOR_CACHE = new HashMap<>();
 
-    private static Class<?> getNMSClass(String name) throws ClassNotFoundException {
-        Class<?> cachedClass = NMS_CLASS_CACHE.get(name);
-        if (cachedClass != null) {
-            return cachedClass;
-        }
+    // Cached reflection elements
+    private static Class<?> packetClass;
+    private static Class<?> actionClass;
+    private static Class<?> chatComponentClass;
+    private static Method chatComponentMethod;
+    private static Constructor<?> packetConstructor;
 
-        String fullName = "net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]
-                + "." + name;
-        Class<?> clazz = Class.forName(fullName);
-        NMS_CLASS_CACHE.put(name, clazz);
-        return clazz;
+    // Cached enum values
+    private static Object timesAction;
+    private static Object titleAction;
+    private static Object subtitleAction;
+
+    // Cached reflection for sending packets
+    private static Method getHandleMethod;
+    private static Field playerConnectionField;
+    private static Method sendPacketMethod;
+    private static Class<?> craftPlayerClass;
+
+    private static Class<?> getNMSClass(String name) throws ClassNotFoundException {
+        if (NMS_CLASS_CACHE.containsKey(name)) {
+            Class<?> cachedClass = NMS_CLASS_CACHE.get(name);
+            return cachedClass;
+        } else {
+            String fullName = "net.minecraft.server."
+                    + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]
+                    + "." + name;
+            Class<?> clazz = Class.forName(fullName);
+            NMS_CLASS_CACHE.put(name, clazz);
+            return clazz;
+        }
     }
 
-    private static void sendPacket(Player player, Object packet)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException,
-            IllegalArgumentException, NoSuchFieldException, ClassNotFoundException {
-        Object craftPlayer = player.getClass().getMethod("getHandle").invoke(player);
-        Object playerConnection = craftPlayer.getClass().getField("playerConnection").get(craftPlayer);
-        playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
+    // Initialize all cached elements once
+    static {
+        try {
+            packetClass = getNMSClass("PacketPlayOutTitle");
+            actionClass = packetClass.getDeclaredClasses()[0]; // EnumTitleAction
+            chatComponentClass = getNMSClass("IChatBaseComponent");
+
+            // Cache methods and constructor
+            chatComponentMethod = chatComponentClass.getDeclaredClasses()[0]
+                    .getMethod("a", String.class);
+            packetConstructor = packetClass.getConstructor(
+                    actionClass, chatComponentClass, int.class, int.class, int.class);
+
+            // Cache enum values
+            timesAction = actionClass.getField("TIMES").get(null);
+            titleAction = actionClass.getField("TITLE").get(null);
+            subtitleAction = actionClass.getField("SUBTITLE").get(null);
+
+            craftPlayerClass = Class
+                    .forName(Bukkit.getServer().getClass().getPackage().getName() + ".entity.CraftPlayer");
+            getHandleMethod = craftPlayerClass.getMethod("getHandle");
+
+            Class<?> entityPlayerClass = getNMSClass("EntityPlayer");
+            playerConnectionField = entityPlayerClass.getField("playerConnection");
+
+            Class<?> playerConnectionClass = getNMSClass("PlayerConnection");
+            sendPacketMethod = playerConnectionClass.getMethod("sendPacket", getNMSClass("Packet"));
+        } catch (Exception e) { /* Skip, not compatible */ }
+    }
+
+    private static void sendPacket(Player player, Object packet) {
+        try {
+            Object craftPlayer = craftPlayerClass.cast(player);
+            Object entityPlayer = getHandleMethod.invoke(craftPlayer);
+            Object playerConnection = playerConnectionField.get(entityPlayer);
+            sendPacketMethod.invoke(playerConnection, packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean sendTitlePacket(Player player, String title, String subtitle,
+            int fadeIn, int stay, int fadeOut) {
+        try {
+            if (chatComponentMethod == null) {
+                return false;
+            }
+            if (packetConstructor == null) {
+                return false;
+            }
+            if (timesAction == null) {
+                return false;
+            }
+            if (titleAction == null) {
+                return false;
+            }
+            if (subtitleAction == null) {
+                return false;
+            }
+            // Create chat components using cached method
+            Object chatTitle = chatComponentMethod.invoke(null, "{\"text\":\"" + title + "\"}");
+            Object chatSubtitle = subtitle != null
+                    ? chatComponentMethod.invoke(null, "{\"text\":\"" + subtitle + "\"}")
+                    : null;
+
+            // 1. Send TIMES packet using cached constructor and enum
+            Object timesPacket = packetConstructor.newInstance(
+                    timesAction, null, fadeIn, stay, fadeOut);
+            sendPacket(player, timesPacket);
+
+            // 2. Send TITLE packet
+            Object titlePacket = packetConstructor.newInstance(
+                    titleAction, chatTitle, -1, -1, -1);
+            sendPacket(player, titlePacket);
+
+            // 3. Send SUBTITLE packet if exists
+            if (subtitle != null) {
+                Object subtitlePacket = packetConstructor.newInstance(
+                        subtitleAction, chatSubtitle, -1, -1, -1);
+                sendPacket(player, subtitlePacket);
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
@@ -44,40 +144,13 @@ public class Titles {
             return;
         }
 
-        title = ChatColors.color(title);
-        subtitle = subtitle != null ? ChatColors.color(subtitle) : null;
+        if (sendTitlePacket(player, title, subtitle, fadeIn, stay, fadeOut)) {
+            return;
+        }
 
         try {
             player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
         } catch (NoSuchMethodError e) {
-            // Do nothing
-        }
-
-        try {
-            Object chatTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class)
-                    .invoke(null, "{\"text\":\"" + title + "\"}");
-            Object chatSubtitle = subtitle != null
-                    ? getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class)
-                            .invoke(null, "{\"text\":\"" + subtitle + "\"}")
-                    : null;
-
-            Constructor<?> titleConstructor = getNMSClass("PacketPlayOutTitle").getConstructor(
-                    getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0], getNMSClass("IChatBaseComponent"),
-                    int.class, int.class, int.class);
-
-            Object titlePacket = titleConstructor.newInstance(
-                    getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null), chatTitle,
-                    fadeIn, stay, fadeOut);
-            Object subtitlePacket = subtitle != null ? titleConstructor.newInstance(
-                    getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE").get(null),
-                    chatSubtitle,
-                    fadeIn, stay, fadeOut) : null;
-
-            sendPacket(player, titlePacket);
-            if (subtitlePacket != null) {
-                sendPacket(player, subtitlePacket);
-            }
-        } catch (Exception e) {
             // Failed
         }
     }
@@ -111,8 +184,6 @@ public class Titles {
         if (player == null || message == null) {
             return;
         }
-
-        message = ChatColors.color(message);
 
         try {
             Class<?> chatBaseComponentClass = getNMSClass("IChatBaseComponent");
