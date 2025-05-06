@@ -138,13 +138,19 @@ public class KothCommand implements CommandExecutor {
                                     .replace("<node>", "minekoth.command.start"));
                     return true;
                 }
-                Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
-                if (schedule == null) {
-                    sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
-                            .getMessage("messages.no-schedules"));
-                    break;
+                Koth koth = null;
+                if (args.length >= 2) {
+                    String kothName = args[1];
+                    koth = kothManager.getKothByName(kothName);
+                } else {
+                    Schedule schedule = MineKoth.getInstance().getScheduleManager().getNextSchedule();
+                    if (schedule == null) {
+                        sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
+                                .getMessage("messages.no-schedules"));
+                        break;
+                    }
+                    koth = schedule.getKoth();
                 }
-                Koth koth = schedule.getKoth();
                 if (koth == null) {
                     sender.sendMessage(MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.invalid-koth"));
