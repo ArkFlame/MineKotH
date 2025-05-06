@@ -137,10 +137,10 @@ public class Rewards {
         return 0;
     }
     
-    private static final String SECTION_SEPARATOR = "\u241E\0";
-    private static final String ITEM_SEPARATOR = "\u241F\0";
-    private static final String KEY_VALUE_SEPARATOR = ":\0";
-    private static final String META_SEPARATOR = "\u241D\0"; // For item metadata
+    private static final String SECTION_SEPARATOR = "\u2588";
+    private static final String ITEM_SEPARATOR = "\u25CB";
+    private static final String KEY_VALUE_SEPARATOR = ":";
+    private static final String META_SEPARATOR = "\u25B6";   
     
     public String serialize() {
         StringBuilder builder = new StringBuilder();
@@ -178,7 +178,6 @@ public class Rewards {
         if (!commands.isEmpty()) {
             builder.append(String.join(ITEM_SEPARATOR, commands));
         }
-        
         return builder.toString();
     }
     
@@ -188,14 +187,22 @@ public class Rewards {
         // Display name
         if (meta.hasDisplayName()) {
             metaBuilder.append("name").append(KEY_VALUE_SEPARATOR)
-                      .append(meta.getDisplayName().replace(KEY_VALUE_SEPARATOR, ""))
+                      .append(meta.getDisplayName()
+                        .replace(KEY_VALUE_SEPARATOR, "")
+                        .replace(META_SEPARATOR, "")
+                        .replace(ITEM_SEPARATOR, "")
+                        .replace(SECTION_SEPARATOR, ""))
                       .append(META_SEPARATOR);
         }
         
         // Lore
         if (meta.hasLore()) {
             metaBuilder.append("lore").append(KEY_VALUE_SEPARATOR)
-                      .append(String.join("\n", meta.getLore()).replace(KEY_VALUE_SEPARATOR, ""))
+                      .append(String.join("\n", meta.getLore())
+                        .replace(KEY_VALUE_SEPARATOR, "")
+                        .replace(META_SEPARATOR, "")
+                        .replace(ITEM_SEPARATOR, "")
+                        .replace(SECTION_SEPARATOR, ""))
                       .append(META_SEPARATOR);
         }
         

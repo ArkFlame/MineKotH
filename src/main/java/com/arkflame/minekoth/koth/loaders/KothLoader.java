@@ -40,7 +40,6 @@ public class KothLoader {
         config.set("rewards", koth.getRewards().serialize());
         config.set("firstPosition", koth.getFirstPosition().serialize());
         config.set("secondPosition", koth.getSecondPosition().serialize());
-
         // Save using ConfigUtil
         configUtil.saveConfig(config, kothFile);
     }
