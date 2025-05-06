@@ -43,7 +43,7 @@ public class SetupChatListener implements Listener {
             player.sendMessage(lang.getMessage("messages.set-first-positions"));
             return;
         } else if (!session.isTimesSet()) {
-            message = message.toLowerCase();
+            message = ChatColor.stripColor(message.toLowerCase());
             if (!session.isValidTimes(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-times"));
                 return;
@@ -55,7 +55,7 @@ public class SetupChatListener implements Listener {
                 player.sendMessage(lang.getMessage("messages.enter-days"));
             }
         } else if (!session.isDaysSet()) {
-            message = message.toUpperCase();
+            message = ChatColor.stripColor(message.toUpperCase());
             if (!session.isValidDays(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-days"));
                 return;
