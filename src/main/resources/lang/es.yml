@@ -283,7 +283,7 @@ messages:
     &8❙ &6/koth list: &fLista todos los koths existentes.
     &8❙ &6/koth info <id>: &fObtén detalles sobre un koth específico.
     &8❙ &6/koth delete <id>: &fElimina un koth específico.
-    &8❙ &6/koth start: &fInicia el próximo koth programado.
+    &8❙ &6/koth start <koth>: &fInicia el próximo koth programado.
     &8❙ &6/koth stop: &fDetiene el evento koth actual.
     &8❙ &6/koth capture: &fCaptura el koth actual.
     &8❙ &6/koth tp <id/nombre>: &fTeletransportarse a un koth.
