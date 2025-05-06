@@ -26,7 +26,6 @@ public class ConfigUtil {
 
     public YamlConfiguration loadConfig(File file) {
         if (!file.exists()) {
-            plugin.getLogger().warning("Config file does not exist: " + file.getName());
             return null;
         }
         return YamlConfiguration.loadConfiguration(file);

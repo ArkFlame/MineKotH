@@ -33,7 +33,6 @@ public class YamlPlayerData extends PlayerData {
     public void load() {
         config = configUtil.loadConfig(file);
         if (config == null) {
-            logger.log(Level.WARNING, "Config file not found or could not be loaded: " + file.getName());
             return;
         }
 
