@@ -31,6 +31,7 @@ public class SetupChatListener implements Listener {
         event.setCancelled(true);
 
         String message = event.getMessage();
+        message = ChatColor.stripColor(message.trim());
         Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
 
         if (!session.isNameSet()) {
@@ -43,7 +44,7 @@ public class SetupChatListener implements Listener {
             player.sendMessage(lang.getMessage("messages.set-first-positions"));
             return;
         } else if (!session.isTimesSet()) {
-            message = ChatColor.stripColor(message.toLowerCase());
+            message = message.toLowerCase();
             if (!session.isValidTimes(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-times"));
                 return;
@@ -55,7 +56,7 @@ public class SetupChatListener implements Listener {
                 player.sendMessage(lang.getMessage("messages.enter-days"));
             }
         } else if (!session.isDaysSet()) {
-            message = ChatColor.stripColor(message.toUpperCase());
+            message = message.toUpperCase();
             if (!session.isValidDays(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-days"));
                 return;
