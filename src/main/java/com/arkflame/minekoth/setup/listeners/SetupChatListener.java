@@ -43,6 +43,7 @@ public class SetupChatListener implements Listener {
             player.sendMessage(lang.getMessage("messages.set-first-positions"));
             return;
         } else if (!session.isTimesSet()) {
+            message = message.toLowerCase();
             if (!session.isValidTimes(message)) {
                 player.sendMessage(lang.getMessage("messages.invalid-times"));
                 return;
