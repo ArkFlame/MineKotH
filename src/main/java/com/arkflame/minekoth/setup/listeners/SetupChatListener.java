@@ -6,13 +6,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.lang.Lang;
-import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.FoliaAPI;
@@ -20,7 +20,7 @@ import com.arkflame.minekoth.utils.Times;
 
 public class SetupChatListener implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         SetupSession session = MineKoth.getInstance().getSessionManager().getSession(player);
