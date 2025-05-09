@@ -94,9 +94,17 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                         }
                     }
                     break;
+                default:
+                    break;
+            }
+        } else {
+            String[] parts = identifier.split("_");
+            String arg2 = parts.length > 2 ? parts[2] : null;
+            switch (identifier) {
                 case "stats":
                     if (arg2 != null) {
-                        PlayerData playerData = plugin.getPlayerDataManager().getAndLoad(player.getUniqueId().toString());
+                        PlayerData playerData = plugin.getPlayerDataManager()
+                                .getAndLoad(player.getUniqueId().toString());
                         if (playerData != null) {
                             switch (parts[3]) {
                                 case "wins":

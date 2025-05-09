@@ -10,3 +10,4 @@
 %minekoth_koth_is_stalemate%: Whether the KoTH event is in a stalemate.
 %minekoth_koth_location%: Get the current koth coordinates
 %minekoth_koth_location_<id>%: Get the specific koth coordinates
+%minekoth_stats_wins%
