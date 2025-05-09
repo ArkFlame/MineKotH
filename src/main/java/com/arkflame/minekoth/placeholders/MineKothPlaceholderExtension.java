@@ -39,81 +39,82 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
-        if (identifier.startsWith("koth_")) {
-            String[] parts = identifier.split("_");
-            String arg2 = parts.length > 2 ? parts[2] : null;
-            KothEvent event = getCurrentKothEvent();
-            switch (parts[1]) {
-                case "name":
-                    return arg2 == null ? getKothName() : getKothNameById(arg2);
-                case "state":
-                    return arg2 == null ? getKothState() : getKothStateById(arg2);
-                case "capturer":
-                    return arg2 == null ? getKothCapturer() : getKothCapturerById(arg2);
-                case "time":
-                    return arg2 == null ? getKothTime() : getKothTimeById(arg2);
-                case "location":
-                    return arg2 == null ? getKothLocation() : getKothLocationById(arg2);
-                case "topplayer":
-                    return getKothTopPlayer();
-                case "capturingplayers":
-                    return getKothCapturingPlayers();
-                case "winner":
-                    return getKothWinner();
-                case "timesinceend":
-                    return getKothTimeSinceEnd();
-                case "isstalemate":
-                    return getKothIsStalemate();
-                case "capturetime":
-                    if (event != null) {
-                        if (arg2 != null) {
-                            CapturingPlayers players = event.getGroup(Integer.parseInt(arg2));
-                            if (players != null) {
-                                return players.getCaptureTimeFormatted();
+        String[] args = identifier.split("_");
+        if (args.length > 0) {
+            String arg0 = args[0];
+            String arg1 = args.length > 1 ? args[1] : null;
+            String arg2 = args.length > 2 ? args[2] : null;
+            switch (arg0) {
+                case "koth": {
+                    KothEvent event = getCurrentKothEvent();
+                    switch (args[1]) {
+                        case "name":
+                            return arg2 == null ? getKothName() : getKothNameById(arg2);
+                        case "state":
+                            return arg2 == null ? getKothState() : getKothStateById(arg2);
+                        case "capturer":
+                            return arg2 == null ? getKothCapturer() : getKothCapturerById(arg2);
+                        case "time":
+                            return arg2 == null ? getKothTime() : getKothTimeById(arg2);
+                        case "location":
+                            return arg2 == null ? getKothLocation() : getKothLocationById(arg2);
+                        case "topplayer":
+                            return getKothTopPlayer();
+                        case "capturingplayers":
+                            return getKothCapturingPlayers();
+                        case "winner":
+                            return getKothWinner();
+                        case "timesinceend":
+                            return getKothTimeSinceEnd();
+                        case "isstalemate":
+                            return getKothIsStalemate();
+                        case "capturetime":
+                            if (event != null) {
+                                if (arg2 != null) {
+                                    CapturingPlayers players = event.getGroup(Integer.parseInt(arg2));
+                                    if (players != null) {
+                                        return players.getCaptureTimeFormatted();
+                                    }
+                                }
+                                CapturingPlayers players = event.getGroup(player);
+                                if (players != null) {
+                                    return players.getCaptureTimeFormatted();
+                                }
                             }
-                        }
-                        CapturingPlayers players = event.getGroup(player);
-                        if (players != null) {
-                            return players.getCaptureTimeFormatted();
-                        }
+                            break;
+                        case "position":
+                            if (event != null) {
+                                int position = event.getPosition(player);
+                                return position == -1 ? NONE : String.valueOf(position);
+                            }
+                            break;
+                        case "playername":
+                            if (event != null && arg2 != null) {
+                                CapturingPlayers players = event.getGroup(Integer.parseInt(arg2) - 1);
+                                if (players != null) {
+                                    return players.getPlayers().stream()
+                                            .map(Player::getName)
+                                            .collect(Collectors.joining(", "));
+                                }
+                            }
+                            break;
+                        default:
+                            break;
                     }
                     break;
-                case "position":
-                    if (event != null) {
-                        int position = event.getPosition(player);
-                        return position == -1 ? NONE : String.valueOf(position);
-                    }
-                    break;
-                case "playername":
-                    if (event != null && arg2 != null) {
-                        CapturingPlayers players = event.getGroup(Integer.parseInt(arg2) - 1);
-                        if (players != null) {
-                            return players.getPlayers().stream()
-                                    .map(Player::getName)
-                                    .collect(Collectors.joining(", "));
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            String[] parts = identifier.split("_");
-            String arg2 = parts.length > 2 ? parts[2] : null;
-            switch (identifier) {
-                case "stats":
-                    if (arg2 != null) {
+                }
+                case "stats": {
+                    if (arg1 != null) {
                         PlayerData playerData = plugin.getPlayerDataManager()
                                 .getAndLoad(player.getUniqueId().toString());
                         if (playerData != null) {
-                            switch (parts[3]) {
+                            switch (arg1) {
                                 case "wins":
-                                    return playerData.getTotal(PlayerData.WINS).toString();
+                                    return String.valueOf(playerData.getTotal(PlayerData.WINS).intValue());
                             }
                         }
                     }
-                default:
-                    break;
+                }
             }
         }
         return NONE;
