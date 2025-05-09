@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class LangManager {
 
     private final Map<String, Lang> languages = new HashMap<>();
-    private final Lang defaultLang;
+    private final String defaultLang;
     private final File langFolder;
     private final ConfigUtil configUtil;
 
@@ -31,8 +31,7 @@ public class LangManager {
 
         copyDefaultLanguages();
         loadLanguages();
-        String lang = MineKoth.getInstance().getConfig().getString("messages.lang", "en");
-        defaultLang = languages.getOrDefault(lang, new Lang("en", new HashMap<>()));
+        defaultLang = MineKoth.getInstance().getConfig().getString("messages.lang", "en");
     }
 
     private void copyDefaultLanguages() {
@@ -74,11 +73,7 @@ public class LangManager {
     }
 
     public Lang getLang(Player player) {
-        String locale = getPlayerLocale(player);
-        if (locale == null) {
-            return defaultLang;
-        }
-        return languages.getOrDefault(locale, defaultLang);
+        return languages.getOrDefault(getPlayerLocale(player), languages.getOrDefault(defaultLang, languages.get("en")));
     }
 
     public String getPlayerLocale(Player player) {

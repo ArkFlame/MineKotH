@@ -225,7 +225,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
     }
 
     private String formatLocation(Location loc) {
-        return loc == null ? NONE : String.format("%d, %d, %d", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        return loc == null ? NONE : String.format("%d, %d", loc.getBlockX(), loc.getBlockZ());
     }
 
     private String getKothTopPlayer() {
