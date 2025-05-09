@@ -7,6 +7,7 @@ import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.events.CapturingPlayers;
 import com.arkflame.minekoth.koth.events.KothEvent;
 import com.arkflame.minekoth.koth.events.KothEvent.KothEventState;
+import com.arkflame.minekoth.playerdata.PlayerData;
 import com.arkflame.minekoth.schedule.Schedule;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
@@ -93,6 +94,16 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                         }
                     }
                     break;
+                case "stats":
+                    if (arg2 != null) {
+                        PlayerData playerData = plugin.getPlayerDataManager().getAndLoad(player.getUniqueId().toString());
+                        if (playerData != null) {
+                            switch (parts[3]) {
+                                case "wins":
+                                    return playerData.getTotal(PlayerData.WINS).toString();
+                            }
+                        }
+                    }
                 default:
                     break;
             }
