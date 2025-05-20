@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.lang.Lang;
@@ -89,7 +90,7 @@ public class SetupChatListener implements Listener {
             
             if (!session.isRewardsSet()) {
                 player.sendMessage(lang.getMessage("messages.put-rewards"));
-                openRewardsInventory(player);
+                openRewardsInventory(player, session);
             }
         } else if (!session.isLootTypeSet()) {
             if (!session.isValidLootType(message)) {
@@ -127,9 +128,12 @@ public class SetupChatListener implements Listener {
         }
     }
 
-    public static void openRewardsInventory(Player player) {
+    public static void openRewardsInventory(Player player, SetupSession session) {
         FoliaAPI.runTask(() -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
+            for (ItemStack oldReward : session.getRewards()) {
+                inventory.addItem(oldReward);
+            }
             player.openInventory(inventory);
         });
     }

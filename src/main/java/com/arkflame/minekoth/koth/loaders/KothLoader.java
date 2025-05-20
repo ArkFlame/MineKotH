@@ -37,7 +37,7 @@ public class KothLoader {
         config.set("timeToCapture", koth.getTimeToCapture());
         config.set("times", koth.getTimes());
         config.set("days", koth.getDays());
-        config.set("rewards", koth.getRewards().serialize());
+        koth.getRewards().save(config);
         config.set("firstPosition", koth.getFirstPosition().serialize());
         config.set("secondPosition", koth.getSecondPosition().serialize());
         // Save using ConfigUtil
@@ -60,7 +60,7 @@ public class KothLoader {
             String days = config.getString("days");
             Position firstPosition = Position.deserialize(config.getString("firstPosition"));
             Position secondPosition = Position.deserialize(config.getString("secondPosition"));
-            Rewards rewards = Rewards.deserialize(config.getString("rewards"));
+            Rewards rewards = new Rewards().load(config);
             return new Koth(id, name, worldName, firstPosition, secondPosition, timeLimit, timeToCapture, rewards, times, days);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to load KOTH " + kothId, e);
