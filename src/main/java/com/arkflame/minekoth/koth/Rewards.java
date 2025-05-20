@@ -7,12 +7,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.FoliaAPI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Rewards {
@@ -88,69 +90,102 @@ public class Rewards {
     }
 
     public int giveRewards(Player topPlayer) {
+        int multiplier = MineKoth.getInstance().getLootMultiplier(topPlayer);
+        
         if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
-
-            FoliaAPI.runTask(() -> {
+            FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
                 // Execute all reward commands
-                for (String command : getRewardsCommands()) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", topPlayer.getName()));
-                }
+                executeCommands(topPlayer, getRewardsCommands());
+                
                 // Give all reward items
-                for (ItemStack item : getRewardsItems()) {
-                    if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                        topPlayer.getInventory().addItem(item);
-                    }
-                }
+                giveItems(topPlayer, getRewardsItems(), multiplier);
             });
-
+    
             return getRewardsItems().size() + getRewardsCommands().size();
-        } else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
+        } 
+        else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
             // Combine items and commands into a single collection
             ArrayList<Object> rewardsPool = new ArrayList<>();
             rewardsPool.addAll(getRewardsItems());
             rewardsPool.addAll(getRewardsCommands());
-
+    
             // Shuffle and pick random rewards
             Collections.shuffle(rewardsPool);
             int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
-
-            FoliaAPI.runTask(() -> {
+    
+            FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
                 for (int i = 0; i < rewardsToGive; i++) {
                     Object reward = rewardsPool.get(i);
-
+    
                     if (reward instanceof ItemStack) {
-                        ItemStack item = (ItemStack) reward;
-                        if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                            topPlayer.getInventory().addItem(item);
-                        }
+                        giveItem(topPlayer, (ItemStack) reward, multiplier);
                     } else if (reward instanceof String) {
-                        String command = (String) reward;
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                                command.replace("%player%", topPlayer.getName()));
+                        executeCommand(topPlayer, (String) reward);
                     }
                 }
             });
-
+    
             return rewardsToGive;
         }
-
+    
         return 0;
     }
     
+    /**
+     * Executes a command with player placeholder replaced
+     */
+    private void executeCommand(Player player, String command) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
+                command.replace("%player%", player.getName()));
+    }
+    
+    /**
+     * Executes multiple commands for a player
+     */
+    private void executeCommands(Player player, Collection<String> commands) {
+        for (String command : commands) {
+            executeCommand(player, command);
+        }
+    }
+    
+    /**
+     * Gives a single item to a player with multiplier, handling inventory overflow
+     */
+    private void giveItem(Player player, ItemStack item, int multiplier) {
+        if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
+            for (int i = 0; i < multiplier; i++) {
+                HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+                // Drop items that don't fit in the inventory
+                for (ItemStack remainingItem : remainingItems.values()) {
+                    player.getWorld().dropItem(player.getLocation(), remainingItem);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Gives multiple items to a player with multiplier
+     */
+    private void giveItems(Player player, Collection<ItemStack> items, int multiplier) {
+        for (ItemStack item : items) {
+            giveItem(player, item, multiplier);
+        }
+    }
+
     private static final String SECTION_SEPARATOR = "\u2588";
     private static final String ITEM_SEPARATOR = "\u25CB";
     private static final String KEY_VALUE_SEPARATOR = ":";
-    private static final String META_SEPARATOR = "\u25B6";   
-    
+    private static final String META_SEPARATOR = "\u25B6";
+
     public String serialize() {
         StringBuilder builder = new StringBuilder();
-        
+
         // Serialize loot details
         builder.append(lootType.name())
-              .append(KEY_VALUE_SEPARATOR)
-              .append(lootAmount)
-              .append(SECTION_SEPARATOR);
-        
+                .append(KEY_VALUE_SEPARATOR)
+                .append(lootAmount)
+                .append(SECTION_SEPARATOR);
+
         // Serialize items with metadata
         if (!items.isEmpty()) {
             boolean first = true;
@@ -159,70 +194,70 @@ public class Rewards {
                     builder.append(ITEM_SEPARATOR);
                 }
                 first = false;
-                
+
                 // Basic item data
                 builder.append(item.getType().name())
-                      .append(KEY_VALUE_SEPARATOR)
-                      .append(item.getAmount());
-                
+                        .append(KEY_VALUE_SEPARATOR)
+                        .append(item.getAmount());
+
                 // Item metadata
                 if (item.hasItemMeta()) {
                     builder.append(META_SEPARATOR)
-                          .append(serializeItemMeta(item.getItemMeta()));
+                            .append(serializeItemMeta(item.getItemMeta()));
                 }
             }
         }
         builder.append(SECTION_SEPARATOR);
-        
+
         // Serialize commands
         if (!commands.isEmpty()) {
             builder.append(String.join(ITEM_SEPARATOR, commands));
         }
         return builder.toString();
     }
-    
+
     private String serializeItemMeta(ItemMeta meta) {
         StringBuilder metaBuilder = new StringBuilder();
-        
+
         // Display name
         if (meta.hasDisplayName()) {
             metaBuilder.append("name").append(KEY_VALUE_SEPARATOR)
-                      .append(meta.getDisplayName()
-                        .replace(KEY_VALUE_SEPARATOR, "")
-                        .replace(META_SEPARATOR, "")
-                        .replace(ITEM_SEPARATOR, "")
-                        .replace(SECTION_SEPARATOR, ""))
-                      .append(META_SEPARATOR);
+                    .append(meta.getDisplayName()
+                            .replace(KEY_VALUE_SEPARATOR, "")
+                            .replace(META_SEPARATOR, "")
+                            .replace(ITEM_SEPARATOR, "")
+                            .replace(SECTION_SEPARATOR, ""))
+                    .append(META_SEPARATOR);
         }
-        
+
         // Lore
         if (meta.hasLore()) {
             metaBuilder.append("lore").append(KEY_VALUE_SEPARATOR)
-                      .append(String.join("\n", meta.getLore())
-                        .replace(KEY_VALUE_SEPARATOR, "")
-                        .replace(META_SEPARATOR, "")
-                        .replace(ITEM_SEPARATOR, "")
-                        .replace(SECTION_SEPARATOR, ""))
-                      .append(META_SEPARATOR);
+                    .append(String.join("\n", meta.getLore())
+                            .replace(KEY_VALUE_SEPARATOR, "")
+                            .replace(META_SEPARATOR, "")
+                            .replace(ITEM_SEPARATOR, "")
+                            .replace(SECTION_SEPARATOR, ""))
+                    .append(META_SEPARATOR);
         }
-        
+
         // Enchantments (1.8 compatible)
         if (meta.hasEnchants()) {
             for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
                 metaBuilder.append("ench").append(KEY_VALUE_SEPARATOR)
-                          .append(entry.getKey().getName())
-                          .append(KEY_VALUE_SEPARATOR)
-                          .append(entry.getValue())
-                          .append(META_SEPARATOR);
+                        .append(entry.getKey().getName())
+                        .append(KEY_VALUE_SEPARATOR)
+                        .append(entry.getValue())
+                        .append(META_SEPARATOR);
             }
         }
-        
+
         return metaBuilder.toString();
     }
-    
+
     public static Rewards deserialize(String serializedData) {
         String[] sections = serializedData.split(SECTION_SEPARATOR, -1);
-        
+
         // Deserialize loot details
         String[] lootDetails = sections[0].split(KEY_VALUE_SEPARATOR);
         if (lootDetails.length < 2) {
@@ -230,7 +265,7 @@ public class Rewards {
         }
         LootType lootType = LootType.valueOf(lootDetails[0]);
         int lootAmount = Integer.parseInt(lootDetails[1]);
-        
+
         // Deserialize items
         Collection<ItemStack> items = new ArrayList<>();
         if (sections.length > 1 && !sections[1].isEmpty()) {
@@ -238,45 +273,51 @@ public class Rewards {
             for (String entry : itemEntries) {
                 String[] parts = entry.split(META_SEPARATOR, 2); // Split into base item and meta
                 String[] itemData = parts[0].split(KEY_VALUE_SEPARATOR);
-                
+
                 if (itemData.length < 2) {
                     continue; // Skip invalid items
                 }
-                
+
                 Material material = Material.valueOf(itemData[0]);
                 int amount = Integer.parseInt(itemData[1]);
                 ItemStack item = new ItemStack(material, amount);
-                
+
                 // Handle item metadata if present
                 if (parts.length > 1 && !parts[1].isEmpty()) {
                     applyItemMeta(item, parts[1]);
                 }
-                
+
                 items.add(item);
             }
         }
-        
+
         // Deserialize commands
         Collection<String> commands = new ArrayList<>();
         if (sections.length > 2 && !sections[2].isEmpty()) {
             String[] commandEntries = sections[2].split(ITEM_SEPARATOR, -1);
             Collections.addAll(commands, commandEntries);
         }
-        
+
         return new Rewards(commands, items.toArray(new ItemStack[0]), lootType, lootAmount);
     }
-    
+
     private static void applyItemMeta(ItemStack item, String metaString) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-        
+        if (meta == null) {
+            return;
+        }
+
         String[] metaParts = metaString.split(META_SEPARATOR);
         for (String part : metaParts) {
-            if (part.isEmpty()) continue;
-            
+            if (part.isEmpty()) {
+                continue;
+            }
+
             String[] keyValue = part.split(KEY_VALUE_SEPARATOR, 2);
-            if (keyValue.length < 2) continue;
-            
+            if (keyValue.length < 2) {
+                continue;
+            }
+
             switch (keyValue[0]) {
                 case "name":
                     meta.setDisplayName(keyValue[1]);
@@ -295,7 +336,7 @@ public class Rewards {
                     break;
             }
         }
-        
+
         item.setItemMeta(meta);
     }
 }

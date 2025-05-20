@@ -1,5 +1,8 @@
 package com.arkflame.minekoth;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -244,5 +247,23 @@ public class MineKoth extends JavaPlugin {
 
     public boolean isMineClansEnabled() {
         return getServer().getPluginManager().isPluginEnabled("MineClans");
+    }
+
+    public int getLootMultiplier(Player player) {
+        // Get the configured multiplier values from config
+        List<Integer> multipliers = getConfig().getIntegerList("reward-multipliers");
+        
+        // Sort in descending order to check highest permissions first
+        multipliers.sort(Collections.reverseOrder());
+        
+        // Check each multiplier permission from highest to lowest
+        for (int multiplier : multipliers) {
+            if (player.hasPermission("minekoth.rewards.multiplier." + multiplier)) {
+                return multiplier;
+            }
+        }
+        
+        // Return 1 as the default multiplier if no permissions found
+        return 1;
     }
 }
