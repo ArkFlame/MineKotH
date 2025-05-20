@@ -258,7 +258,7 @@ public class MineKoth extends JavaPlugin {
         
         // Check each multiplier permission from highest to lowest
         for (int multiplier : multipliers) {
-            if (player.hasPermission("minekoth.rewards.multiplier." + multiplier)) {
+            if (player.hasPermission("minekoth.reward.multiplier." + multiplier)) {
                 return multiplier;
             }
         }
