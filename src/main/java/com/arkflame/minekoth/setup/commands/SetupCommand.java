@@ -181,7 +181,7 @@ public class SetupCommand {
                 .replace("<times>", session.getTimes())
                 .replace("<time_limit>", String.valueOf(session.getTimeLimit()))
                 .replace("<capture_time>", String.valueOf(session.getCaptureTime()))
-                .replace("<reward_items>", String.valueOf(session.getRewards().length))
+                .replace("<reward_items>", String.valueOf(session.getRewards().size()))
                 .replace("<reward_commands>", session.getRewardsCommands().toString()));
     }
 

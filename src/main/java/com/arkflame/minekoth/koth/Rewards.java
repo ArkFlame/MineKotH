@@ -28,7 +28,7 @@ public class Rewards {
     private LootType lootType;
     private int lootAmount;
 
-    public Rewards(Collection<String> commands, ItemStack[] itemsArray, LootType lootType, int lootAmount) {
+    public Rewards(Collection<String> commands, Collection<ItemStack> itemsArray, LootType lootType, int lootAmount) {
         this.items = new ArrayList<>();
         this.commands = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class Rewards {
         }
 
         if (itemsArray != null) {
-            Collections.addAll(this.items, itemsArray);
+            this.items.addAll(itemsArray);
         }
 
         this.lootType = lootType;
@@ -185,6 +185,8 @@ public class Rewards {
     }
 
     public Rewards load(Configuration config) {
+        items.clear();
+        commands.clear();
         if (config.isString("rewards")) {
             config.set("rewards", null);
             return this;

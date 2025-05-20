@@ -174,7 +174,7 @@ public class KothEditMenu extends Menu {
                 player.closeInventory();
                 MineKoth.getInstance().getLangManager().sendMessage(player, "messages.put-rewards-in-chest");
                 MineKoth.getInstance().getSessionManager().addSession(player, session);
-                SetupChatListener.openRewardsInventory(player, session);
+                SetupChatListener.openRewardsInventory(player, koth);
         }
 
         private void startScheduleSession(InventoryClickEvent e) {

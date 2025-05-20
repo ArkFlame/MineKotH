@@ -32,15 +32,15 @@ public class SetupInventoryCloseListener implements Listener {
         Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
 
         if (!session.isRewardsSet()) {
+            // Trying to debug why items is 0
             List<ItemStack> items = new ArrayList<>();
             Inventory inventory = event.getInventory();
-            for (int i = 0; i < 27; i++) {
-                ItemStack item = inventory.getItem(i);
+            for (ItemStack item : inventory.getContents()) {
                 if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
                     items.add(item);
                 }
             }
-            session.setRewards(items.toArray(new ItemStack[0]));
+            session.setRewards(items);
             player.sendMessage(lang.getMessage("messages.rewards-set").replace("<count>", String.valueOf(items.size())));
             if (!session.isLootTypeSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-loot-type"));

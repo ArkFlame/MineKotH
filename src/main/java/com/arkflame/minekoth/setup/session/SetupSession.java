@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Position;
 import com.arkflame.minekoth.koth.Rewards.LootType;
@@ -21,7 +22,7 @@ public class SetupSession {
     private Position secondPosition;
     private int timeLimit;
     private int captureTime;
-    private ItemStack[] rewards;
+    private Collection<ItemStack> rewards;
     private Collection<String> rewardsCommands = new HashSet<>();
     private LootType lootType;
     private int lootAmount = -1;
@@ -41,7 +42,7 @@ public class SetupSession {
         this.secondPosition = new Position(koth.getSecondLocation());
         this.timeLimit = koth.getTimeLimit();
         this.captureTime = koth.getTimeToCapture();
-        this.rewards = koth.getRewards().getRewardsItems().toArray(new ItemStack[0]);
+        this.rewards = koth.getRewards().getRewardsItems();
         this.rewardsCommands = koth.getRewards().getRewardsCommands();
         this.times = koth.getTimes();
         this.days = koth.getDays();
@@ -80,7 +81,7 @@ public class SetupSession {
         return captureTime;
     }
 
-    public ItemStack[] getRewards() {
+    public Collection<ItemStack> getRewards() {
         return rewards;
     }
 
@@ -154,7 +155,7 @@ public class SetupSession {
                 && isCaptureTimeSet() && isRewardsSet() && isDaysSet() && isLootTypeSet() && isLootAmountSet();
     }
 
-    public void setRewards(ItemStack[] rewards) {
+    public void setRewards(List<ItemStack> rewards) {
         this.rewards = rewards;
     }
 
@@ -308,5 +309,9 @@ public class SetupSession {
 
     public boolean isValidPosition(Location loc) {
         return loc != null && loc.getWorld().getName().equals(worldName);
+    }
+
+    public Koth getKoth() {
+        return MineKoth.getInstance().getKothManager().getKothById(id);
     }
 }

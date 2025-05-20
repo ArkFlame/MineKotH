@@ -1,5 +1,6 @@
 package com.arkflame.minekoth.setup.listeners;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
@@ -52,7 +54,7 @@ public class SetupChatListener implements Listener {
             }
             session.setTimes(message);
             player.sendMessage(lang.getMessage("messages.times-set").replace("<value>", message));
-            
+
             if (!session.isDaysSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-days"));
             }
@@ -64,7 +66,7 @@ public class SetupChatListener implements Listener {
             }
             session.setDays(message);
             player.sendMessage(lang.getMessage("messages.days-set").replace("<value>", message));
-            
+
             if (!session.isTimeLimitSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-time-limit"));
             }
@@ -75,7 +77,8 @@ public class SetupChatListener implements Listener {
                 return;
             }
             session.setTimeLimit(time);
-            player.sendMessage(lang.getMessage("messages.time-limit-set").replace("<value>", Times.formatSeconds(time)));
+            player.sendMessage(
+                    lang.getMessage("messages.time-limit-set").replace("<value>", Times.formatSeconds(time)));
             if (!session.isCaptureTimeSet()) {
                 player.sendMessage(lang.getMessage("messages.enter-capture-time"));
             }
@@ -86,11 +89,12 @@ public class SetupChatListener implements Listener {
                 return;
             }
             session.setCaptureTime(time);
-            player.sendMessage(lang.getMessage("messages.capture-time-set").replace("<value>", Times.formatSeconds(time)));
-            
+            player.sendMessage(
+                    lang.getMessage("messages.capture-time-set").replace("<value>", Times.formatSeconds(time)));
+
             if (!session.isRewardsSet()) {
                 player.sendMessage(lang.getMessage("messages.put-rewards"));
-                openRewardsInventory(player, session);
+                openRewardsInventory(player, session.getKoth());
             }
         } else if (!session.isLootTypeSet()) {
             if (!session.isValidLootType(message)) {
@@ -128,11 +132,15 @@ public class SetupChatListener implements Listener {
         }
     }
 
-    public static void openRewardsInventory(Player player, SetupSession session) {
+    public static void openRewardsInventory(Player player, Koth koth) {
         FoliaAPI.runTask(() -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
-            for (ItemStack oldReward : session.getRewards()) {
-                inventory.addItem(oldReward);
+            Collection<ItemStack> rewards = koth.getRewards().getRewardsItems();
+            if (rewards != null) {
+                for (ItemStack oldReward : rewards) {
+                    System.out.println("Adding item: " + oldReward);
+                    inventory.addItem(oldReward);
+                }
             }
             player.openInventory(inventory);
         });
