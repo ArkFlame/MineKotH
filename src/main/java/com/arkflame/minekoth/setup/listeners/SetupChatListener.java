@@ -140,7 +140,6 @@ public class SetupChatListener implements Listener {
             Collection<ItemStack> rewards = koth.getRewards().getRewardsItems();
             if (rewards != null) {
                 for (ItemStack oldReward : rewards) {
-                    System.out.println("Adding item: " + oldReward);
                     inventory.addItem(oldReward);
                 }
             }

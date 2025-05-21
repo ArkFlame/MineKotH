@@ -225,12 +225,9 @@ public class KothEvent {
             CapturingPlayers topGroup = captureState.getTopGroup();
             long captureSecondsLeft = getTimeLeftToCapture();
             if (hasReachedTimeLimit()) {
-                System.out.println("Time limit reached, setting captured");
                 setCaptured(topGroup);
             } else if ((captureSecondsLeft <= 0 &&
                     isCaptureTimeGoal)) {
-                System.out.println("Capture time goal reached, setting captured");
-                System.out.println("Capture seconds: " + captureSecondsLeft);
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = captureState.getTopPlayer();
@@ -385,7 +382,7 @@ public class KothEvent {
     }
 
     public String getTimeLeftFormatted() {
-        if (getTimeLeftToFinish() < captureState.getTimeLeftToCapture()) {
+        if (getTimeLeftToFinish() < captureState.getTimeLeftToCapture() || getTopGroup() == null) {
             return Times.formatSecondsShort(getTimeLeftToFinish());
         } else {
             return captureState.getTimeLeftToCaptureFormatted();
