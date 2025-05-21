@@ -112,7 +112,7 @@ public class KothEvent {
                         lang.getMessage("messages.entering-zone-title"),
                         (oldTopGroup.containsPlayer(player)
                                 ? lang.getMessage("messages.top-player-capturing-prefix")
-                                : lang.getMessage("messages.not-top-player-capturing-prefix")) + topPlayer.getName()
+                                : lang.getMessage("messages.not-top-player-capturing-prefix")) + getCapturerName()
                                 + " " + lang.getMessage("messages.is-capturing"),
                         10, 20, 10);
             }
@@ -231,7 +231,7 @@ public class KothEvent {
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = captureState.getTopPlayer();
-                String topPlayerName = topPlayer == null ? "No Winner" : topPlayer.getName();
+                String capturer = getCapturerName();
                 boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) captureSecondsLeft);
 
                 for (Player player : captureState.getPlayersInZone()) {
@@ -243,11 +243,11 @@ public class KothEvent {
                                 "<time-left>", timeLeftToCapture);
                     } else if (isTopGroup) {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-team",
-                                "<player>", topPlayerName,
+                                "<player>", capturer,
                                 "<time-left>", getTimeLeftFormatted());
                     } else {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-enemy",
-                                "<player>", topPlayerName,
+                                "<player>", capturer,
                                 "<time-left>", getTimeLeftFormatted());
                     }
                     if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
@@ -262,9 +262,9 @@ public class KothEvent {
                                         ? lang.getMessage("messages.you-are-capturing-subtitle")
                                         : isTopGroup
                                                 ? lang.getMessage("messages.top-player-name-capturing-subtitle")
-                                                        .replace("<topPlayerName>", topPlayerName)
+                                                        .replace("<topPlayerName>", capturer)
                                                 : lang.getMessage("messages.not-top-player-name-capturing-subtitle")
-                                                        .replace("<topPlayerName>", topPlayerName),
+                                                        .replace("<topPlayerName>", capturer),
                                 10, 20, 10);
                         Sounds.play(player, 1.0f, 1.0f, "CLICK");
                     }
@@ -447,5 +447,9 @@ public class KothEvent {
 
     public CapturingPlayers getGroup(int position) {
         return captureState.getGroup(position);
+    }
+
+    public String getCapturerName() {
+        return captureState.getCapturerName();
     }
 }

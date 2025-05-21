@@ -288,8 +288,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
     public String getKothCapturer() {
         KothEvent event = getCurrentKothEvent();
         if (event != null) {
-            Player player = event.getTopPlayer();
-            return player != null ? player.getName() : NONE;
+            return event.getCapturerName();
         }
         return NONE;
     }
@@ -298,8 +297,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
         for (KothEvent event : plugin.getKothEventManager().getRunningKoths()) {
             if (event != null && event.getKoth().getId() == koth.getId()) {
-                Player player = event.getTopPlayer();
-                return player != null ? player.getName() : NONE;
+                return event.getCapturerName();
             }
         }
         return NONE;

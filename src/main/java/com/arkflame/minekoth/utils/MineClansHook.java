@@ -9,6 +9,9 @@ import com.arkflame.mineclans.models.FactionPlayer;
 
 public class MineClansHook {
     public static boolean isSameTeam(Player p1, Player p2) {
+        if (p1 == null || p2 == null) {
+            return false;
+        }
         MineClansAPI mineClansAPI = MineClans.getInstance().getAPI();
 
         FactionPlayer fp1 = mineClansAPI.getFactionPlayer(p1);
@@ -21,5 +24,21 @@ public class MineClansHook {
             }
         }
         return false;
+    }
+
+    public static String getClanName(Player player) {
+        if (player == null) {
+            return null;
+        }
+        MineClansAPI mineClansAPI = MineClans.getInstance().getAPI();
+        FactionPlayer fp = mineClansAPI.getFactionPlayer(player);
+        if (fp != null) {
+            Faction faction = fp.getFaction();
+            if (faction == null) {
+                return null;
+            }
+            return faction.getName();
+        }
+        return null;
     }
 }

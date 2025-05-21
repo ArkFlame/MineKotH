@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
-import com.arkflame.minekoth.utils.MineClansHook;
 import com.arkflame.minekoth.utils.Times;
 
 public class KothEventCaptureState {
@@ -45,7 +44,7 @@ public class KothEventCaptureState {
         playersInZone.add(player);
         for (CapturingPlayers group : playersCapturing) {
             Player firstPlayer = group.getPlayers().get(0);
-            if (firstPlayer != player && isSameTeam(group.getPlayers().get(0), player)) {
+            if (firstPlayer != player && group.isSameTeam(player)) {
                 group.addPlayer(player);
                 return;
             }
@@ -67,14 +66,6 @@ public class KothEventCaptureState {
 
     public boolean isCapturing(Player player) {
         return playersInZone.contains(player);
-    }
-
-    private boolean isSameTeam(Player p1, Player p2) {
-        // Placeholder logic for determining if two players are on the same team.
-        if (MineKoth.getInstance().isMineClansEnabled()) { // MineClans plugin enabled
-            return MineClansHook.isSameTeam(p1, p2);
-        }
-        return false;
     }
 
     public boolean isAnyoneCapturing() {
@@ -154,5 +145,10 @@ public class KothEventCaptureState {
     public int getPosition(Player player) {
         CapturingPlayers group = getGroup(player);
         return group != null ? playersCapturing.indexOf(group) + 1 : -1;
+    }
+
+    public String getCapturerName() {
+        CapturingPlayers topGroup = getTopGroup();
+        return topGroup != null ? topGroup.getName() : "";
     }
 }
