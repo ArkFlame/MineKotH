@@ -8,6 +8,8 @@
 # You can use PlaceholderAPI on all lang messages
 # ==================================================== 
 messages:
+  no-permission: "&c✖ &7You do not have permission to do this."
+
   reload: "&a&lTIP:&a MineKoth has been reloaded!"
 
   awarded-diamond: "&a&lTIP:&a You have been awarded a diamond for capturing the hill for 30 seconds!"
@@ -199,7 +201,7 @@ messages:
   invalid-world: "&c✖ &7The world must be the same as the first position."
   position2-set: "&a✔ &7Position 2 set at: &b<value>"
   area-size: "&a✔ &7Area size (&b<x_length>x<z_length>&7): &b<area> blocks"
-  enter-times: "&b➡ &7Enter the times to run the koth (e.g., &b8pm 9pm 10pm&7)."
+  enter-times: "&b➡ &7Enter the times to run the koth (&b8pm 9pm 10pm&7) or &7(&b30 min&7)."
 
   rewards-set: "&a✔ &7Rewards set. (&b<count> items&7)"
   rewards-already-set: "&c✖ &7Rewards are already set."

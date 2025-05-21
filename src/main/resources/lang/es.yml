@@ -8,6 +8,8 @@
 # Podes usar PlaceholderAPI en todos los mensajes
 # ==================================================== 
 messages:
+  no-permission: "&c✖ &7You do not have permission to do this."
+  
   reload: "&a&lTIP:&a MineKoth ha sido recargado!"
 
   awarded-diamond: "&a&lTIP:&a ¡Has sido premiado con un diamante por capturar la colina durante 30 segundos!"

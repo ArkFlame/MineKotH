@@ -19,6 +19,7 @@ import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.setup.commands.SetupCommand;
 import com.arkflame.minekoth.setup.session.SetupSession;
 import com.arkflame.minekoth.utils.FoliaAPI;
+import com.arkflame.minekoth.utils.KothScheduleUtil;
 import com.arkflame.minekoth.utils.Times;
 
 public class SetupChatListener implements Listener {
@@ -48,7 +49,8 @@ public class SetupChatListener implements Listener {
             return;
         } else if (!session.isTimesSet()) {
             message = message.toLowerCase();
-            if (!session.isValidTimes(message)) {
+            message = KothScheduleUtil.processMessage(message);
+            if (message == null) {
                 player.sendMessage(lang.getMessage("messages.invalid-times"));
                 return;
             }

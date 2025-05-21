@@ -179,17 +179,6 @@ public class SetupSession {
         return id;
     }
 
-    public boolean isValidTimes(String message) {
-        if (message == null || message.isEmpty()) {
-            return false;
-        }
-
-        // Regular expression to match 12-hour (with am/pm), 24-hour time formats, and
-        // multiple times separated by commas
-        String timePattern = "^(?:(1[0-2]|[1-9])(am|pm)|([01]?[0-9]|2[0-3]):([0-5]?[0-9])|(24:00))(,\\s?(?:(1[0-2]|[1-9])(am|pm)|([01]?[0-9]|2[0-3]):([0-5]?[0-9])|(24:00)))*$";
-        return message.toLowerCase().matches(timePattern);
-    }
-
     public boolean isValidTimeLimit(String message) {
         if (message == null || message.isEmpty()) {
             return false;
