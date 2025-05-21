@@ -11,6 +11,7 @@ import com.arkflame.minekoth.utils.DiscordHook;
 import com.arkflame.minekoth.utils.FoliaAPI;
 import com.arkflame.minekoth.utils.GlowingUtility;
 import com.arkflame.minekoth.utils.Sounds;
+import com.arkflame.minekoth.utils.Times;
 import com.arkflame.minekoth.utils.Titles;
 
 import org.bukkit.entity.Player;
@@ -203,51 +204,63 @@ public class KothEvent {
         }
     }
 
+    public int getTimeLeftToFinish() {
+        int secondsLeft = (int) Math.ceil(((startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis()) / 1000);
+        return secondsLeft;
+    }
+
+    public int getTimeLeftToCapture() {
+        int secondsLeft = (int) Math.ceil(captureState.getTimeLeftToCapture());
+        return secondsLeft;
+    }
+
     public boolean hasReachedTimeLimit() {
-        long timeLimit = koth.getTimeLimit() * 1000L;
-        return System.currentTimeMillis() - startTime > timeLimit;
+        return getTimeLeftToFinish() <= 0;
     }
 
     public void tick() {
+        boolean isCaptureTimeGoal = MineKoth.getInstance().getConfig()
+                .getBoolean("capturing-options.capture-time-goal", true);
         if (state == KothEventState.CAPTURING) {
             CapturingPlayers topGroup = captureState.getTopGroup();
-            long secondsLeft = captureState.getTimeLeftToCapture() / 1000;
-            boolean isCaptureTimeGoal = MineKoth.getInstance().getConfig()
-                    .getBoolean("capturing-options.capture-time-goal", true);
-            if (!isCaptureTimeGoal && hasReachedTimeLimit()) {
+            long captureSecondsLeft = getTimeLeftToCapture();
+            if (hasReachedTimeLimit()) {
+                System.out.println("Time limit reached, setting captured");
                 setCaptured(topGroup);
-            } else if ((secondsLeft <= 0 &&
+            } else if ((captureSecondsLeft <= 0 &&
                     isCaptureTimeGoal)) {
+                System.out.println("Capture time goal reached, setting captured");
+                System.out.println("Capture seconds: " + captureSecondsLeft);
                 setCaptured(topGroup);
             } else {
                 Player topPlayer = captureState.getTopPlayer();
                 String topPlayerName = topPlayer == null ? "No Winner" : topPlayer.getName();
-                boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) secondsLeft);
+                boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) captureSecondsLeft);
 
                 for (Player player : captureState.getPlayersInZone()) {
                     boolean isTopPlayer = player == topPlayer;
                     boolean isTopGroup = topGroup != null && topGroup.containsPlayer(player);
                     if (isTopPlayer) {
-                        String timeLeftToCapture = captureState.getTimeLeftToCaptureFormatted();
+                        String timeLeftToCapture = getTimeLeftFormatted();
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.you-are-capturing-action",
                                 "<time-left>", timeLeftToCapture);
                     } else if (isTopGroup) {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-team",
                                 "<player>", topPlayerName,
-                                "<time-left>", captureState.getTimeLeftToCaptureFormatted());
+                                "<time-left>", getTimeLeftFormatted());
                     } else {
                         MineKoth.getInstance().getLangManager().sendAction(player, "messages.capturing-action-enemy",
                                 "<player>", topPlayerName,
-                                "<time-left>", captureState.getTimeLeftToCaptureFormatted());
+                                "<time-left>", getTimeLeftFormatted());
                     }
                     if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
                         sendTimeLeftTitle = false;
                     }
                     if (sendTimeLeftTitle) {
                         Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                        String timeLeftToCapture = getTimeLeftFormatted();
                         Titles.sendTitle(player,
-                                lang.getMessage("messages.seconds-left").replace("<seconds>",
-                                        String.valueOf(secondsLeft)),
+                                lang.getMessage("messages.seconds-left").replace("<seconds>", timeLeftToCapture),
                                 isTopPlayer
                                         ? lang.getMessage("messages.you-are-capturing-subtitle")
                                         : isTopGroup
@@ -263,17 +276,21 @@ public class KothEvent {
             }
         } else if (state == KothEventState.UNCAPTURED) {
             if (hasReachedTimeLimit()) {
-                MineKoth.getInstance().getKothEventManager().end(this);
+                if (!isCaptureTimeGoal) {
+                    setCaptured(captureState.getTopGroup());
+                } else {
+                    MineKoth.getInstance().getKothEventManager().end(this);
 
-                // Notify Discord
-                DiscordHook.sendKothTimeLimit(koth.getName());
+                    // Notify Discord
+                    DiscordHook.sendKothTimeLimit(koth.getName());
 
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
-                    Titles.sendTitle(player,
-                            lang.getMessage("messages.time-limit-title"),
-                            lang.getMessage("messages.time-limit-subtitle"),
-                            10, 60, 10);
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
+                        Titles.sendTitle(player,
+                                lang.getMessage("messages.time-limit-title"),
+                                lang.getMessage("messages.time-limit-subtitle"),
+                                10, 60, 10);
+                    }
                 }
             }
         }
@@ -367,19 +384,12 @@ public class KothEvent {
         }
     }
 
-    // Get koth time limit and check if it was exceded comparing it with start time
-    // and current time
-    public String getTimeLeftToFinishFormatted() {
-        long time = (startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis();
-        long minutes = time / 60000;
-        long seconds = (time % 60000) / 1000;
-        if (seconds < 0) {
-            return "0";
+    public String getTimeLeftFormatted() {
+        if (getTimeLeftToFinish() < captureState.getTimeLeftToCapture()) {
+            return Times.formatSecondsShort(getTimeLeftToFinish());
+        } else {
+            return captureState.getTimeLeftToCaptureFormatted();
         }
-        if (minutes > 0) {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
-        return String.format("%d", seconds);
     }
 
     private void applyCapturingParticles(Player player) {
@@ -409,10 +419,6 @@ public class KothEvent {
 
     public KothEventBets getKothEventBets() {
         return bets;
-    }
-
-    public String getTimeLeftToCaptureFormatted() {
-        return captureState.getTimeLeftToCaptureFormatted();
     }
 
     public Player getTopPlayer() {

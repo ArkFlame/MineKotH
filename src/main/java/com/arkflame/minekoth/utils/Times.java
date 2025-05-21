@@ -114,6 +114,18 @@ public class Times {
         return result.toString();
     }
 
+    public static String formatSecondsShort(int seconds) {
+        if (seconds <= 0) {
+            return "0";
+        }
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        if (minutes > 0) {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+        return String.format("%d", seconds);
+    }
+
     public static KothTime parseTimeEntry(String timeEntry) {
         int hour, minute = 0;
         boolean isPm = timeEntry.toLowerCase().contains("pm");

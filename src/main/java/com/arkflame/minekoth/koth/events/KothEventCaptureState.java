@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.MineClansHook;
+import com.arkflame.minekoth.utils.Times;
 
 public class KothEventCaptureState {
     private final int timeToCapture;
@@ -20,25 +21,16 @@ public class KothEventCaptureState {
         this.timeToCapture = timeToCapture;
     }
 
-    public long getTimeLeftToCapture() {
+    public int getTimeLeftToCapture() {
         if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
-            return getTopGroup().getScore() * 1000;
+            return getTopGroup().getScore();
         }
-        long timeLeftToCapture = ((timeToCapture - (getTopGroup() != null ? getTopGroup().getScore() : 0)) * 1000);
+        int timeLeftToCapture = ((timeToCapture - (getTopGroup() != null ? getTopGroup().getScore() : 0)));
         return timeLeftToCapture;
     }
 
     public String getTimeLeftToCaptureFormatted() {
-        long time = getTimeLeftToCapture();
-        long minutes = time / 60000;
-        long seconds = (time % 60000) / 1000;
-        if (seconds < 0) {
-            return "0";
-        }
-        if (minutes > 0) {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
-        return String.format("%d", seconds);
+        return Times.formatSecondsShort(getTimeLeftToCapture());
     }
 
     public boolean isInZone(Player player) {

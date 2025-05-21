@@ -76,9 +76,15 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                                         return players.getCaptureTimeFormatted();
                                     }
                                 }
+                                int timeLimitLeft = event.getTimeLeftToFinish();
+                                int timeToCaptureLeft = event.getTimeLeftToCapture();
                                 CapturingPlayers players = event.getGroup(player);
                                 if (players != null) {
-                                    return players.getCaptureTimeFormatted();
+                                    if (timeToCaptureLeft > timeLimitLeft) {
+                                        return players.getCaptureTimeFormatted();
+                                    } else {
+                                        return event.getTimeLeftFormatted();
+                                    }
                                 }
                             }
                             break;
@@ -166,11 +172,11 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
             if (event != null) {
                 switch (event.getState()) {
                     case CAPTURING:
-                        return event.getTimeLeftToCaptureFormatted();
+                        return event.getTimeLeftFormatted();
                     case STALEMATE:
                         return "Stalemate";
                     default:
-                        return event.getTimeLeftToFinishFormatted();
+                        return event.getTimeLeftFormatted();
                 }
             }
         }
@@ -185,11 +191,11 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                 if (event != null) {
                     switch (event.getState()) {
                         case CAPTURING:
-                            return event.getTimeLeftToCaptureFormatted();
+                            return event.getTimeLeftFormatted();
                         case STALEMATE:
                             return "Stalemate";
                         default:
-                            return event.getTimeLeftToFinishFormatted();
+                            return event.getTimeLeftFormatted();
                     }
                 }
             }
