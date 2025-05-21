@@ -89,54 +89,50 @@ public class Rewards {
 
     public int giveRewards(Player topPlayer) {
         int multiplier = MineKoth.getInstance().getLootMultiplier(topPlayer);
-        
+
         if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
             FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
-                // Execute all reward commands
-                executeCommands(topPlayer, getRewardsCommands());
-                
-                // Give all reward items
-                giveItems(topPlayer, getRewardsItems(), multiplier);
+                for (int i = 0; i < lootAmount * multiplier; i++) {
+                    // Execute all reward commands
+                    executeCommands(topPlayer, getRewardsCommands());
+
+                    // Give all reward items
+                    giveItems(topPlayer, getRewardsItems());
+                }
             });
-    
-            return getRewardsItems().size() + getRewardsCommands().size();
-        } 
-        else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
-            // Combine items and commands into a single collection
+
+            return getRewardsItems().size() * multiplier + getRewardsCommands().size();
+        } else if (lootType == LootType.RANDOM || lootType == LootType.MINECLANS_RANDOM) {
             ArrayList<Object> rewardsPool = new ArrayList<>();
             rewardsPool.addAll(getRewardsItems());
             rewardsPool.addAll(getRewardsCommands());
-    
-            // Shuffle and pick random rewards
-            Collections.shuffle(rewardsPool);
             int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
-    
             FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
-                for (int i = 0; i < rewardsToGive; i++) {
-                    Object reward = rewardsPool.get(i);
-    
+                for (int i = 0; i < rewardsToGive * multiplier; i++) {
+                    int index = (int) (Math.random() * rewardsPool.size());
+                    Object reward = rewardsPool.get(index);
                     if (reward instanceof ItemStack) {
-                        giveItem(topPlayer, (ItemStack) reward, multiplier);
+                        giveItem(topPlayer, (ItemStack) reward);
                     } else if (reward instanceof String) {
                         executeCommand(topPlayer, (String) reward);
                     }
                 }
             });
-    
+
             return rewardsToGive;
         }
-    
+
         return 0;
     }
-    
+
     /**
      * Executes a command with player placeholder replaced
      */
     private void executeCommand(Player player, String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), 
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                 command.replace("%player%", player.getName()));
     }
-    
+
     /**
      * Executes multiple commands for a player
      */
@@ -145,28 +141,26 @@ public class Rewards {
             executeCommand(player, command);
         }
     }
-    
+
     /**
      * Gives a single item to a player with multiplier, handling inventory overflow
      */
-    private void giveItem(Player player, ItemStack item, int multiplier) {
+    private void giveItem(Player player, ItemStack item) {
         if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-            for (int i = 0; i < multiplier; i++) {
-                HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
-                // Drop items that don't fit in the inventory
-                for (ItemStack remainingItem : remainingItems.values()) {
-                    player.getWorld().dropItem(player.getLocation(), remainingItem);
-                }
+            HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+            // Drop items that don't fit in the inventory
+            for (ItemStack remainingItem : remainingItems.values()) {
+                player.getWorld().dropItem(player.getLocation(), remainingItem);
             }
         }
     }
-    
+
     /**
      * Gives multiple items to a player with multiplier
      */
-    private void giveItems(Player player, Collection<ItemStack> items, int multiplier) {
+    private void giveItems(Player player, Collection<ItemStack> items) {
         for (ItemStack item : items) {
-            giveItem(player, item, multiplier);
+            giveItem(player, item);
         }
     }
 
