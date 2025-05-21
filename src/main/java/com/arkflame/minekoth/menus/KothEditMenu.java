@@ -58,7 +58,7 @@ public class KothEditMenu extends Menu {
                                 .onClick(this::startRegionSession)
                                 .build();
 
-                MenuItem timeLimitItem = new MenuItem.Builder(Materials.get("CLOCK"))
+                MenuItem timeLimitItem = new MenuItem.Builder(Materials.get("CLOCK", "WATCH"))
                                 .name(lang.getMessage("messages.time-limit"))
                                 .lore(
                                                 lang.getMessage("messages.current-limit").replace("<value>",
