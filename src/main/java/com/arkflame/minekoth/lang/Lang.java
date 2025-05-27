@@ -13,7 +13,7 @@ public class Lang {
     }
 
     public String getMessage(String key) {
-        return messages.getOrDefault(key, "Message not found: " + key);
+        return messages.getOrDefault(key, "Message not found for " + code + ": " + key);
     }
 
     public String getMessage(String key, Object... args) {

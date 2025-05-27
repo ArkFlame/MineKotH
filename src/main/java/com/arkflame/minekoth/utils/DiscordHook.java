@@ -22,8 +22,8 @@ public class DiscordHook {
 
     public static void sendKothStart(String kothName) {
         Lang lang = MineKoth.getInstance().getLangManager().getLang(null); // Use null for global messages
-        String title = lang.getMessage("discord.koth-started-title");
-        String description = lang.getMessage("discord.koth-started-description")
+        String title = lang.getMessage("messages.discord.koth-started-title");
+        String description = lang.getMessage("messages.discord.koth-started-description")
                 .replace("<koth_name>", kothName);
         int color = 0x1F8B4C; // A nice green color.
 
@@ -32,8 +32,8 @@ public class DiscordHook {
 
     public static void sendKothTimeLimit(String kothName) {
         Lang lang = MineKoth.getInstance().getLangManager().getLang(null);
-        String title = lang.getMessage("discord.koth-time-limit-title");
-        String description = lang.getMessage("discord.koth-time-limit-description")
+        String title = lang.getMessage("messages.discord.koth-time-limit-title");
+        String description = lang.getMessage("messages.discord.koth-time-limit-description")
                 .replace("<koth_name>", kothName);
         int color = 0xE67E22; // Orange color.
 
@@ -42,8 +42,8 @@ public class DiscordHook {
 
     public static void sendKothCaptured(String kothName, String playerName) {
         Lang lang = MineKoth.getInstance().getLangManager().getLang(null);
-        String title = lang.getMessage("discord.koth-captured-title");
-        String description = lang.getMessage("discord.koth-captured-description")
+        String title = lang.getMessage("messages.discord.koth-captured-title");
+        String description = lang.getMessage("messages.discord.koth-captured-description")
                 .replace("<koth_name>", kothName)
                 .replace("<player_name>", playerName);
         int color = 0x9B59B6; // Purple color.
