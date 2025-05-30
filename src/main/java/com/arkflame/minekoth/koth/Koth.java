@@ -71,7 +71,7 @@ public class Koth {
 
         return location.getWorld().getName().equals(worldName) &&
                 location.getX() >= xMin && location.getX() <= xMax + 1 &&
-                location.getY() >= yMin - 2.0 && location.getY() <= yMax + 2.0 &&
+                location.getY() >= yMin - 1.5 && location.getY() <= yMax + 1.5 &&
                 location.getZ() >= zMin && location.getZ() <= zMax + 1;
     }
 
@@ -151,7 +151,7 @@ public class Koth {
         if (center == null) {
             // Generate Center
             double x = (firstPosition.getX() + secondPosition.getX()) / 2;
-            double y = (firstPosition.getY() + secondPosition.getY()) / 2;
+            double y = Math.min(firstPosition.getY(), secondPosition.getY()) - 2;
             double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
             center = new Location(getWorld(), x, y, z);
             // Generate Safe center
@@ -161,7 +161,7 @@ public class Koth {
                 while (safeCenter.getBlock().getType().isSolid() && ++attempts < 5) {
                     safeCenter.add(0, 1, 0);
                 }
-                safeCenter.add(0.5, 2, 0.5);
+                safeCenter.add(0.5, 0, 0.5);
             });
         }
         return center;
@@ -178,6 +178,7 @@ public class Koth {
         if (safeCenter == null) {
             return;
         }
+        Location safeCenter1 = getSafeCenter().clone().add(0, 2, 0);
         Configuration config = MineKoth.getInstance().getConfig();
         String[] lines = config.getString("messages.koth-hologram-lines").split("\n");
         for (int i = 0; i < lines.length; i++) {
@@ -186,7 +187,7 @@ public class Koth {
             }
         }
         FoliaAPI.runTask(() -> {
-            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, safeCenter, lines);
+            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, safeCenter1, lines);
             hologramSpawned = true;
         });
     }

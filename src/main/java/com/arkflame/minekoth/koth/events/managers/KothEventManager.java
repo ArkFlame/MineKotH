@@ -177,9 +177,12 @@ public class KothEventManager {
 
                             config.giveRewards(player, timeCaptured);
                         }
-
-                        ParticleUtil.generatePerimeter(currentEvent.getKoth().getFirstLocation().add(0, 0.5, 0),
-                                currentEvent.getKoth().getSecondLocation().add(0, 0.5, 0), "COLOURED_DUST", 100);
+                        double safeY = currentEvent.getKoth().getSafeCenter().getY() + 0.5;
+                        Location firstLocation = currentEvent.getKoth().getFirstLocation().clone();
+                        Location secondLocation = currentEvent.getKoth().getSecondLocation().clone();
+                        firstLocation.setY(safeY);
+                        secondLocation.setY(safeY);
+                        ParticleUtil.generatePerimeter(firstLocation, secondLocation, "COLOURED_DUST", 100);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

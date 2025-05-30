@@ -251,7 +251,7 @@ public class KothCommand implements CommandExecutor {
                     break;
                 }
 
-                Location center = tpKoth.getCenter();
+                Location center = tpKoth.getCenter().clone().add(0, 2, 0);
 
                 FoliaAPI.runTask(() -> {
                     FoliaAPI.teleportPlayer(player, center, true);
