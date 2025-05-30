@@ -71,7 +71,7 @@ public class Koth {
 
         return location.getWorld().getName().equals(worldName) &&
                 location.getX() >= xMin && location.getX() <= xMax + 1 &&
-                location.getY() >= yMin && location.getY() <= yMax + 1.5 &&
+                location.getY() >= yMin - 2.0 && location.getY() <= yMax + 2.0 &&
                 location.getZ() >= zMin && location.getZ() <= zMax + 1;
     }
 
