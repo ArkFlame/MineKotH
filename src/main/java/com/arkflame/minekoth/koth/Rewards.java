@@ -37,7 +37,11 @@ public class Rewards {
         }
 
         if (itemsArray != null) {
-            this.items.addAll(itemsArray);
+            for (ItemStack item : itemsArray) {
+                if (item != null && item.getType() != Material.AIR) {
+                    this.items.add(item);
+                }
+            }
         }
 
         this.lootType = lootType;
@@ -173,6 +177,9 @@ public class Rewards {
         }
         int i = 0;
         for (ItemStack item : items) {
+            if (item == null || item.getType() == Material.AIR || item.getAmount() == 0) {
+                continue;
+            }
             config.set("rewards.items." + i++, item);
         }
         config.set("rewards.lootType", lootType.name());

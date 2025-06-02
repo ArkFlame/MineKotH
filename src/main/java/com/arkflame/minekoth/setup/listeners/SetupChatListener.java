@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -137,10 +138,15 @@ public class SetupChatListener implements Listener {
     public static void openRewardsInventory(Player player, Koth koth) {
         FoliaAPI.runTask(() -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
-            Collection<ItemStack> rewards = koth.getRewards().getRewardsItems();
-            if (rewards != null) {
-                for (ItemStack oldReward : rewards) {
-                    inventory.addItem(oldReward);
+            if (koth.getRewards() != null) {
+                Collection<ItemStack> rewards = koth.getRewards().getRewardsItems();
+                if (rewards != null) {
+                    for (ItemStack oldReward : rewards) {
+                        if (oldReward == null || oldReward.getType() == Material.AIR || oldReward.getAmount() == 0) {
+                            continue;
+                        }
+                        inventory.addItem(oldReward);
+                    }
                 }
             }
             player.openInventory(inventory);
