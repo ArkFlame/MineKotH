@@ -138,7 +138,7 @@ public class SetupChatListener implements Listener {
     public static void openRewardsInventory(Player player, Koth koth) {
         FoliaAPI.runTask(() -> {
             Inventory inventory = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Rewards");
-            if (koth.getRewards() != null) {
+            if (koth != null && koth.getRewards() != null) {
                 Collection<ItemStack> rewards = koth.getRewards().getRewardsItems();
                 if (rewards != null) {
                     for (ItemStack oldReward : rewards) {
