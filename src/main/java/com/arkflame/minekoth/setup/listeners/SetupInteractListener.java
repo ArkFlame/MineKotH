@@ -52,7 +52,7 @@ public class SetupInteractListener implements Listener {
                 player.sendMessage(lang.getMessage("messages.invalid-world"));
                 return;
             }
-            session.setSecondPosition(new Position(loc.getBlockX(), session.getFirstPosition().getY() + 1, loc.getBlockZ()));
+            session.setSecondPosition(new Position(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()));
             player.sendMessage(lang.getMessage("messages.position2-set").replace("<value>", Locations.toString(loc)));
             Position first = session.getFirstPosition();
             Position second = session.getSecondPosition();

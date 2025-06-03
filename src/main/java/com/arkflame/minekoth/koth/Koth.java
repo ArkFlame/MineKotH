@@ -26,6 +26,9 @@ public class Koth {
     private Location center;
     private Location safeCenter;
 
+    private boolean resetScore = true;
+    private boolean captureTimeGoal = true;
+
     public Koth(int id, String name, String worldName, Position firstPosition, Position secondPosition, int timeLimit,
             int timeToCapture, Rewards rewards, String times, String days) {
         this.id = id;
