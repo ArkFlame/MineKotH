@@ -31,7 +31,7 @@ public class KothScheduleUtil {
         int intervalMinutes = parseTimeInterval(message.trim().toLowerCase());
         
         // If it's a valid interval, generate a schedule
-        if (intervalMinutes > 0) {
+        if (intervalMinutes > 0 && intervalMinutes > 5) {
             return generateSchedule(intervalMinutes);
         }
         
@@ -87,11 +87,6 @@ public class KothScheduleUtil {
      * @return Formatted schedule string
      */
     private static String generateSchedule(int intervalMinutes) {
-        // Don't allow intervals less than 30 minutes
-        if (intervalMinutes < 30) {
-            return "Invalid interval: Please use intervals of at least 30 minutes.";
-        }
-        
         List<String> times = new ArrayList<>();
         
         // Generate times for a 24-hour period (00:00 to 24:00)
