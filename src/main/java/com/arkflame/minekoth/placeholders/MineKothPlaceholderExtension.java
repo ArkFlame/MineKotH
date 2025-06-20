@@ -40,6 +40,14 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
+        String res = onPlaceholderRequest0(player, identifier);
+        if (res == null) {
+            return NONE;
+        }
+        return res;
+    }
+
+    public String onPlaceholderRequest0(Player player, String identifier) {
         try {
             String[] args = identifier.split("_");
             if (args.length > 0) {
@@ -122,13 +130,14 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                                 }
                             }
                         }
+                        return ZERO;
                     }
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return ZERO;
+        return NONE;
     }
 
     private KothEvent getCurrentKothEvent() {
