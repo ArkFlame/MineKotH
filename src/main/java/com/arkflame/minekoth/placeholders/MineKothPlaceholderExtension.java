@@ -14,7 +14,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import java.util.stream.Collectors;
 
 public class MineKothPlaceholderExtension extends PlaceholderExpansion {
-    private static final String NONE = "";
+    private static final String ZERO = "0";
+    private static final String NONE = "N/A";
     private static final String FALSE = "False";
     private final MineKoth plugin;
 
@@ -127,7 +128,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return NONE;
+        return ZERO;
     }
 
     private KothEvent getCurrentKothEvent() {
