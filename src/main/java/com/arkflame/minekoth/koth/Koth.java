@@ -82,7 +82,6 @@ public class Koth {
         return isInside(player.getLocation());
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -152,12 +151,10 @@ public class Koth {
             return null;
         }
         if (center == null) {
-            // Generate Center
             double x = (firstPosition.getX() + secondPosition.getX()) / 2;
-            double y = Math.min(firstPosition.getY(), secondPosition.getY()) - 2;
+            double y = Math.min(firstPosition.getY(), secondPosition.getY());
             double z = (firstPosition.getZ() + secondPosition.getZ()) / 2;
             center = new Location(getWorld(), x, y, z);
-            // Generate Safe center
             safeCenter = center.clone();
             FoliaAPI.runTaskForRegion(safeCenter, () -> {
                 int attempts = 0;
