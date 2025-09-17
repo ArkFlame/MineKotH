@@ -374,7 +374,7 @@ public class KothEvent {
     }
 
     public void updatePlayerState(Player player, Location to, boolean dead) {
-        if (koth.isInside(to) && !dead) {
+        if (koth.isInside(to) && !dead && !player.isDead()) {
             enterKoth(player);
         } else {
             leaveKoth(player);
