@@ -76,4 +76,11 @@ public class CapturingPlayers {
         }
         return false;
     }
+
+    public Player getTopPlayer() {
+        if (players.isEmpty()) {
+            return null;
+        }
+        return players.get(0);
+    }
 }

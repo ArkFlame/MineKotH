@@ -305,3 +305,6 @@ messages:
   no-perrmission: "&c✖ &7No tienes permisos. Requiere: <node>."
   capturing-action-enemy: "&c<player> esta capturando! <time-left>"
   capturing-action-team: "&a<player> esta capturando! <time-left>"
+  bossbar-capturing-self: "&a&lTU ESTAS CAPTURANDO! &f- &e<time-left>"
+  bossbar-capturing-team: "&9&lTU EQUIPO ESTA CAPTURANDO! &f- &b<player> &f(&e<time-left>&f)"
+  bossbar-capturing-enemy: "&c&lUN ENEMIGO ESTA CAPTURANDO! &f- &c<player> &f(&e<time-left>&f)"

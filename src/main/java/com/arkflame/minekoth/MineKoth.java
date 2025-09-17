@@ -11,6 +11,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.arkflame.minekoth.bossbarapi.BossBarManager;
 import com.arkflame.minekoth.commands.KothCommand;
 import com.arkflame.minekoth.holograms.HologramsAPIUniversal;
 import com.arkflame.minekoth.koth.Koth;
@@ -247,6 +248,8 @@ public class MineKoth extends JavaPlugin {
                 scheduleManager.addSchedule(schedule);
             }
         }, 20L);
+        
+        BossBarManager.init(this);
     }
 
     @Override
@@ -266,6 +269,8 @@ public class MineKoth extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             GlowingUtility.unsetGlowing(player);
         }
+        
+        kothEventManager.clearAllBossBars();
     }
 
     public boolean isMineClansEnabled() {
