@@ -143,6 +143,7 @@ public class MineKoth extends JavaPlugin {
     public void onEnable() {
         setInstance(this);
         saveDefaults();
+        reloadConfig();
 
         // Initialize database
         FoliaAPI.runTaskAsync(() -> {
