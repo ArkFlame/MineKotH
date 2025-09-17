@@ -21,11 +21,15 @@ public class KothEventCaptureState {
     }
 
     public int getTimeLeftToCapture() {
+        CapturingPlayers topGroup = getTopGroup();
+
+        int score = (topGroup != null) ? topGroup.getScore() : 0;
+
         if (!MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true)) {
-            return getTopGroup().getScore();
+            return score;
         }
-        int timeLeftToCapture = ((timeToCapture - (getTopGroup() != null ? getTopGroup().getScore() : 0)));
-        return timeLeftToCapture;
+
+        return timeToCapture - score;
     }
 
     public String getTimeLeftToCaptureFormatted() {
