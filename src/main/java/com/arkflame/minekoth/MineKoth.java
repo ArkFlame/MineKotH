@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList; // Added import for unregistering listeners
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -248,13 +249,20 @@ public class MineKoth extends JavaPlugin {
         }, 20L);
     }
 
+    @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
+
+        HandlerList.unregisterAll(this);
+
         DiscordHook.shutdown();
         MenuUtil.shutdown();
         HologramsAPIUniversal.getHologramsAPI().clearHolograms();
+        
         if (playerDataManager != null) {
             playerDataManager.close();
         }
+        
         for (Player player : Bukkit.getOnlinePlayers()) {
             GlowingUtility.unsetGlowing(player);
         }

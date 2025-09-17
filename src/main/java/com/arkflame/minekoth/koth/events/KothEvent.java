@@ -233,7 +233,7 @@ public class KothEvent {
                 Player topPlayer = captureState.getTopPlayer();
                 String capturer = getCapturerName();
                 boolean sendTimeLeftTitle = COUNTDOWN_INTERVALS.contains((int) captureSecondsLeft);
-
+                captureState.tick();
                 for (Player player : captureState.getPlayersInZone()) {
                     boolean isTopPlayer = player == topPlayer;
                     boolean isTopGroup = topGroup != null && topGroup.containsPlayer(player);
@@ -269,7 +269,6 @@ public class KothEvent {
                         Sounds.play(player, 1.0f, 1.0f, "CLICK");
                     }
                 }
-                captureState.tick();
             }
         } else if (state == KothEventState.UNCAPTURED) {
             if (hasReachedTimeLimit()) {
