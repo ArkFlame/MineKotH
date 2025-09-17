@@ -180,6 +180,9 @@ public class KothEventManager {
 
     private void updatePlayerBossBar(Player player, boolean isTopPlayer, boolean isTopGroup, String capturer,
             String timeLeft, double progress, LangManager langManager) {
+        if (!MineKoth.getInstance().getConfig().getBoolean("bossbar.enabled")) {
+            return;
+        }
         BossBarAPI bossBar = playerBossBars.computeIfAbsent(player.getUniqueId(), k -> BossBarAPI.create()
                 .style(BarStyle.SEGMENTED_20)
                 .addPlayer(player));

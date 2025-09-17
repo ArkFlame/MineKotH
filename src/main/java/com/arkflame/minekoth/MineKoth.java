@@ -249,7 +249,9 @@ public class MineKoth extends JavaPlugin {
             }
         }, 20L);
         
+        if (getConfig().getBoolean("bossbar.enabled")) {
         BossBarManager.init(this);
+        }
     }
 
     @Override
