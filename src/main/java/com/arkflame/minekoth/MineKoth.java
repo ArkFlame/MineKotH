@@ -1,5 +1,6 @@
 package com.arkflame.minekoth;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,10 +127,22 @@ public class MineKoth extends JavaPlugin {
         return playerDataManager;
     }
 
+    public void saveDefaults() {
+        File dataFolder = getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        File configFile = new File(dataFolder, "config.yml");
+        if (!configFile.exists()) {
+            saveDefaultConfig();
+        }
+    }
+
     @Override
     public void onEnable() {
         setInstance(this);
-        saveDefaultConfig();
+        saveDefaults();
 
         // Initialize database
         FoliaAPI.runTaskAsync(() -> {
@@ -216,7 +229,8 @@ public class MineKoth extends JavaPlugin {
         if (hologramsAPI != HologramsAPIUniversal.NONE) {
             getLogger().info("Using " + hologramsAPI.getName() + " for holograms.");
         } else {
-            getLogger().info("No hologram API found. Install any of the following: DecentHolograms, HolographicDisplays, or FancyHolograms.");
+            getLogger().info(
+                    "No hologram API found. Install any of the following: DecentHolograms, HolographicDisplays, or FancyHolograms.");
         }
 
         // Delay load
@@ -252,17 +266,17 @@ public class MineKoth extends JavaPlugin {
     public int getLootMultiplier(Player player) {
         // Get the configured multiplier values from config
         List<Integer> multipliers = getConfig().getIntegerList("reward-multipliers");
-        
+
         // Sort in descending order to check highest permissions first
         multipliers.sort(Collections.reverseOrder());
-        
+
         // Check each multiplier permission from highest to lowest
         for (int multiplier : multipliers) {
             if (player.hasPermission("minekoth.reward.multiplier." + multiplier)) {
                 return multiplier;
             }
         }
-        
+
         // Return 1 as the default multiplier if no permissions found
         return 1;
     }
