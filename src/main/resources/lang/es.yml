@@ -31,6 +31,7 @@ messages:
   
   capturing-title: "&aCapturando"
   capturing-subtitle: "&aEmpezaste a capturar el koth"
+  capturing-broadcast: "&a%player% ha empezado a capturar el koth"
   entering-zone-title: "&aEntrando en Zona"
   top-player-capturing-prefix: "&a"
   not-top-player-capturing-prefix: "&c"

@@ -6,6 +6,9 @@ reward-multipliers:
   - 5
   - 6
 
+capturing-broadcast: 
+  enabled: false
+
 bossbar:
   enabled: true
 

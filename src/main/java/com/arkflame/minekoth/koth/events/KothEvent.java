@@ -106,6 +106,15 @@ public class KothEvent {
                         lang.getMessage("messages.capturing-title"),
                         lang.getMessage("messages.capturing-subtitle"),
                         10, 20, 10);
+                // Broadcast player capturing now
+                if (MineKoth.getInstance().getConfig().getBoolean("capturing-broadcast.enabled")) {
+                    for (Player p1 : Bukkit.getOnlinePlayers()) {
+                        String message = MineKoth.getInstance().getLangManager().getLang(p1).getMessage(
+                                "messages.capturing-broadcast",
+                                "%player%", player.getName());
+                        p1.sendMessage(message);
+                    }
+                }
             } else {
                 Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
                 Titles.sendTitle(player,
@@ -205,7 +214,8 @@ public class KothEvent {
     }
 
     public int getTimeLeftToFinish() {
-        int secondsLeft = (int) Math.ceil(((startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis()) / 1000);
+        int secondsLeft = (int) Math
+                .ceil(((startTime + koth.getTimeLimit() * 1000) - System.currentTimeMillis()) / 1000);
         return secondsLeft;
     }
 
