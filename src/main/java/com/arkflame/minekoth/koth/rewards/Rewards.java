@@ -1,5 +1,7 @@
-package com.arkflame.minekoth.koth;
+package com.arkflame.minekoth.koth.rewards;
 
+import com.arkflame.minekoth.MineKoth;
+import com.arkflame.minekoth.utils.FoliaAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -7,12 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.arkflame.minekoth.MineKoth;
-import com.arkflame.minekoth.utils.FoliaAPI;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Rewards {
@@ -23,13 +21,13 @@ public class Rewards {
         MINECLANS_RANDOM
     }
 
-    private Collection<ItemStack> items;
-    private Collection<String> commands;
+    private final RewardItems rewardItems;
+    private final Collection<String> commands;
     private LootType lootType;
     private int lootAmount;
 
     public Rewards(Collection<String> commands, Collection<ItemStack> itemsArray, LootType lootType, int lootAmount) {
-        this.items = new ArrayList<>();
+        this.rewardItems = new RewardItems();
         this.commands = new ArrayList<>();
 
         if (commands != null) {
@@ -38,9 +36,8 @@ public class Rewards {
 
         if (itemsArray != null) {
             for (ItemStack item : itemsArray) {
-                if (item != null && item.getType() != Material.AIR) {
-                    this.items.add(item);
-                }
+                // Delegate to the new class's method
+                this.rewardItems.addItem(item);
             }
         }
 
@@ -49,16 +46,18 @@ public class Rewards {
     }
 
     public Rewards() {
-        this.items = new ArrayList<>();
+        this.rewardItems = new RewardItems();
         this.commands = new ArrayList<>();
         this.lootType = LootType.DEFAULT;
         this.lootAmount = 1;
     }
 
+    // Item-related methods now delegate to RewardItems
     public Collection<ItemStack> getRewardsItems() {
-        return items;
+        return rewardItems.getItems();
     }
 
+    // Command-related methods remain unchanged
     public Collection<String> getRewardsCommands() {
         return commands;
     }
@@ -75,6 +74,7 @@ public class Rewards {
         commands.clear();
     }
 
+    // Other getters/setters remain unchanged
     public LootType getLootType() {
         return lootType;
     }
@@ -90,17 +90,15 @@ public class Rewards {
     public void setLootAmount(int lootAmount) {
         this.lootAmount = lootAmount;
     }
-
+    
+    // The core reward-giving logic remains identical
     public int giveRewards(Player topPlayer) {
         int multiplier = MineKoth.getInstance().getLootMultiplier(topPlayer);
 
         if (lootType == LootType.DEFAULT || lootType == LootType.MINECLANS_DEFAULT) {
             FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
                 for (int i = 0; i < lootAmount * multiplier; i++) {
-                    // Execute all reward commands
                     executeCommands(topPlayer, getRewardsCommands());
-
-                    // Give all reward items
                     giveItems(topPlayer, getRewardsItems());
                 }
             });
@@ -110,6 +108,11 @@ public class Rewards {
             ArrayList<Object> rewardsPool = new ArrayList<>();
             rewardsPool.addAll(getRewardsItems());
             rewardsPool.addAll(getRewardsCommands());
+            
+            if (rewardsPool.isEmpty()) {
+                return 0;
+            }
+            
             int rewardsToGive = Math.min(lootAmount, rewardsPool.size());
             FoliaAPI.runTaskForRegion(topPlayer.getLocation(), () -> {
                 for (int i = 0; i < rewardsToGive * multiplier; i++) {
@@ -129,71 +132,73 @@ public class Rewards {
         return 0;
     }
 
-    /**
-     * Executes a command with player placeholder replaced
-     */
+    // All private helper methods for giving rewards are identical
     private void executeCommand(Player player, String command) {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                 command.replace("%player%", player.getName()));
     }
 
-    /**
-     * Executes multiple commands for a player
-     */
     private void executeCommands(Player player, Collection<String> commands) {
         for (String command : commands) {
             executeCommand(player, command);
         }
     }
 
-    /**
-     * Gives a single item to a player with multiplier, handling inventory overflow
-     */
     private void giveItem(Player player, ItemStack item) {
         if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
             HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
-            // Drop items that don't fit in the inventory
             for (ItemStack remainingItem : remainingItems.values()) {
                 player.getWorld().dropItem(player.getLocation(), remainingItem);
             }
         }
     }
 
-    /**
-     * Gives multiple items to a player with multiplier
-     */
     private void giveItems(Player player, Collection<ItemStack> items) {
         for (ItemStack item : items) {
             giveItem(player, item);
         }
     }
-
+    
+    // The save and load methods are now cleaner but produce the exact same YAML structure.
     public void save(Configuration config) {
+        // This check is from the original code.
         if (config.isString("rewards")) {
             config.set("rewards", null);
         }
+        
+        // Ensure the 'rewards' section exists for saving.
+        ConfigurationSection rewardsSection = config.getConfigurationSection("rewards");
+        if (rewardsSection == null) {
+            rewardsSection = config.createSection("rewards");
+        }
+        
+        // Reverted to original logic for saving commands.
+        rewardsSection.set("commands", null); // Clear old commands
         for (String command : commands) {
-            config.set("rewards.commands." + command, command);
+            rewardsSection.set("commands." + command, command);
         }
-        int i = 0;
-        for (ItemStack item : items) {
-            if (item == null || item.getType() == Material.AIR || item.getAmount() == 0) {
-                continue;
-            }
-            config.set("rewards.items." + i++, item);
-        }
-        config.set("rewards.lootType", lootType.name());
+
+        // Delegate item saving to the new class.
+        rewardItems.save(rewardsSection);
+        
+        // Save other properties.
+        rewardsSection.set("lootType", lootType.name());
     }
 
     public Rewards load(Configuration config) {
-        items.clear();
+        // Clear current state.
+        rewardItems.clearItems();
         commands.clear();
+        
+        // This check is from the original code.
         if (config.isString("rewards")) {
             config.set("rewards", null);
             return this;
         }
+        
         ConfigurationSection section = config.getConfigurationSection("rewards");
         if (section != null) {
+            // Reverted to original logic for loading commands.
             ConfigurationSection commandsSection = section.getConfigurationSection("commands");
             if (commandsSection != null) {
                 for (String key : commandsSection.getKeys(false)) {
@@ -203,23 +208,15 @@ public class Rewards {
                     }
                 }
             }
-            ConfigurationSection itemsSection = section.getConfigurationSection("items");
-            if (itemsSection != null) {
-                for (String key : itemsSection.getKeys(false)) {
-                    ItemStack item = itemsSection.getItemStack(key);
-                    if (item != null && item.getType() != Material.AIR) {
-                        items.add(item);
-                    }
-                }
-            }
+
+            // Delegate item loading to the new class.
+            rewardItems.load(section);
+
+            // Logic for loading lootType remains the same.
             String rawLootType = section.getString("lootType", LootType.DEFAULT.name());
-            if (rawLootType != null) {
-                try {
-                    lootType = LootType.valueOf(rawLootType);
-                } catch (IllegalArgumentException e) {
-                    lootType = LootType.DEFAULT;
-                }
-            } else {
+            try {
+                lootType = LootType.valueOf(rawLootType);
+            } catch (IllegalArgumentException e) {
                 lootType = LootType.DEFAULT;
             }
         }

@@ -2,7 +2,7 @@ package com.arkflame.minekoth.koth.loaders;
 
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Position;
-import com.arkflame.minekoth.koth.Rewards;
+import com.arkflame.minekoth.koth.rewards.Rewards;
 import com.arkflame.minekoth.utils.ConfigUtil;
 
 import org.bukkit.configuration.file.YamlConfiguration;

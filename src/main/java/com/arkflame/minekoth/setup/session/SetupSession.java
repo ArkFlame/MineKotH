@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
 import com.arkflame.minekoth.koth.Position;
-import com.arkflame.minekoth.koth.Rewards.LootType;
+import com.arkflame.minekoth.koth.rewards.Rewards.LootType;
 
 public class SetupSession {
     private int id = -1;

@@ -23,15 +23,21 @@ public class PlayerDataInitializer {
                 String password = plugin.getConfig().getString("player-data.mysql.password", "password");
 
                 // Attempt to create a HikariCP DataSource.
-                plugin.getLogger().info("Using MySQLPlayerDataManager with HikariCP.");
+                plugin.getLogger().info("Using MySQLPlayerDataManager with HikariCP. (" + url + ")");
                 return new MySQLPlayerDataManager(url, username, password, plugin.getLogger());
             case "yaml":
                 // Use YAML-based persistence.
                 File dataFolder = new File(plugin.getDataFolder(), plugin.getConfig().getString("player-data.yaml.directory", "playerdata"));
                 // Ensure the data folder exists.
                 if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-                    plugin.getLogger().severe("Failed to create YAML data folder: " + dataFolder.getAbsolutePath());
-                    return new PlayerDataManager();
+                    // Log a fatal error and throw an exception to prevent the plugin from enabling with a misconfigured storage.
+                    // This avoids silent data loss by falling back to the in-memory manager.
+                    plugin.getLogger().severe("====================================================");
+                    plugin.getLogger().severe(" FAILED TO CREATE YAML DATA FOLDER: " + dataFolder.getAbsolutePath());
+                    plugin.getLogger().severe(" Please check your file permissions.");
+                    plugin.getLogger().severe(" The plugin will not enable to prevent data loss.");
+                    plugin.getLogger().severe("====================================================");
+                    throw new RuntimeException("Failed to initialize YAML storage. Aborting plugin enable.");
                 }
                 plugin.getLogger().info("Using YamlPlayerDataManager.");
                 return new YamlPlayerDataManager(dataFolder, new ConfigUtil(plugin), plugin.getLogger());

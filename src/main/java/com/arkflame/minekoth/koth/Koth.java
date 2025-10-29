@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.holograms.HologramsAPIUniversal;
+import com.arkflame.minekoth.koth.rewards.Rewards;
 import com.arkflame.minekoth.utils.FoliaAPI;
 
 public class Koth {

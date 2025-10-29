@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.koth.Koth;
-import com.arkflame.minekoth.koth.Rewards;
+import com.arkflame.minekoth.koth.rewards.Rewards;
 import com.arkflame.minekoth.lang.Lang;
 import com.arkflame.minekoth.menus.KothEditMenu;
 import com.arkflame.minekoth.setup.session.SetupSession;
