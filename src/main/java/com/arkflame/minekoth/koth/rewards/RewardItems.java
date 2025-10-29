@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.logging.Level;
 
 /**
@@ -26,6 +27,10 @@ public class RewardItems {
      * @return A collection of ItemStacks.
      */
     public Collection<ItemStack> getItems() {
+        Collection<ItemStack> items = new HashSet<>();
+        for (ItemStack item : this.items) {
+            items.add(item.clone());
+        }
         return items;
     }
 
