@@ -184,6 +184,12 @@ public class KothEvent {
     }
 
     public void setCaptured(CapturingPlayers winners) {
+        if (this.state == KothEventState.CAPTURED) {
+            return;
+        }
+        this.state = KothEventState.CAPTURED;
+        this.endTime = System.currentTimeMillis();
+
         Player topPlayer = winners.getPlayers().get(0);
         giveRewards(winners);
         if (topPlayer != null) {
@@ -202,9 +208,6 @@ public class KothEvent {
 
         stats.clearStats();
         captureState.clearPlayers();
-
-        state = KothEventState.CAPTURED;
-        endTime = System.currentTimeMillis();
     }
 
     private void clearAllParticles() {
