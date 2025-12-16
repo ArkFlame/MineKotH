@@ -232,7 +232,7 @@ public class MineKoth extends JavaPlugin {
         // Initialize Holograms
         String hologramEngine = getConfig().getString("hologram.engine", "auto");
         HologramsAPIUniversal hologramsAPI = HologramsAPIUniversal.getHologramsAPI(hologramEngine);
-        
+
         if (hologramsAPI != HologramsAPIUniversal.NONE) {
             getLogger().info("Using " + hologramsAPI.getName() + " for holograms.");
         } else {
@@ -252,7 +252,7 @@ public class MineKoth extends JavaPlugin {
                 scheduleManager.addSchedule(schedule);
             }
         }, 20L);
-        
+
         if (getConfig().getBoolean("bossbar.enabled")) {
             BossBarManager.init(this);
         }
@@ -266,23 +266,30 @@ public class MineKoth extends JavaPlugin {
 
         DiscordHook.shutdown();
         MenuUtil.shutdown();
-        
+
         String hologramEngine = getConfig().getString("hologram.engine", "auto");
         HologramsAPIUniversal.getHologramsAPI(hologramEngine).clearHolograms();
-        
+
         if (playerDataManager != null) {
             playerDataManager.close();
         }
-        
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             GlowingUtility.unsetGlowing(player);
         }
-        
+
         kothEventManager.clearAllBossBars();
     }
 
     public boolean isMineClansEnabled() {
-        return getServer().getPluginManager().isPluginEnabled("MineClans");
+        PluginManager pm = getServer().getPluginManager();
+        return pm.isPluginEnabled("MineClans");
+    }
+
+    public boolean isUClansEnabled() {
+        PluginManager pm = getServer().getPluginManager();
+        return pm.isPluginEnabled("UltimateClans")
+                || pm.isPluginEnabled("UltimateClans-Lite");
     }
 
     public int getLootMultiplier(Player player) {

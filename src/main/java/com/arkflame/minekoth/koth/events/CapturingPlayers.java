@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.utils.MineClansHook;
+import com.arkflame.minekoth.utils.UClansHook;
 
 public class CapturingPlayers {
     private String name;
@@ -15,14 +16,28 @@ public class CapturingPlayers {
 
     public CapturingPlayers(Player player) {
         this.name = player.getName();
-        if (MineKoth.getInstance().isMineClansEnabled()) { // MineClans plugin enabled
+        this.players = new ArrayList<>();
+        this.players.add(player);
+
+        MineKoth mineKoth = MineKoth.getInstance();
+        boolean nameSet = false;
+
+        // Priority 1: MineClans
+        if (mineKoth.isMineClansEnabled()) {
             String factionName = MineClansHook.getClanName(player);
             if (factionName != null) {
                 this.name = factionName;
+                nameSet = true;
             }
         }
-        this.players = new ArrayList<>();
-        this.players.add(player);
+
+        // Priority 2: UClans (Only if name wasn't set by MineClans)
+        if (!nameSet && mineKoth.isUClansEnabled()) {
+            String clanName = UClansHook.getClanName(player);
+            if (clanName != null) {
+                this.name = clanName;
+            }
+        }
     }
 
     public List<Player> getPlayers() {
@@ -70,10 +85,24 @@ public class CapturingPlayers {
         if (player == null) {
             return false;
         }
-        // Placeholder logic for determining if two players are on the same team.
-        if (MineKoth.getInstance().isMineClansEnabled()) { // MineClans plugin enabled
-            return MineClansHook.isSameTeam(getPlayers().get(0), player);
+        
+        Player capturingPlayer = getPlayers().get(0);
+        MineKoth mineKoth = MineKoth.getInstance();
+        
+        // Check MineClans
+        if (mineKoth.isMineClansEnabled()) {
+            if (MineClansHook.isSameTeam(capturingPlayer, player)) {
+                return true;
+            }
         }
+
+        // Check UClans
+        if (mineKoth.isUClansEnabled()) {
+            if (UClansHook.isSameTeam(capturingPlayer, player)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
