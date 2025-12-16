@@ -1,6 +1,9 @@
 package com.arkflame.minekoth.playerdata;
 
 import java.io.File;
+import java.util.logging.Logger;
+
+import org.bukkit.configuration.Configuration;
 
 import com.arkflame.minekoth.MineKoth;
 import com.arkflame.minekoth.playerdata.mysql.MySQLPlayerDataManager;
@@ -9,42 +12,58 @@ import com.arkflame.minekoth.utils.ConfigUtil;
 
 public class PlayerDataInitializer {
     public static PlayerDataManager initializeDatabase(MineKoth plugin) {
-        // Get the storage type from config (mysql, yaml, memory).
-        String storageType = plugin.getConfig().getString("player-data.storage", "mysql").toLowerCase();
+        Configuration config = plugin.getConfig();
+        String storageType = config.getString("player-data.storage", "mysql").toLowerCase();
         return initializeDatabase(plugin, storageType);
     }
 
     public static PlayerDataManager initializeDatabase(MineKoth plugin, String storageType) {
+        Logger logger = plugin.getLogger();
+        Configuration config = plugin.getConfig();
         switch (storageType) {
             case "mysql":
-                // MySQL configuration from config.yml.
-                String url = plugin.getConfig().getString("player-data.mysql.url", "jdbc:mysql://localhost:3306/db");
-                String username = plugin.getConfig().getString("player-data.mysql.username", "root");
-                String password = plugin.getConfig().getString("player-data.mysql.password", "password");
+                String urlPath = "player-data.mysql.url";
+                String userPath = "player-data.mysql.username";
+                String passPath = "player-data.mysql.password";
 
-                // Attempt to create a HikariCP DataSource.
-                plugin.getLogger().info("Using MySQLPlayerDataManager with HikariCP. (" + url + ")");
-                return new MySQLPlayerDataManager(url, username, password, plugin.getLogger());
+                String url = config.getString(urlPath);
+                String username = config.getString(userPath);
+                String password = config.getString(passPath);
+
+                if (url == null || url.isEmpty()) {
+                    logger.info("No value was found in " + urlPath + ", fallback to default mysql url");
+                    url = "jdbc:mysql://localhost:3306/db";
+                }
+
+                if (username == null || username.isEmpty()) {
+                    logger.info("No value was found in " + userPath + ", fallback to default mysql username");
+                    username = "root";
+                }
+
+                if (password == null || password.isEmpty()) {
+                    logger.info("No value was found in " + passPath + ", fallback to default mysql password");
+                    password = "password";
+                }
+
+                logger.info("Using MySQLPlayerDataManager with HikariCP. (" + url + ")");
+                return new MySQLPlayerDataManager(url, username, password, logger);
             case "yaml":
-                // Use YAML-based persistence.
-                File dataFolder = new File(plugin.getDataFolder(), plugin.getConfig().getString("player-data.yaml.directory", "playerdata"));
-                // Ensure the data folder exists.
+                File dataFolder = new File(plugin.getDataFolder(),
+                        config.getString("player-data.yaml.directory", "playerdata"));
                 if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-                    // Log a fatal error and throw an exception to prevent the plugin from enabling with a misconfigured storage.
-                    // This avoids silent data loss by falling back to the in-memory manager.
-                    plugin.getLogger().severe("====================================================");
-                    plugin.getLogger().severe(" FAILED TO CREATE YAML DATA FOLDER: " + dataFolder.getAbsolutePath());
-                    plugin.getLogger().severe(" Please check your file permissions.");
-                    plugin.getLogger().severe(" The plugin will not enable to prevent data loss.");
-                    plugin.getLogger().severe("====================================================");
+                    logger.severe("====================================================");
+                    logger.severe(" FAILED TO CREATE YAML DATA FOLDER: " + dataFolder.getAbsolutePath());
+                    logger.severe(" Please check your file permissions.");
+                    logger.severe(" The plugin will not enable to prevent data loss.");
+                    logger.severe("====================================================");
                     throw new RuntimeException("Failed to initialize YAML storage. Aborting plugin enable.");
                 }
-                plugin.getLogger().info("Using YamlPlayerDataManager.");
-                return new YamlPlayerDataManager(dataFolder, new ConfigUtil(plugin), plugin.getLogger());
+                logger.info("Using YamlPlayerDataManager.");
+                return new YamlPlayerDataManager(dataFolder, new ConfigUtil(plugin), logger);
             case "memory":
             default:
                 // Use in-memory persistence.
-                plugin.getLogger().info("Using in-memory PlayerDataManager.");
+                logger.info("Using in-memory PlayerDataManager.");
                 return new PlayerDataManager();
         }
     }
