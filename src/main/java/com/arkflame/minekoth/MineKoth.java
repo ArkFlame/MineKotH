@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList; // Added import for unregistering listeners
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -228,12 +228,16 @@ public class MineKoth extends JavaPlugin {
 
         // Initialize the MenuUtil
         MenuUtil.registerEvents(this);
-        HologramsAPIUniversal hologramsAPI = HologramsAPIUniversal.getHologramsAPI();
+
+        // Initialize Holograms
+        String hologramEngine = getConfig().getString("hologram.engine", "auto");
+        HologramsAPIUniversal hologramsAPI = HologramsAPIUniversal.getHologramsAPI(hologramEngine);
+        
         if (hologramsAPI != HologramsAPIUniversal.NONE) {
             getLogger().info("Using " + hologramsAPI.getName() + " for holograms.");
         } else {
             getLogger().info(
-                    "No hologram API found. Install any of the following: DecentHolograms, HolographicDisplays, or FancyHolograms.");
+                    "No hologram API found or selected. Install DecentHolograms, HolographicDisplays, or FancyHolograms, or check your configuration.");
         }
 
         // Delay load
@@ -250,7 +254,7 @@ public class MineKoth extends JavaPlugin {
         }, 20L);
         
         if (getConfig().getBoolean("bossbar.enabled")) {
-        BossBarManager.init(this);
+            BossBarManager.init(this);
         }
     }
 
@@ -262,7 +266,9 @@ public class MineKoth extends JavaPlugin {
 
         DiscordHook.shutdown();
         MenuUtil.shutdown();
-        HologramsAPIUniversal.getHologramsAPI().clearHolograms();
+        
+        String hologramEngine = getConfig().getString("hologram.engine", "auto");
+        HologramsAPIUniversal.getHologramsAPI(hologramEngine).clearHolograms();
         
         if (playerDataManager != null) {
             playerDataManager.close();

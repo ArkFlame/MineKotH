@@ -176,25 +176,30 @@ public class Koth {
     }
 
     public void spawnHologram() {
+        Configuration config = MineKoth.getInstance().getConfig();
+        if (!config.getBoolean("hologram.enabled")) {
+            return;
+        }
         if (safeCenter == null) {
             return;
         }
         Location safeCenter1 = getSafeCenter().clone().add(0, 2, 0);
-        Configuration config = MineKoth.getInstance().getConfig();
         String[] lines = config.getString("messages.koth-hologram-lines").split("\n");
         for (int i = 0; i < lines.length; i++) {
             if (lines[i] != null) {
                 lines[i] = lines[i].replace("<id>", String.valueOf(id)).replace("<name>", name);
             }
         }
+        String engine = config.getString("hologram.engine", "auto");
         FoliaAPI.runTask(() -> {
-            HologramsAPIUniversal.getHologramsAPI().createHologram("koth_" + id, safeCenter1, lines);
+            HologramsAPIUniversal.getHologramsAPI(engine).createHologram("koth_" + id, safeCenter1, lines);
             hologramSpawned = true;
         });
     }
 
     public void despawnHologram() {
-        HologramsAPIUniversal.getHologramsAPI().deleteHologram("koth_" + id);
+        String engine = MineKoth.getInstance().getConfig().getString("hologram.engine", "auto");
+        HologramsAPIUniversal.getHologramsAPI(engine).deleteHologram("koth_" + id);
         hologramSpawned = false;
     }
 

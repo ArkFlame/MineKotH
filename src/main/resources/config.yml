@@ -115,6 +115,18 @@ random-events:
       - "SPEED: 600: 1"
       - "STRENGTH: 600: 1"
 
+hologram:
+  # Whether to spawn holograms above the KOTH capture zone.
+  enabled: true
+  
+  # The hologram plugin to use.
+  # Available engines: 
+  # - auto (Automatically detects DecentHolograms, HolographicDisplays, or FancyHolograms)
+  # - DecentHolograms
+  # - HolographicDisplays
+  # - FancyHolograms
+  engine: auto
+
 killstreaks:
   enabled: true
   first-kill:

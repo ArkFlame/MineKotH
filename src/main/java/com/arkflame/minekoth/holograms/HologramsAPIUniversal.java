@@ -2,6 +2,7 @@ package com.arkflame.minekoth.holograms;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.PluginManager;
 
 public abstract class HologramsAPIUniversal {
     public static HologramsAPIUniversal DECENT_HOLOGRAMS;
@@ -29,14 +30,31 @@ public abstract class HologramsAPIUniversal {
         }
     };
 
-    public static final HologramsAPIUniversal getHologramsAPI() {
-        if (Bukkit.getPluginManager().isPluginEnabled("DecentHolograms")) {
+    public static final HologramsAPIUniversal getHologramsAPI(String engine) {
+        PluginManager pm = Bukkit.getPluginManager();
+        
+        if (engine == null) engine = "auto";
+
+        // Check for specific engines
+        if (engine.equalsIgnoreCase("DecentHolograms") && pm.isPluginEnabled("DecentHolograms")) {
             return DECENT_HOLOGRAMS = DECENT_HOLOGRAMS != null ? DECENT_HOLOGRAMS : new DecentHolograms();
-        } else if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+        } else if (engine.equalsIgnoreCase("HolographicDisplays") && pm.isPluginEnabled("HolographicDisplays")) {
             return HOLOGRAPHIC_DISPLAYS = HOLOGRAPHIC_DISPLAYS != null ? HOLOGRAPHIC_DISPLAYS : new HolographicDisplays();
-        } else if (Bukkit.getPluginManager().isPluginEnabled("FancyHolograms")) {
+        } else if (engine.equalsIgnoreCase("FancyHolograms") && pm.isPluginEnabled("FancyHolograms")) {
             return FANCY_HOLOGRAMS = FANCY_HOLOGRAMS != null ? FANCY_HOLOGRAMS : new FancyHolograms();
         }
+
+        // Auto detection
+        if (engine.equalsIgnoreCase("auto")) {
+            if (pm.isPluginEnabled("DecentHolograms")) {
+                return DECENT_HOLOGRAMS = DECENT_HOLOGRAMS != null ? DECENT_HOLOGRAMS : new DecentHolograms();
+            } else if (pm.isPluginEnabled("HolographicDisplays")) {
+                return HOLOGRAPHIC_DISPLAYS = HOLOGRAPHIC_DISPLAYS != null ? HOLOGRAPHIC_DISPLAYS : new HolographicDisplays();
+            } else if (pm.isPluginEnabled("FancyHolograms")) {
+                return FANCY_HOLOGRAMS = FANCY_HOLOGRAMS != null ? FANCY_HOLOGRAMS : new FancyHolograms();
+            }
+        }
+        
         return NONE;
     }
 
