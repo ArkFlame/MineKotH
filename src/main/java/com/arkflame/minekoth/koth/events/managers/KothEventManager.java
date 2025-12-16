@@ -34,6 +34,7 @@ import org.bukkit.potion.PotionEffectType;
 public class KothEventManager {
 
     private final List<KothEvent> events = new ArrayList<>();
+    private final Map<Integer, Collection<KothEvent>> eventsById = new HashMap<>();
     private final KothEventsCaptureRewardsConfig config;
     private final Map<UUID, BossBarAPI> playerBossBars = new HashMap<>();
 
@@ -44,6 +45,8 @@ public class KothEventManager {
     private KothEvent runNewEvent(Koth koth) {
         KothEvent event = new KothEvent(koth);
         events.add(event);
+        eventsById.put(koth.getId(), eventsById.getOrDefault(koth.getId(), new HashSet<>()));
+        eventsById.get(koth.getId()).add(event);
         return event;
     }
 
@@ -68,6 +71,13 @@ public class KothEventManager {
 
     public void end(KothEvent currentEvent) {
         if (events.remove(currentEvent)) {
+            int id = currentEvent.getKoth().getId();
+            if (eventsById.get(id) != null) {
+                eventsById.get(id).remove(currentEvent);
+                if (eventsById.get(id).isEmpty()) {
+                    eventsById.remove(id);
+                }
+            }
             currentEvent.clear();
         }
         clearAllBossBars();
@@ -150,23 +160,25 @@ public class KothEventManager {
         String capturer = (topPlayer != null) ? topPlayer.getName() : "No one";
         int score = (topGroup != null) ? topGroup.getScore() : 0;
         int timeToCapture = currentEvent.getKoth().getTimeToCapture();
-        
+
         double progress = (timeToCapture > 0) ? (double) score / timeToCapture : 0.0;
         progress = Math.max(0.0, Math.min(1.0, progress));
 
         String timeLeftFormatted = currentEvent.getTimeLeftFormatted();
-        boolean sendTimeLeftTitle = MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal", true);
+        boolean sendTimeLeftTitle = MineKoth.getInstance().getConfig().getBoolean("capturing-options.capture-time-goal",
+                true);
         LangManager langManager = MineKoth.getInstance().getLangManager();
 
         for (Player player : currentEvent.getPlayersInZone()) {
             boolean isTopPlayer = player.equals(topPlayer);
             boolean isTopGroup = topGroup != null && topGroup.containsPlayer(player);
-            
+
             updatePlayerBossBar(player, isTopPlayer, isTopGroup, capturer, timeLeftFormatted, progress, langManager);
-            
+
             // FIX: Pass the 'currentEvent' to the method so it can check the time remaining
-            updatePlayerActionAndTitle(player, isTopPlayer, isTopGroup, capturer, timeLeftFormatted, sendTimeLeftTitle, langManager, currentEvent);
-            
+            updatePlayerActionAndTitle(player, isTopPlayer, isTopGroup, capturer, timeLeftFormatted, sendTimeLeftTitle,
+                    langManager, currentEvent);
+
             updatePlayerStatsAndRewards(player, currentEvent, topGroup);
         }
 
@@ -209,7 +221,8 @@ public class KothEventManager {
 
     /**
      * Sends ActionBars and Titles to a specific player.
-     * FIX: This method now includes a timer to prevent spamming the title every tick.
+     * FIX: This method now includes a timer to prevent spamming the title every
+     * tick.
      */
     private void updatePlayerActionAndTitle(Player player, boolean isTopPlayer, boolean isTopGroup, String capturer,
             String timeLeft, boolean sendTitleFromConfig, LangManager langManager, KothEvent currentEvent) {
@@ -217,9 +230,11 @@ public class KothEventManager {
         if (isTopPlayer) {
             langManager.sendAction(player, "messages.you-are-capturing-action", "<time-left>", timeLeft);
         } else if (isTopGroup) {
-            langManager.sendAction(player, "messages.capturing-action-team", "<player>", capturer, "<time-left>", timeLeft);
+            langManager.sendAction(player, "messages.capturing-action-team", "<player>", capturer, "<time-left>",
+                    timeLeft);
         } else {
-            langManager.sendAction(player, "messages.capturing-action-enemy", "<player>", capturer, "<time-left>", timeLeft);
+            langManager.sendAction(player, "messages.capturing-action-enemy", "<player>", capturer, "<time-left>",
+                    timeLeft);
         }
 
         // Title (sent only at specific intervals)
@@ -232,15 +247,17 @@ public class KothEventManager {
             // 2. Every 15 seconds otherwise (e.g., at 45, 30, 15 seconds).
             // 3. Does not show at 0 to avoid overlapping with the capture message.
             boolean shouldShowTitle = (timeLeftSeconds > 0) &&
-                                      ((timeLeftSeconds <= 10) || (timeLeftSeconds % 15 == 0));
+                    ((timeLeftSeconds <= 10) || (timeLeftSeconds % 15 == 0));
 
             if (shouldShowTitle) {
                 Lang lang = langManager.getLang(player);
                 String subtitle = isTopPlayer
                         ? lang.getMessage("messages.you-are-capturing-subtitle")
                         : isTopGroup
-                                ? lang.getMessage("messages.top-player-name-capturing-subtitle").replace("<topPlayerName>", capturer)
-                                : lang.getMessage("messages.not-top-player-name-capturing-subtitle").replace("<topPlayerName>", capturer);
+                                ? lang.getMessage("messages.top-player-name-capturing-subtitle")
+                                        .replace("<topPlayerName>", capturer)
+                                : lang.getMessage("messages.not-top-player-name-capturing-subtitle")
+                                        .replace("<topPlayerName>", capturer);
 
                 Titles.sendTitle(player,
                         lang.getMessage("messages.seconds-left").replace("<seconds>", timeLeft),
@@ -253,7 +270,9 @@ public class KothEventManager {
 
     private void updatePlayerStatsAndRewards(Player player, KothEvent currentEvent, CapturingPlayers topGroup) {
         if (PotionEffectUtil.removeEffect(player, PotionEffectType.INVISIBILITY)) {
-            Titles.sendTitle(player, "", MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.revealed"), 10, 20, 10);
+            Titles.sendTitle(player, "",
+                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.revealed"), 10, 20,
+                    10);
         }
 
         if (topGroup == null || topGroup.containsPlayer(player)) {
@@ -271,7 +290,8 @@ public class KothEventManager {
             }
         }
 
-        PlayerData playerData = MineKoth.getInstance().getPlayerDataManager().getIfLoaded(player.getUniqueId().toString());
+        PlayerData playerData = MineKoth.getInstance().getPlayerDataManager()
+                .getIfLoaded(player.getUniqueId().toString());
         if (playerData != null) {
             playerData.addCaptureTime(currentEvent.getKoth().getId(), 1);
         }
@@ -281,7 +301,8 @@ public class KothEventManager {
             if (playerData != null) {
                 playerData.incrementParticipationCount(currentEvent.getKoth().getId());
             }
-            player.sendMessage(MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.stay-to-earn-loot"));
+            player.sendMessage(
+                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.stay-to-earn-loot"));
         }
         config.giveRewards(player, timeCaptured);
     }
@@ -310,5 +331,9 @@ public class KothEventManager {
             }
         }
         return null;
+    }
+
+    public Collection<KothEvent> getRunningKothsById(int id) {
+        return eventsById.getOrDefault(id, Collections.emptySet());
     }
 }
