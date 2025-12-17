@@ -97,28 +97,40 @@ capture-rewards:
 
 random-events:
   loot-drop:
+    enabled: true
     chance: 0.001
     loot:
       - "DIAMOND: 3"
       - "EMERALD: 2"
     drop-count: 5
   zombie-horde:
+    enabled: true
     chance: 0.0008
     spawn-count: 10
   lightning-strike:
+    enabled: true
     chance: 0.0005
     damage: 6
     fire-ticks: 100
   skeleton-horde:
+    enabled: true
     chance: 0.0008
     spawn-count: 10
   potion-effect:
+    enabled: true
     chance: 0.001
     min-effects: 1
     max-effects: 3
     effects:
       - "SPEED: 600: 1"
       - "STRENGTH: 600: 1"
+  item-rain:
+    enabled: true
+    chance: 0.001
+    item: "GOLD_NUGGET"
+    amount: 20       # Total entities dropped
+    radius: 5.0      # Horizontal spread
+    altitude: 3.0    # Height above center to drop from
 
 hologram:
   # Whether to spawn holograms above the KOTH capture zone.

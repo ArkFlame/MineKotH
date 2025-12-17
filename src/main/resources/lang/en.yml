@@ -64,6 +64,9 @@ messages:
   loot-drop-title: "&6Loot Drop"
   loot-drop-subtitle: "&7A loot drop has appeared nearby!"
 
+  item-rain-title: "&6Item Rain"
+  item-rain-subtitle: "&7Items are raining from the sky!"
+
   capture-the-hill-title: "&a<kothName>"
   capture-the-hill-subtitle: "&eCapture the Hill!"
   

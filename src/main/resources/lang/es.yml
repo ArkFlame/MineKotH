@@ -64,6 +64,9 @@ messages:
   loot-drop-title: "&6Botín"
   loot-drop-subtitle: "&7¡Un botín ha aparecido cerca!"
 
+  item-rain-title: "&6Lluvia de Objetos"
+  item-rain-subtitle: "&7¡Están lloviendo objetos del cielo!"
+
   capture-the-hill-title: "&a<kothName>"
   capture-the-hill-subtitle: "&e¡Captura la Colina!"
   

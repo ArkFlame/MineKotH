@@ -20,12 +20,37 @@ public class RandomEventsManager {
     }
 
     private void initializeEvents() {
-        // Initialize all random events with their chances from config
-        addRandomEvent(new LootDropEvent(config.getLootDropChance(), config.getLootDropItems(), config.getLootDropCount())); // Loot drop event chance from config
-        addRandomEvent(new ZombieHordeEvent(config.getZombieHordeChance(), config.getZombieHordeSpawnCount())); // Zombie horde event chance from config
-        addRandomEvent(new LightningStrikeEvent(config.getLightningStrikeChance(), config.getLightningStrikeDamage(), config.getLightningStrikeFireTicks())); // Lightning strike event chance from config
-        addRandomEvent(new SkeletonHordeEvent(config.getSkeletonHordeChance(), config.getSkeletonHordeSpawnCount())); // Skeleton horde event chance from config
-        addRandomEvent(new PotionEffectEvent(config.getPotionEffectChance(), config.getPotionEffects(), config.getPotionEffectMin(), config.getPotionEffectMax())); // Potion effect event chance from config
+        // Initialize random events if they are enabled in config
+
+        if (config.isLootDropEnabled()) {
+            addRandomEvent(new LootDropEvent(config.getLootDropChance(), config.getLootDropItems(), config.getLootDropCount()));
+        }
+
+        if (config.isZombieHordeEnabled()) {
+            addRandomEvent(new ZombieHordeEvent(config.getZombieHordeChance(), config.getZombieHordeSpawnCount()));
+        }
+
+        if (config.isLightningStrikeEnabled()) {
+            addRandomEvent(new LightningStrikeEvent(config.getLightningStrikeChance(), config.getLightningStrikeDamage(), config.getLightningStrikeFireTicks()));
+        }
+
+        if (config.isSkeletonHordeEnabled()) {
+            addRandomEvent(new SkeletonHordeEvent(config.getSkeletonHordeChance(), config.getSkeletonHordeSpawnCount()));
+        }
+
+        if (config.isPotionEffectEnabled()) {
+            addRandomEvent(new PotionEffectEvent(config.getPotionEffectChance(), config.getPotionEffects(), config.getPotionEffectMin(), config.getPotionEffectMax()));
+        }
+
+        if (config.isItemRainEnabled()) {
+            addRandomEvent(new ItemRainEvent(
+                config.getItemRainChance(), 
+                config.getItemRainItem(), 
+                config.getItemRainAmount(), 
+                config.getItemRainRadius(), 
+                config.getItemRainAltitude()
+            ));
+        }
     }
 
     public void addRandomEvent(RandomEvent event) {
