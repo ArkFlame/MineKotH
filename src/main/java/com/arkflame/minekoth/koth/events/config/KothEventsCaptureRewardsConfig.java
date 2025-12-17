@@ -33,6 +33,9 @@ public class KothEventsCaptureRewardsConfig {
     }
 
     private void loadCaptureRewards(FileConfiguration config) {
+        this.oneTimeRewards.clear();
+        this.repeatingRewards.clear();
+
         ConfigurationSection captureRewardsSection = config.getConfigurationSection("capture-rewards");
         if (captureRewardsSection == null) {
             this.captureRewardsEnabled = false;
@@ -40,6 +43,7 @@ public class KothEventsCaptureRewardsConfig {
         }
 
         this.captureRewardsEnabled = captureRewardsSection.getBoolean("enabled", false);
+
         if (!captureRewardsEnabled) {
             return;
         }
@@ -95,7 +99,8 @@ public class KothEventsCaptureRewardsConfig {
         Logger logger = plugin.getLogger();
 
         if (parts.length != 2) {
-            logger.warning("Invalid item reward format: '" + rewardString + "'. Expected format: 'item: MATERIAL_NAME,QUANTITY'");
+            logger.warning("Invalid item reward format: '" + rewardString
+                    + "'. Expected format: 'item: MATERIAL_NAME,QUANTITY'");
             return;
         }
 
@@ -103,7 +108,8 @@ public class KothEventsCaptureRewardsConfig {
         Material material = Material.matchMaterial(materialName);
 
         if (material == null) {
-            logger.warning("Invalid material in item reward: '" + materialName + "' in reward string '" + rewardString + "'");
+            logger.warning(
+                    "Invalid material in item reward: '" + materialName + "' in reward string '" + rewardString + "'");
             return;
         }
 
@@ -115,13 +121,14 @@ public class KothEventsCaptureRewardsConfig {
                 scheduler.runTask(plugin, () -> player.getInventory().addItem(itemStack));
             }
         } catch (NumberFormatException e) {
-            logger.warning("Invalid quantity in item reward: '" + parts[1].trim() + "' in reward string '" + rewardString + "'");
+            logger.warning("Invalid quantity in item reward: '" + parts[1].trim() + "' in reward string '"
+                    + rewardString + "'");
         }
     }
 
     private void executeCommandReward(Player player, String rewardString) {
         String command = rewardString.substring(COMMAND_PREFIX.length())
-                                     .replace("%player%", player.getName());
+                .replace("%player%", player.getName());
 
         Server server = plugin.getServer();
         BukkitScheduler scheduler = server.getScheduler();
@@ -129,8 +136,6 @@ public class KothEventsCaptureRewardsConfig {
 
         scheduler.runTask(plugin, () -> server.dispatchCommand(console, command));
     }
-
-
 
     private void sendMessageReward(Player player, String rewardString) {
         String messageKey = rewardString.substring(MESSAGE_KEY_PREFIX.length());
