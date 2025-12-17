@@ -9,6 +9,11 @@ reward-multipliers:
 capturing-broadcast: 
   enabled: false
 
+winner-broadcast:
+  enabled: true
+  # Show to everyone or only to who participated
+  everyone: false
+
 bossbar:
   enabled: true
 

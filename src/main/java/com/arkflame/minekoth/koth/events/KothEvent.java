@@ -16,6 +16,7 @@ import com.arkflame.minekoth.utils.Titles;
 
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
@@ -46,6 +47,7 @@ public class KothEvent {
     private KothEventStats stats;
     private KothEventBets bets;
     private KothEventCaptureState captureState;
+    private Collection<UUID> participated;
 
     public KothEvent(Koth koth) {
         this.koth = koth;
@@ -55,6 +57,7 @@ public class KothEvent {
         this.stats = new KothEventStats();
         this.bets = new KothEventBets();
         this.captureState = new KothEventCaptureState(koth.getTimeToCapture());
+        this.participated = new HashSet<>();
     }
 
     public KothEventStats getStats() {
@@ -126,6 +129,7 @@ public class KothEvent {
                         10, 20, 10);
             }
             Sounds.play(player, 1.0f, 1.0f, "NOTE_PLING", "BLOCK_NOTE_BLOCK_PLING");
+            participated.add(player.getUniqueId());
         }
     }
 
@@ -363,11 +367,22 @@ public class KothEvent {
     }
 
     private void displayWinLoseEffects(Player player, boolean isWinner, Player winner) {
+        FileConfiguration config = MineKoth.getInstance().getConfig();
+        if (!config.getBoolean("winner-broadcast.enabled", true)) {
+            return;
+        }
+        boolean showToEveryone = config.getBoolean("winner-broadcast.everyone", false);
+        if (!showToEveryone) {
+            if (!hasParticipated(player)) {
+                return; // Player didn't participate, so we stop here.
+            }
+        }
         Lang lang = MineKoth.getInstance().getLangManager().getLang(player);
         String title = isWinner ? lang.getMessage("messages.you-won-title")
                 : lang.getMessage("messages.you-lose-title");
         String subtitle = lang.getMessage("messages.winner-subtitle").replace("<winner>",
                 (winner == null ? lang.getMessage("messages.na") : winner.getName()));
+
         Titles.sendTitle(player, title, subtitle, 10, 70, 20);
         Sounds.play(1.0f, 1.0f, "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
         if (isWinner) {
@@ -375,6 +390,10 @@ public class KothEvent {
         } else {
             clearParticles(player);
         }
+    }
+
+    private boolean hasParticipated(Player player) {
+        return participated.contains(player.getUniqueId());
     }
 
     public long getTimeSinceEnd() {
