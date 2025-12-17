@@ -53,10 +53,28 @@ public class KothEventManager {
     public void start(Koth koth) {
         KothEvent currentEvent = runNewEvent(koth);
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
+
+        // Pre-calculate location string to avoid doing it inside the loop
+        Location center = koth.getCenter();
+        String locationStr = center.getBlockX() + ", " + center.getBlockZ();
+
         for (Player player : MineKoth.getInstance().getServer().getOnlinePlayers()) {
             currentEvent.updatePlayerState(player, player.getLocation(), player.isDead());
-            ChatColors.sendMessage(player,
-                    MineKoth.getInstance().getLangManager().getLang(player).getMessage("messages.place-bets"));
+
+            // Retrieve the raw multi-line message
+            String rawMessage = MineKoth.getInstance().getLangManager().getLang(player)
+                    .getMessage("messages.koth-started");
+
+            // Replace placeholders
+            String finalMessage = rawMessage
+                    .replace("%koth_name%", koth.getName())
+                    .replace("%koth_location%", locationStr);
+
+            // Split by new line (\n) to ensure it prints on separate lines in chat
+            for (String line : finalMessage.split("\\n")) {
+                ChatColors.sendMessage(player, line);
+            }
+
             Titles.sendTitle(player,
                     MineKoth.getInstance().getLangManager().getLang(player)
                             .getMessage("messages.capture-the-hill-title").replace("<kothName>", koth.getName()),
@@ -64,7 +82,7 @@ public class KothEventManager {
                             .getMessage("messages.capture-the-hill-subtitle").replace("<kothName>", koth.getName()),
                     10, 20, 10);
         }
-        Location center = koth.getCenter();
+
         Worlds.strikeLightningEffect(center);
         DiscordHook.sendKothStart(koth.getName());
     }

@@ -66,7 +66,10 @@ messages:
 
   capture-the-hill-title: "&a<kothName>"
   capture-the-hill-subtitle: "&e¡Captura la Colina!"
-  place-bets: "&aColoca tus apuestas koth para ganar dinero mientras capturas la colina!"
+  
+  koth-started: |-
+    &eKoth &6%koth_name% &eha comenzado en &7%koth_location%
+    &a¡Coloca tus apuestas koth para ganar dinero mientras capturas la colina!
 
   revealed: "&c¡Has sido revelado!"
   stay-to-earn-loot: "&a&l¡CONSEJO!&a Mantente en el koth para ganar botín. Apuesta para ganar dinero."
