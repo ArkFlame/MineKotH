@@ -160,3 +160,16 @@ killstreaks:
     4:
       - "item: GOLD_INGOT,1"
       - "message-key: messages.killstreak-reward"
+
+tab-hook:
+  enabled: true
+  scoreboard:
+    title: "&6&lMINEKOTH"
+    lines:
+      - "&7&m---------------------"
+      - "&fKoth: &e%minekoth_koth_dynamic_name%"
+      - "&fX: &b%minekoth_koth_dynamic_x% &fY: &b%minekoth_koth_dynamic_y% &fZ: &b%minekoth_koth_dynamic_z%"
+      - ""
+      - "&fCapper: &c%minekoth_koth_capturer%"
+      - "&fTime Left: &e%minekoth_koth_dynamic_time%"
+      - "&7&m---------------------"

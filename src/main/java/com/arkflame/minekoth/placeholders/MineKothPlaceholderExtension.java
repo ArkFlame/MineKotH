@@ -47,14 +47,16 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
-        if (identifier == null) return null;
-        
+        if (identifier == null)
+            return null;
+
         // Split arguments: koth_name -> [koth, name]
         String[] args = identifier.split("_");
-        if (args.length < 1) return null;
+        if (args.length < 1)
+            return null;
 
         String mainCategory = args[0]; // usually "koth"
-        String subCategory = args.length > 1 ? args[1] : ""; 
+        String subCategory = args.length > 1 ? args[1] : "";
         String detail = args.length > 2 ? args[2] : null; // e.g., position number or ID
 
         try {
@@ -66,24 +68,47 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                         return String.valueOf(currentEvent != null);
                     // --- New: Dynamic Placeholders (Adapt to Event or Schedule) ---
                     case "dynamic":
-                        if (detail == null) return NONE;
+                        if (detail == null)
+                            return NONE;
                         switch (detail) {
-                            case "name": return getDynamicName();
-                            case "time": return getDynamicTime();
-                            case "location": return getDynamicLocation();
-                            case "state": return getDynamicState();
+                            case "name":
+                                return getDynamicName();
+                            case "time":
+                                return getDynamicTime();
+                            case "location":
+                                return getDynamicLocation();
+                            case "state":
+                                return getDynamicState();
+                            case "x":
+                                return getDynamicX();
+                            case "y":
+                                return getDynamicY();
+                            case "z":
+                                return getDynamicZ();
                         }
                         return NONE;
 
                     // --- New: Current Placeholders (Only active, else Empty) ---
                     case "current":
-                        if (detail == null) return NONE;
-                        if (currentEvent == null) return EMPTY;
+                        if (detail == null)
+                            return NONE;
+                        if (currentEvent == null)
+                            return EMPTY;
                         switch (detail) {
-                            case "name": return currentEvent.getKoth().getName();
-                            case "time": return currentEvent.getTimeLeftFormatted();
-                            case "location": return formatLocation(currentEvent.getKoth().getCenter());
-                            case "state": return currentEvent.getState().getFancyName();
+                            case "name":
+                                return currentEvent.getKoth().getName();
+                            case "time":
+                                return currentEvent.getTimeLeftFormatted();
+                            case "location":
+                                return formatLocation(currentEvent.getKoth().getCenter());
+                            case "state":
+                                return currentEvent.getState().getFancyName();
+                            case "x":
+                                return String.valueOf(currentEvent.getKoth().getCenter().getBlockX());
+                            case "y":
+                                return String.valueOf(currentEvent.getKoth().getCenter().getBlockY());
+                            case "z":
+                                return String.valueOf(currentEvent.getKoth().getCenter().getBlockZ());
                         }
                         return EMPTY;
 
@@ -100,7 +125,7 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                         return getKothTimeSinceEnd(currentEvent);
                     case "isstalemate":
                         return getKothIsStalemate(currentEvent);
-                    
+
                     // --- Logic for Capture Time (Complex) ---
                     case "capturetime":
                         // Logic for %koth_capturetime_<position>%
@@ -112,10 +137,10 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
                     // --- Logic for Positions/Ranks ---
                     case "top":
-                         // Handle %koth_top_position%
+                        // Handle %koth_top_position%
                         if ("position".equals(detail) && currentEvent != null) {
-                             int pos = currentEvent.getPosition(player);
-                             return pos == -1 ? NONE : String.valueOf(pos);
+                            int pos = currentEvent.getPosition(player);
+                            return pos == -1 ? NONE : String.valueOf(pos);
                         }
                         break;
                     case "playername":
@@ -145,6 +170,15 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                             return pos == -1 ? NONE : String.valueOf(pos);
                         }
                         return NONE;
+                    case "x":
+                        // %minekoth_koth_x% -> Dynamic X
+                        return detail == null ? getDynamicX() : NONE;
+                    case "y":
+                        // %minekoth_koth_y% -> Dynamic Y
+                        return detail == null ? getDynamicY() : NONE;
+                    case "z":
+                        // %minekoth_koth_z% -> Dynamic Z
+                        return detail == null ? getDynamicZ() : NONE;
                 }
             } else if (mainCategory.equals("stats")) {
                 // Handle Stats
@@ -174,7 +208,8 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     private String getDynamicName() {
         KothEvent event = getCurrentKothEvent();
-        if (event != null) return event.getKoth().getName();
+        if (event != null)
+            return event.getKoth().getName();
         Schedule schedule = getNextSchedule();
         return schedule != null ? schedule.getKoth().getName() : NONE;
     }
@@ -190,14 +225,16 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
     private String getDynamicLocation() {
         KothEvent event = getCurrentKothEvent();
-        if (event != null) return formatLocation(event.getKoth().getCenter());
+        if (event != null)
+            return formatLocation(event.getKoth().getCenter());
         Schedule schedule = getNextSchedule();
         return schedule != null ? formatLocation(schedule.getKoth().getCenter()) : NONE;
     }
 
     private String getDynamicState() {
         KothEvent event = getCurrentKothEvent();
-        if (event != null) return event.getState().getFancyName();
+        if (event != null)
+            return event.getState().getFancyName();
         return MineKoth.getInstance().getConfig().getString("messages.koth-states.NOT_STARTED", "Not Started");
     }
 
@@ -249,7 +286,8 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
             if (players != null) {
                 return players.getCaptureTimeFormatted();
             }
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+        }
         return NONE;
     }
 
@@ -277,7 +315,8 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
                         .map(Player::getName)
                         .collect(Collectors.joining(", "));
             }
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+        }
         return NONE;
     }
 
@@ -287,36 +326,44 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         try {
             Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
             return koth != null ? koth.getName() : NONE;
-        } catch (NumberFormatException e) { return NONE; }
+        } catch (NumberFormatException e) {
+            return NONE;
+        }
     }
 
     private String getKothLocationById(String kothId) {
         try {
             Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
             return koth != null ? formatLocation(koth.getCenter()) : NONE;
-        } catch (NumberFormatException e) { return NONE; }
+        } catch (NumberFormatException e) {
+            return NONE;
+        }
     }
 
     private String getKothStateById(String kothId) {
         try {
             Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
-            if (koth == null) return NONE;
+            if (koth == null)
+                return NONE;
 
             // Simplified API usage
             Collection<KothEvent> events = plugin.getKothEventManager().getRunningKothsById(koth.getId());
-            
+
             if (!events.isEmpty()) {
                 // Assuming one event per Koth ID generally, or picking first
                 return events.iterator().next().getState().getFancyName();
             }
             return MineKoth.getInstance().getConfig().getString("messages.koth-states.NOT_STARTED", "Not Started");
-        } catch (NumberFormatException e) { return NONE; }
+        } catch (NumberFormatException e) {
+            return NONE;
+        }
     }
 
     private String getKothTimeById(String kothId) {
         try {
             Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
-            if (koth == null) return NONE;
+            if (koth == null)
+                return NONE;
 
             // Simplified API usage
             Collection<KothEvent> events = plugin.getKothEventManager().getRunningKothsById(koth.getId());
@@ -328,19 +375,23 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
 
             Schedule schedule = plugin.getScheduleManager().getNextOccurrence(koth);
             return schedule != null ? schedule.getTimeLeftFormatted() : NONE;
-        } catch (NumberFormatException e) { return NONE; }
+        } catch (NumberFormatException e) {
+            return NONE;
+        }
     }
 
     private String getKothCapturerById(String kothId) {
         try {
             Koth koth = plugin.getKothManager().getKothById(Integer.parseInt(kothId));
-            if (koth == null) return NONE;
+            if (koth == null)
+                return NONE;
 
             Collection<KothEvent> events = plugin.getKothEventManager().getRunningKothsById(koth.getId());
             if (!events.isEmpty()) {
                 return events.iterator().next().getCapturerName();
             }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
         return NONE;
     }
 
@@ -354,5 +405,29 @@ public class MineKothPlaceholderExtension extends PlaceholderExpansion {
         long minutes = timeInMillis / 60000;
         long seconds = (timeInMillis % 60000) / 1000;
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    private String getDynamicX() {
+        KothEvent event = getCurrentKothEvent();
+        if (event != null)
+            return String.valueOf(event.getKoth().getCenter().getBlockX());
+        Schedule schedule = getNextSchedule();
+        return schedule != null ? String.valueOf(schedule.getKoth().getCenter().getBlockX()) : NONE;
+    }
+
+    private String getDynamicY() {
+        KothEvent event = getCurrentKothEvent();
+        if (event != null)
+            return String.valueOf(event.getKoth().getCenter().getBlockY());
+        Schedule schedule = getNextSchedule();
+        return schedule != null ? String.valueOf(schedule.getKoth().getCenter().getBlockY()) : NONE;
+    }
+
+    private String getDynamicZ() {
+        KothEvent event = getCurrentKothEvent();
+        if (event != null)
+            return String.valueOf(event.getKoth().getCenter().getBlockZ());
+        Schedule schedule = getNextSchedule();
+        return schedule != null ? String.valueOf(schedule.getKoth().getCenter().getBlockZ()) : NONE;
     }
 }

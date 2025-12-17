@@ -48,6 +48,10 @@
             <name>FancyPlugins Repository</name>
             <url>https://repo.fancyplugins.de/releases</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <!-- Dependencies imports -->
@@ -114,6 +118,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.NEZNAMY</groupId>
+            <artifactId>TAB-API</artifactId>
+            <version>5.3.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

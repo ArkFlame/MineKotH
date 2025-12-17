@@ -52,6 +52,13 @@ public class KothEventManager {
 
     public void start(Koth koth) {
         KothEvent currentEvent = runNewEvent(koth);
+        
+        // --- TAB HOOK INTEGRATION START ---
+        // Trigger the hook. If no Koth was running, it creates the scoreboard.
+        // If one was already running, it ensures it stays active.
+        TABHook.updateKothStart();
+        // --- TAB HOOK INTEGRATION END ---
+        
         Sounds.play(1.0f, 1.0f, "BLOCK_NOTE_BLOCK_PLING", "NOTE_PLING");
 
         // Pre-calculate location string to avoid doing it inside the loop
@@ -98,6 +105,13 @@ public class KothEventManager {
             }
             currentEvent.clear();
         }
+        
+        // --- TAB HOOK INTEGRATION START ---
+        // Check if there are still active events running.
+        boolean isStillActive = isEventActive();
+        TABHook.updateKothEnd(isStillActive);
+        // --- TAB HOOK INTEGRATION END ---
+
         clearAllBossBars();
         MineKoth.getInstance().getScheduleManager().calculateNextKoth();
     }
@@ -106,9 +120,12 @@ public class KothEventManager {
         if (!isEventActive()) {
             return;
         }
+        // Iterate through copy to safely remove
         for (KothEvent currentEvent : getRunningKoths()) {
             end(currentEvent);
         }
+        // Note: end(event) calls TABHook.updateKothEnd. 
+        // When the last event ends, isEventActive will be false, and TAB will hide.
     }
 
     public void clearAllBossBars() {
@@ -193,7 +210,6 @@ public class KothEventManager {
 
             updatePlayerBossBar(player, isTopPlayer, isTopGroup, capturer, timeLeftFormatted, progress, langManager);
 
-            // FIX: Pass the 'currentEvent' to the method so it can check the time remaining
             updatePlayerActionAndTitle(player, isTopPlayer, isTopGroup, capturer, timeLeftFormatted, sendTimeLeftTitle,
                     langManager, currentEvent);
 
@@ -237,14 +253,9 @@ public class KothEventManager {
                 .progress(progress);
     }
 
-    /**
-     * Sends ActionBars and Titles to a specific player.
-     * FIX: This method now includes a timer to prevent spamming the title every
-     * tick.
-     */
     private void updatePlayerActionAndTitle(Player player, boolean isTopPlayer, boolean isTopGroup, String capturer,
             String timeLeft, boolean sendTitleFromConfig, LangManager langManager, KothEvent currentEvent) {
-        // ActionBar (sent every tick)
+        
         if (isTopPlayer) {
             langManager.sendAction(player, "messages.you-are-capturing-action", "<time-left>", timeLeft);
         } else if (isTopGroup) {
@@ -255,15 +266,9 @@ public class KothEventManager {
                     timeLeft);
         }
 
-        // Title (sent only at specific intervals)
         if (sendTitleFromConfig) {
-            // Get the remaining time in seconds to perform a check
             int timeLeftSeconds = currentEvent.getTimeLeftToCapture();
 
-            // Condition to show title:
-            // 1. Every second if time left is 10 seconds or less.
-            // 2. Every 15 seconds otherwise (e.g., at 45, 30, 15 seconds).
-            // 3. Does not show at 0 to avoid overlapping with the capture message.
             boolean shouldShowTitle = (timeLeftSeconds > 0) &&
                     ((timeLeftSeconds <= 10) || (timeLeftSeconds % 15 == 0));
 

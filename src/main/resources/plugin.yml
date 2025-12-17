@@ -5,7 +5,7 @@ main: ${mainClass}
 version: ${version}
 url: ${url}
 folia-supported: true
-soft-depend: [Vault, MineClans, DecentHolograms, PlaceholderAPI]
+soft-depend: [Vault, MineClans, DecentHolograms, PlaceholderAPI, TAB]
 api-version: 1.13
 commands:
   koth:
